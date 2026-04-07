@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureAuth - Enterprise Two-Factor Authentication System</title>
+    
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'cuz-blue': '#003366',
+                        'cuz-blue-light': '#0066CC',
+                        'cuz-blue-dark': '#002244',
+                        'metallic': '#6C757D',
+                        'light-gray': '#F8F9FA',
+                        'dark-gray': '#343A40',
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        * {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        /* Scroll animation classes */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        
+        .fade-in-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Staggered animation delays for cards */
+        .fade-in-section.delay-1 { transition-delay: 0.1s; }
+        .fade-in-section.delay-2 { transition-delay: 0.2s; }
+        .fade-in-section.delay-3 { transition-delay: 0.3s; }
+        .fade-in-section.delay-4 { transition-delay: 0.4s; }
+        .fade-in-section.delay-5 { transition-delay: 0.5s; }
+        .fade-in-section.delay-6 { transition-delay: 0.6s; }
+        
+        .card-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        
+        .card-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,51,102,0.15);
+        }
+        
+        .btn-scale {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .btn-scale:hover {
+            transform: scale(1.02);
+        }
+        
+        .link-underline {
+            position: relative;
+        }
+        
+        .link-underline::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #003366;
+            transition: width 0.3s ease;
+        }
+        
+        .link-underline:hover::after {
+            width: 100%;
+        }
+        
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .mobile-menu.open {
+            max-height: 300px;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .shield-glow {
+            filter: drop-shadow(0 0 30px rgba(255,255,255,0.4));
+        }
+    </style>
+</head>
+<body class="bg-white text-dark-gray antialiased">
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md border-b border-gray-200 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #003366 0%, #0066CC 100%);">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold text-cuz-blue">SecureAuth</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-metallic hover:text-cuz-blue link-underline transition-colors font-medium">Features</a>
+                    <a href="#how-it-works" class="text-metallic hover:text-cuz-blue link-underline transition-colors font-medium">How It Works</a>
+                    <a href="#pricing" class="text-metallic hover:text-cuz-blue link-underline transition-colors font-medium">Pricing</a>
+                    <a href="#contact" class="text-metallic hover:text-cuz-blue link-underline transition-colors font-medium">Contact</a>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="login.html" class="text-cuz-blue hover:text-cuz-blue-light font-medium transition-colors">Log in</a>
+                    <a href="register.html" class="bg-cuz-blue hover:bg-cuz-blue-light text-white px-5 py-2.5 rounded-lg font-semibold btn-scale transition-colors">
+                        Get Started
+                    </a>
+                </div>
+                
+                <button id="mobile-menu-btn" class="md:hidden p-2 text-metallic hover:text-cuz-blue">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div id="mobile-menu" class="mobile-menu md:hidden">
+                <div class="py-4 space-y-3">
+                    <a href="#features" class="block text-metallic hover:text-cuz-blue font-medium py-2">Features</a>
+                    <a href="#how-it-works" class="block text-metallic hover:text-cuz-blue font-medium py-2">How It Works</a>
+                    <a href="#pricing" class="block text-metallic hover:text-cuz-blue font-medium py-2">Pricing</a>
+                    <a href="#contact" class="block text-metallic hover:text-cuz-blue font-medium py-2">Contact</a>
+                    <div class="pt-3 border-t border-gray-200 space-y-2">
+                        <a href="login.html" class="block text-cuz-blue font-medium py-2">Log in</a>
+                        <a href="register.html" class="block bg-cuz-blue text-white px-5 py-2.5 rounded-lg font-semibold text-center">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center pt-16" style="background: linear-gradient(135deg, #003366 0%, #0066CC 100%);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="text-white">
+                    <div class="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                        </svg>
+                        <span class="text-sm font-medium">v2.1.0 with DDoS Protection</span>
+                    </div>
+                    
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                        Enterprise Two-Factor Authentication
+                        <span class="text-white/80">Made Simple</span>
+                    </h1>
+                    
+                    <p class="text-lg sm:text-xl text-white/80 mb-8 max-w-xl">
+                        Protect your applications with military-grade 2FA, DDoS protection, and JWT session management — all in 10 minutes.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="register.html" class="bg-white text-cuz-blue px-8 py-4 rounded-xl font-semibold text-center btn-scale shadow-lg">
+                            Start Free Trial
+                        </a>
+                        <a href="#how-it-works" class="bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 px-8 py-4 rounded-xl font-semibold text-center btn-scale hover:bg-white/20">
+                            View Demo
+                        </a>
+                    </div>
+                    
+                    <div class="mt-8 flex items-center space-x-6 text-white/70 text-sm">
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span>No credit card required</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span>Free forever tier</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hidden lg:flex justify-center items-center">
+                    <div class="relative">
+                        <div class="w-80 h-80 flex items-center justify-center animate-float">
+                            <svg class="w-64 h-64 text-white shield-glow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="rgba(255,255,255,0.15)" stroke="white" stroke-width="1.5"/>
+                                <rect x="9" y="11" width="6" height="5" rx="1" fill="white" stroke="none"/>
+                                <path d="M10 11V9a2 2 0 114 0v2" stroke="white" stroke-width="1.5" fill="none"/>
+                                <path d="M9 13l2 2 4-4" stroke="#003366" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        
+                        <div class="absolute -top-2 -right-2 bg-white rounded-xl p-3 shadow-2xl">
+                            <svg class="w-8 h-8 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                        </div>
+                        <div class="absolute -bottom-2 -left-2 bg-white rounded-xl p-3 shadow-2xl">
+                            <svg class="w-8 h-8 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                        </div>
+                        <div class="absolute top-1/2 -right-6 bg-white rounded-xl p-3 shadow-2xl">
+                            <svg class="w-8 h-8 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section id="features" class="py-24 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in-section">
+                <span class="inline-block bg-cuz-blue/10 text-cuz-blue px-4 py-2 rounded-full text-sm font-semibold mb-4">FEATURES</span>
+                <h2 class="text-3xl sm:text-4xl font-bold text-dark-gray mb-4">
+                    Everything You Need to Secure Your Application
+                </h2>
+                <p class="text-lg text-metallic max-w-2xl mx-auto">
+                    Complete authentication and security suite built for modern applications
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white rounded-2xl p-8 card-lift fade-in-section delay-1 border border-gray-100">
+                    <div class="w-14 h-14 bg-cuz-blue/10 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark-gray mb-3">TOTP Two-Factor Authentication</h3>
+                    <p class="text-metallic leading-relaxed">RFC 6238 compliant, works seamlessly with Google Authenticator, Authy, and Microsoft Authenticator apps.</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-8 card-lift fade-in-section delay-2 border border-gray-100">
+                    <div class="w-14 h-14 bg-cuz-blue/10 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark-gray mb-3">DDoS Protection</h3>
+                    <p class="text-metallic leading-relaxed">6-layer application security with IP auto-banning, connection limiting, and malformed request detection.</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-8 card-lift fade-in-section delay-3 border border-gray-100">
+                    <div class="w-14 h-14 bg-cuz-blue/10 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 21H5v-6l1.757-1.757A6 6 0 0118 9V5a2 2 0 012-2h4v4z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark-gray mb-3">JWT Session Management</h3>
+                    <p class="text-metallic leading-relaxed">Stateless authentication with automatic token refresh, reducing server load while maintaining security.</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-8 card-lift fade-in-section delay-1 border border-gray-100">
+                    <div class="w-14 h-14 bg-cuz-blue/10 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark-gray mb-3">Inactivity Auto-Logout</h3>
+                    <p class="text-metallic leading-relaxed">Configurable timeout with real-time activity tracking. Protects against abandoned sessions.</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-8 card-lift fade-in-section delay-2 border border-gray-100">
+                    <div class="w-14 h-14 bg-cuz-blue/10 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark-gray mb-3">Account Lockout</h3>
+                    <p class="text-metallic leading-relaxed">Automatic protection against brute-force attacks with progressive delays after failed attempts.</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-8 card-lift fade-in-section delay-3 border border-gray-100">
+                    <div class="w-14 h-14 bg-cuz-blue/10 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark-gray mb-3">Login History</h3>
+                    <p class="text-metallic leading-relaxed">Complete audit trail with IP addresses, device fingerprints, timestamps, and location data.</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-8 card-lift fade-in-section delay-1 border border-gray-100">
+                    <div class="w-14 h-14 bg-cuz-blue/10 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark-gray mb-3">Rate Limiting</h3>
+                    <p class="text-metallic leading-relaxed">Configurable request throttling per endpoint with automatic IP-based restrictions.</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-8 card-lift fade-in-section delay-2 border border-gray-100">
+                    <div class="w-14 h-14 bg-cuz-blue/10 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark-gray mb-3">bcrypt Password Hashing</h3>
+                    <p class="text-metallic leading-relaxed">Industry-standard password security with adjustable cost factor for future-proof protection.</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-8 card-lift fade-in-section delay-3 border border-gray-100">
+                    <div class="w-14 h-14 bg-cuz-blue/10 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4h2v-4zM6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-dark-gray mb-3">QR Code Generation</h3>
+                    <p class="text-metallic leading-relaxed">One-click setup with automatic authenticator app configuration. No manual entry required.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in-section">
+                <span class="inline-block bg-cuz-blue/10 text-cuz-blue px-4 py-2 rounded-full text-sm font-semibold mb-4">HOW IT WORKS</span>
+                <h2 class="text-3xl sm:text-4xl font-bold text-dark-gray mb-4">
+                    Deploy in 10 Minutes
+                </h2>
+                <p class="text-lg text-metallic max-w-2xl mx-auto">
+                    Get enterprise-grade security without the complexity
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="relative fade-in-section delay-1">
+                    <div class="bg-gray-50 rounded-2xl p-8 h-full border border-gray-100">
+                        <div class="w-12 h-12 bg-cuz-blue text-white rounded-full flex items-center justify-center font-bold text-lg mb-6">1</div>
+                        <h3 class="text-xl font-bold text-dark-gray mb-3">Install SecureAuth</h3>
+                        <p class="text-metallic mb-6">Install via npm or include the script in your project.</p>
+                        <div class="bg-dark-gray rounded-lg p-4 font-mono text-sm text-white overflow-x-auto">
+                            <code>npm install secureauth</code>
+                        </div>
+                    </div>
+                    <div class="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
+                        <svg class="w-8 h-8 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="relative fade-in-section delay-2">
+                    <div class="bg-gray-50 rounded-2xl p-8 h-full border border-gray-100">
+                        <div class="w-12 h-12 bg-cuz-blue text-white rounded-full flex items-center justify-center font-bold text-lg mb-6">2</div>
+                        <h3 class="text-xl font-bold text-dark-gray mb-3">Integrate Middleware</h3>
+                        <p class="text-metallic mb-6">Add 3 lines of code to protect any route.</p>
+                        <div class="bg-dark-gray rounded-lg p-4 font-mono text-sm text-white overflow-x-auto">
+                            <code>app.use(auth.protect)</code>
+                        </div>
+                    </div>
+                    <div class="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
+                        <svg class="w-8 h-8 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="fade-in-section delay-3">
+                    <div class="bg-gray-50 rounded-2xl p-8 h-full border border-gray-100">
+                        <div class="w-12 h-12 bg-cuz-blue text-white rounded-full flex items-center justify-center font-bold text-lg mb-6">3</div>
+                        <h3 class="text-xl font-bold text-dark-gray mb-3">Deploy Protected</h3>
+                        <p class="text-metallic mb-6">Your application is now secured with 2FA and DDoS protection.</p>
+                        <div class="flex items-center text-cuz-blue font-semibold">
+                            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span>You're protected!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-24 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in-section">
+                <span class="inline-block bg-cuz-blue/10 text-cuz-blue px-4 py-2 rounded-full text-sm font-semibold mb-4">PRICING</span>
+                <h2 class="text-3xl sm:text-4xl font-bold text-dark-gray mb-4">
+                    Simple, Transparent Pricing
+                </h2>
+                <p class="text-lg text-metallic max-w-2xl mx-auto">
+                    Start free and scale as you grow. No hidden fees.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="bg-white rounded-2xl p-8 border border-gray-200 card-lift fade-in-section delay-1">
+                    <div class="text-center mb-6">
+                        <h3 class="text-xl font-bold text-dark-gray mb-2">Starter</h3>
+                        <div class="text-4xl font-bold text-cuz-blue">Free</div>
+                        <p class="text-metallic text-sm mt-2">Forever free</p>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center text-sm">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Up to 100 users
+                        </li>
+                        <li class="flex items-center text-sm">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            TOTP 2FA
+                        </li>
+                        <li class="flex items-center text-sm">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            JWT Sessions
+                        </li>
+                        <li class="flex items-center text-sm">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Basic DDoS Protection
+                        </li>
+                    </ul>
+                    <a href="register.html" class="block w-full text-center py-3 border-2 border-cuz-blue text-cuz-blue rounded-xl font-semibold hover:bg-cuz-blue hover:text-white transition-colors">
+                        Get Started
+                    </a>
+                </div>
+                
+                <div class="bg-cuz-blue rounded-2xl p-8 text-white card-lift fade-in-section delay-2 transform scale-105 shadow-2xl relative">
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                        <span class="bg-yellow-400 text-dark-gray px-4 py-1 rounded-full text-sm font-bold">MOST POPULAR</span>
+                    </div>
+                    <div class="text-center mb-6 pt-2">
+                        <h3 class="text-xl font-bold mb-2">Professional</h3>
+                        <div class="text-4xl font-bold">$29</div>
+                        <p class="text-white/70 text-sm mt-2">per month</p>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center text-sm">
+                            <svg class="w-5 h-5 text-yellow-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Unlimited users
+                        </li>
+                        <li class="flex items-center text-sm">
+                            <svg class="w-5 h-5 text-yellow-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Advanced DDoS Protection
+                        </li>
+                        <li class="flex items-center text-sm">
+                            <svg class="w-5 h-5 text-yellow-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Priority support
+                        </li>
+                        <li class="flex items-center text-sm">
+                            <svg class="w-5 h-5 text-yellow-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Audit logs (90 days)
+                        </li>
+                        <li class="flex items-center text-sm">
+                            <svg class="w-5 h-5 text-yellow-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Custom branding
+                        </li>
+                    </ul>
+                    <a href="register.html" class="block w-full text-center py-3 bg-white text-cuz-blue rounded-xl font-semibold hover:bg-gray-100 transition-colors">
+                        Start Free Trial
+                    </a>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-8 border border-gray-200 card-lift fade-in-section delay-3">
+                    <div class="text-center mb-6">
+                        <h3 class="text-xl font-bold text-dark-gray mb-2">Enterprise</h3>
+                        <div class="text-4xl font-bold text-cuz-blue">Custom</div>
+                        <p class="text-metallic text-sm mt-2">Contact us</p>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center text-sm">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Everything in Pro
+                        </li>
+                        <li class="flex items-center text-sm">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            SLA guarantee
+                        </li>
+                        <li class="flex items-center text-sm">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Dedicated support
+                        </li>
+                        <li class="flex items-center text-sm">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            On-premise deployment
+                        </li>
+                    </ul>
+                    <a href="#contact" class="block w-full text-center py-3 border-2 border-cuz-blue text-cuz-blue rounded-xl font-semibold hover:bg-cuz-blue hover:text-white transition-colors">
+                        Contact Sales
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Stats Section -->
+    <section class="py-24" style="background: linear-gradient(135deg, #003366 0%, #0066CC 100%);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center fade-in-section">
+                <div>
+                    <div class="text-4xl sm:text-5xl font-bold text-white mb-2">16</div>
+                    <div class="text-white/80">Security Features</div>
+                </div>
+                <div>
+                    <div class="text-4xl sm:text-5xl font-bold text-white mb-2">$0</div>
+                    <div class="text-white/80">To Get Started</div>
+                </div>
+                <div>
+                    <div class="text-4xl sm:text-5xl font-bold text-white mb-2">10</div>
+                    <div class="text-white/80">Minutes to Deploy</div>
+                </div>
+                <div>
+                    <div class="text-4xl sm:text-5xl font-bold text-white mb-2">100%</div>
+                    <div class="text-white/80">Enterprise-Grade</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="py-24 bg-gray-50">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="bg-white rounded-3xl p-12 shadow-xl fade-in-section">
+                <h2 class="text-3xl sm:text-4xl font-bold text-dark-gray mb-4">
+                    Ready to Secure Your Application?
+                </h2>
+                <p class="text-lg text-metallic mb-8 max-w-xl mx-auto">
+                    Join organizations using SecureAuth for bulletproof authentication. Start your free trial today.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="register.html" class="bg-cuz-blue hover:bg-cuz-blue-light text-white px-8 py-4 rounded-xl font-semibold btn-scale">
+                        Start Free Trial
+                    </a>
+                    <a href="login.html" class="bg-white border-2 border-cuz-blue text-cuz-blue hover:bg-cuz-blue hover:text-white px-8 py-4 rounded-xl font-semibold btn-scale transition-colors">
+                        Log In
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer id="contact" class="bg-dark-gray text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-3 gap-12">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #0066CC 0%, #003366 100%);">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                        </div>
+                        <span class="text-xl font-bold">SecureAuth</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">Built by Bwalya Adrian Mange</p>
+                    <p class="text-gray-400 text-sm mb-1">Student ID: 106-293</p>
+                    <p class="text-gray-400 text-sm mb-4">Cavendish University Zambia</p>
+                    <p class="text-gray-400 text-sm">BSc Computing (Year 4) - Cybersecurity</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#features" class="text-gray-400 hover:text-white transition-colors">Features</a></li>
+                        <li><a href="#how-it-works" class="text-gray-400 hover:text-white transition-colors">Documentation</a></li>
+                        <li><a href="#pricing" class="text-gray-400 hover:text-white transition-colors">Pricing</a></li>
+                        <li><a href="register.html" class="text-gray-400 hover:text-white transition-colors">Get Started</a></li>
+                        <li><a href="login.html" class="text-gray-400 hover:text-white transition-colors">Login</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Get in Touch</h4>
+                    <p class="text-gray-400 mb-4">Interested in using SecureAuth for your organization?</p>
+                    <a href="mailto:bwalya.mange@cuz.edu.zm" class="inline-block bg-cuz-blue hover:bg-cuz-blue-light text-white px-6 py-3 rounded-lg font-medium btn-scale mb-4">
+                        Contact Us
+                    </a>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                            </svg>
+                        </a>
+                        <a href="mailto:bwalya.mange@cuz.edu.zm" class="text-gray-400 hover:text-white transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-12 pt-8 text-center">
+                <p class="text-gray-400 text-sm">
+                    Copyright 2026 SecureAuth. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('open');
+            });
+        }
+        
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all fade-in sections
+        document.querySelectorAll('.fade-in-section').forEach(el => {
+            observer.observe(el);
+        });
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    if (mobileMenu) mobileMenu.classList.remove('open');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

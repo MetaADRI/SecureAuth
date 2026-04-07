@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - SecureAuth</title>
+    
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'cuz-blue': '#003366',
+                        'cuz-blue-light': '#0066CC',
+                        'cuz-blue-dark': '#002244',
+                        'metallic': '#6C757D',
+                        'light-gray': '#F8F9FA',
+                        'dark-gray': '#343A40',
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        * {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        .input-focus:focus {
+            border-color: #003366;
+            box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
+        }
+        
+        .btn-scale {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .btn-scale:hover {
+            transform: scale(1.02);
+        }
+        
+        .btn-scale:active {
+            transform: scale(0.98);
+        }
+        
+        /* Shake animation for error */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .shake {
+            animation: shake 0.5s ease;
+        }
+        
+        /* Password strength indicator */
+        .strength-bar {
+            height: 4px;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        /* Modal animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .modal-animate {
+            animation: fadeIn 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen flex items-center justify-center p-4">
+    
+    <div class="w-full max-w-md">
+        <!-- Logo Header - Logo on top, text below -->
+        <div class="text-center mb-8">
+            <a href="index.html" class="inline-flex flex-col items-center">
+                <!-- Logo Icon -->
+                <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-3 shadow-lg" style="background: linear-gradient(135deg, #003366 0%, #0066CC 100%);">
+                    <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                </div>
+                <!-- SecureAuth Text Below -->
+                <span class="text-2xl font-bold text-cuz-blue">SecureAuth</span>
+            </a>
+            <h1 class="text-2xl font-bold text-dark-gray mt-4">Create Your Account</h1>
+            <p class="text-metallic mt-2">Start protecting your applications with 2FA</p>
+        </div>
+        
+        <!-- Registration Card -->
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+            <!-- Registration Form -->
+            <form id="registerForm" class="space-y-5">
+                <!-- Full Name -->
+                <div>
+                    <label for="fullName" class="block text-sm font-semibold text-dark-gray mb-2">
+                        Full Name
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-metallic" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                        </div>
+                        <input 
+                            type="text" 
+                            id="fullName" 
+                            required
+                            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl input-focus outline-none transition-all"
+                            placeholder="Enter your full name"
+                        >
+                    </div>
+                </div>
+                
+                <!-- Email -->
+                <div>
+                    <label for="email" class="block text-sm font-semibold text-dark-gray mb-2">
+                        Email Address
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-metallic" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
+                            </svg>
+                        </div>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            required
+                            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl input-focus outline-none transition-all"
+                            placeholder="name@company.com"
+                        >
+                    </div>
+                    <p class="text-xs text-metallic mt-1">Use your @cavendish.ac.zm email for university access</p>
+                </div>
+                
+                <!-- Password -->
+                <div>
+                    <label for="password" class="block text-sm font-semibold text-dark-gray mb-2">
+                        Password
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-metallic" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                        </div>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            required
+                            minlength="8"
+                            class="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl input-focus outline-none transition-all"
+                            placeholder="Create a strong password"
+                        >
+                        <button 
+                            type="button" 
+                            id="togglePassword"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-metallic hover:text-cuz-blue transition-colors"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="eyeIcon">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <!-- Password Strength Indicator -->
+                    <div class="mt-2 flex gap-1">
+                        <div class="strength-bar flex-1 bg-gray-200" id="strength1"></div>
+                        <div class="strength-bar flex-1 bg-gray-200" id="strength2"></div>
+                        <div class="strength-bar flex-1 bg-gray-200" id="strength3"></div>
+                        <div class="strength-bar flex-1 bg-gray-200" id="strength4"></div>
+                    </div>
+                    <p class="text-xs text-metallic mt-1">Minimum 8 characters with mixed case, numbers, and symbols</p>
+                </div>
+                
+                <!-- Confirm Password -->
+                <div>
+                    <label for="confirmPassword" class="block text-sm font-semibold text-dark-gray mb-2">
+                        Confirm Password
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="w-5 h-5 text-metallic" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                        </div>
+                        <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            required
+                            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl input-focus outline-none transition-all"
+                            placeholder="Confirm your password"
+                        >
+                    </div>
+                </div>
+                
+                <!-- Error Alert -->
+                <div id="errorAlert" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+                    <div class="flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span id="errorMessage"></span>
+                    </div>
+                </div>
+                
+                <!-- Submit Button -->
+                <button 
+                    type="submit" 
+                    id="registerBtn"
+                    class="w-full bg-cuz-blue hover:bg-cuz-blue-light text-white py-3.5 rounded-xl font-semibold btn-scale transition-colors flex items-center justify-center"
+                >
+                    <svg id="loadingSpinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span id="btnText">Register & Generate 2FA</span>
+                </button>
+            </form>
+            
+            <!-- QR Code Modal (Hidden initially) -->
+            <div id="qrSection" class="hidden modal-animate">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-dark-gray mb-2">Registration Successful!</h2>
+                    <p class="text-metallic">Scan this QR code with Google Authenticator to set up 2FA</p>
+                </div>
+                
+                <!-- QR Code Container -->
+                <div class="bg-gray-50 rounded-xl p-6 mb-6 flex justify-center">
+                    <img id="qrCodeImage" alt="2FA QR Code" class="max-w-[250px] w-full rounded-lg shadow-md">
+                </div>
+                
+                <!-- Instructions -->
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+                    <h4 class="font-semibold text-cuz-blue mb-3 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                        </svg>
+                        Setup Instructions
+                    </h4>
+                    <ol class="space-y-2 text-sm text-dark-gray">
+                        <li class="flex items-start">
+                            <span class="bg-cuz-blue text-white w-5 h-5 rounded-full flex items-center justify-center text-xs mr-3 mt-0.5 shrink-0">1</span>
+                            Open <strong>Google Authenticator</strong> on your smartphone
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-cuz-blue text-white w-5 h-5 rounded-full flex items-center justify-center text-xs mr-3 mt-0.5 shrink-0">2</span>
+                            Tap the <strong>"+"</strong> button to add a new account
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-cuz-blue text-white w-5 h-5 rounded-full flex items-center justify-center text-xs mr-3 mt-0.5 shrink-0">3</span>
+                            Select <strong>"Scan a QR code"</strong>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-cuz-blue text-white w-5 h-5 rounded-full flex items-center justify-center text-xs mr-3 mt-0.5 shrink-0">4</span>
+                            Point your camera at the QR code above
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-cuz-blue text-white w-5 h-5 rounded-full flex items-center justify-center text-xs mr-3 mt-0.5 shrink-0">5</span>
+                            <strong>SecureAuth</strong> will appear in your app with 6-digit codes
+                        </li>
+                    </ol>
+                </div>
+                
+                <!-- Continue Button -->
+                <a href="login.html" class="block w-full bg-cuz-blue hover:bg-cuz-blue-light text-white py-3.5 rounded-xl font-semibold btn-scale transition-colors text-center">
+                    Continue to Login
+                </a>
+            </div>
+        </div>
+        
+        <!-- Back to Home -->
+        <div class="text-center mt-6">
+            <p class="text-metallic">
+                Already have an account? 
+                <a href="login.html" class="text-cuz-blue hover:text-cuz-blue-light font-semibold transition-colors">Log in</a>
+            </p>
+            <a href="index.html" class="inline-flex items-center text-metallic hover:text-cuz-blue transition-colors mt-4 text-sm">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Back to Home
+            </a>
+        </div>
+    </div>
+    
+    <script src="js/auth.js"></script>
+    <script>
+        // Password visibility toggle
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+        
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            // Update icon
+            if (type === 'password') {
+                eyeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>';
+            } else {
+                eyeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>';
+            }
+        });
+        
+        // Password strength indicator
+        passwordInput.addEventListener('input', (e) => {
+            const password = e.target.value;
+            let strength = 0;
+            
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+            if (password.match(/[0-9]/)) strength++;
+            if (password.match(/[^a-zA-Z0-9]/)) strength++;
+            
+            const colors = ['bg-gray-200', 'bg-red-500', 'bg-yellow-500', 'bg-blue-500', 'bg-green-500'];
+            
+            for (let i = 1; i <= 4; i++) {
+                const bar = document.getElementById(`strength${i}`);
+                bar.className = `strength-bar flex-1 ${i <= strength ? colors[strength] : 'bg-gray-200'}`;
+            }
+        });
+        
+        // Form submission
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            const errorAlert = document.getElementById('errorAlert');
+            const errorMessage = document.getElementById('errorMessage');
+            const registerBtn = document.getElementById('registerBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const btnText = document.getElementById('btnText');
+            
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match';
+                errorAlert.classList.remove('hidden');
+                errorAlert.classList.add('shake');
+                setTimeout(() => errorAlert.classList.remove('shake'), 500);
+                return;
+            }
+            
+            // Hide error, show loading
+            errorAlert.classList.add('hidden');
+            registerBtn.disabled = true;
+            loadingSpinner.classList.remove('hidden');
+            btnText.textContent = 'Creating Account...';
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fullName, email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Hide form, show QR code
+                    document.getElementById('registerForm').classList.add('hidden');
+                    document.getElementById('qrSection').classList.remove('hidden');
+                    document.getElementById('qrCodeImage').src = data.qrCode;
+                } else {
+                    errorMessage.textContent = data.message || 'Registration failed. Please try again.';
+                    errorAlert.classList.remove('hidden');
+                    errorAlert.classList.add('shake');
+                    setTimeout(() => errorAlert.classList.remove('shake'), 500);
+                    registerBtn.disabled = false;
+                    loadingSpinner.classList.add('hidden');
+                    btnText.textContent = 'Register & Generate 2FA';
+                }
+            } catch (error) {
+                errorMessage.textContent = 'Connection error. Is the server running?';
+                errorAlert.classList.remove('hidden');
+                errorAlert.classList.add('shake');
+                setTimeout(() => errorAlert.classList.remove('shake'), 500);
+                registerBtn.disabled = false;
+                loadingSpinner.classList.add('hidden');
+                btnText.textContent = 'Register & Generate 2FA';
+            }
+        });
+    </script>
+</body>
+</html>

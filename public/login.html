@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - SecureAuth</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Inter', sans-serif;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+    }
+    .bg-gradient {
+      background: linear-gradient(135deg, #003366 0%, #0066CC 100%);
+    }
+    input:focus {
+      border-color: #0066CC;
+      box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+    }
+    .form-input {
+      transition: all 0.3s ease;
+    }
+    button.btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 51, 102, 0.3);
+    }
+    .password-toggle {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <div class="min-h-screen flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-md">
+      <!-- Back Button -->
+      <a href="index.html" class="text-blue-900 font-semibold text-sm mb-8 inline-flex items-center hover:opacity-70 transition">
+        ← Back to Home
+      </a>
+
+      <!-- Card -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient text-white p-8 text-center">
+          <div class="text-4xl mb-3">🔐</div>
+          <h1 class="text-3xl font-bold mb-2">Welcome Back</h1>
+          <p class="text-blue-100">Step 1 of 2: Enter your password</p>
+        </div>
+
+        <!-- Content -->
+        <div class="p-8">
+          <!-- Login Form -->
+          <form id="loginForm" class="space-y-5">
+            <!-- Email -->
+            <div>
+              <label for="email" class="block text-sm font-semibold text-gray-900 mb-2">
+                <span class="inline-flex items-center">✉️ Email Address</span>
+              </label>
+              <input
+                type="email"
+                id="email"
+                placeholder="you@example.com"
+                class="form-input w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                required
+                autofocus
+              />
+            </div>
+
+            <!-- Password -->
+            <div>
+              <label for="password" class="block text-sm font-semibold text-gray-900 mb-2">
+                <span class="inline-flex items-center">🔒 Password</span>
+              </label>
+              <div class="relative">
+                <input
+                  type="password"
+                  id="password"
+                  placeholder="••••••••"
+                  class="form-input w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none pr-10"
+                  required
+                />
+                <button
+                  type="button"
+                  onclick="togglePassword('password')"
+                  class="password-toggle absolute right-3 top-3 text-gray-500 hover:text-gray-700"
+                >
+                  👁️
+                </button>
+              </div>
+            </div>
+
+            <!-- Error Alert -->
+            <div id="errorAlert" class="hidden bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"></div>
+
+            <!-- Submit Button -->
+            <button
+              type="submit"
+              id="loginBtn"
+              class="w-full bg-gradient text-white font-semibold py-3 rounded-lg hover:shadow-lg transition duration-200 flex items-center justify-center space-x-2"
+            >
+              <span id="btnText">Continue to 2FA</span>
+              <span id="loadingSpinner" class="hidden">
+                <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </span>
+            </button>
+
+            <!-- Register Link -->
+            <p class="text-center text-sm text-gray-600">
+              Don't have an account?
+              <a href="register.html" class="text-blue-900 font-semibold hover:opacity-70 transition">Register</a>
+            </p>
+          </form>
+
+          <!-- Info Box -->
+          <div class="mt-6 bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
+            <h4 class="font-semibold text-blue-900 mb-2 flex items-center">
+              <span class="text-lg mr-2">🔍</span> Secure Login Process
+            </h4>
+            <p class="text-sm text-blue-700">
+              After verifying your password, you'll enter a 6-digit code from your Google Authenticator app for added security.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    function togglePassword(fieldId) {
+      const field = document.getElementById(fieldId);
+      field.type = field.type === 'password' ? 'text' : 'password';
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      const errorAlert = document.getElementById('errorAlert');
+      const loginBtn = document.getElementById('loginBtn');
+      const loadingSpinner = document.getElementById('loadingSpinner');
+      const btnText = document.getElementById('btnText');
+      
+      // Hide error, show loading
+      errorAlert.classList.add('hidden');
+      loginBtn.disabled = true;
+      loadingSpinner.classList.remove('hidden');
+      btnText.classList.add('hidden');
+      
+      try {
+        const response = await fetch('http://localhost:3000/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          // Store temporary token
+          localStorage.setItem('tempToken', data.tempToken);
+          localStorage.setItem('userEmail', email);
+          
+          // Redirect to 2FA verification page
+          window.location.href = 'verify.html';
+        } else {
+          errorAlert.textContent = `❌ ${data.message || 'Login failed'}`;
+          errorAlert.classList.remove('hidden');
+          loginBtn.disabled = false;
+          loadingSpinner.classList.add('hidden');
+          btnText.classList.remove('hidden');
+        }
+      } catch (error) {
+        errorAlert.textContent = '❌ Connection error. Is the server running?';
+        errorAlert.classList.remove('hidden');
+        loginBtn.disabled = false;
+        loadingSpinner.classList.add('hidden');
+        btnText.classList.remove('hidden');
+      }
+    });
+  </script>
+</body>
+</html>

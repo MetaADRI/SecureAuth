@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2FA Verification - SecureAuth</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Inter', sans-serif;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+    }
+    .bg-gradient {
+      background: linear-gradient(135deg, #003366 0%, #0066CC 100%);
+    }
+    .totp-input {
+      font-size: 3rem;
+      letter-spacing: 0.75rem;
+      font-weight: 700;
+      text-align: center;
+    }
+    .totp-input:focus {
+      border-color: #0066CC;
+      box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+    }
+    button.btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 51, 102, 0.3);
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+    .shake {
+      animation: shake 0.5s ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <div class="min-h-screen flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-md">
+      <!-- Back Button -->
+      <a href="index.html" class="text-blue-900 font-semibold text-sm mb-8 inline-flex items-center hover:opacity-70 transition">
+        ← Back to Home
+      </a>
+
+      <!-- Card -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient text-white p-8 text-center">
+          <div class="text-5xl mb-3">🛡️</div>
+          <h1 class="text-3xl font-bold mb-2">Two-Factor Authentication</h1>
+          <p class="text-blue-100">Step 2 of 2: Verify your identity</p>
+        </div>
+
+        <!-- Content -->
+        <div class="p-8">
+          <!-- Instructions -->
+          <div class="text-center mb-8">
+            <p class="text-gray-700 mb-2">
+              Open <strong>Google Authenticator</strong> and enter the 6-digit code
+            </p>
+            <p id="userEmail" class="text-sm text-gray-500"></p>
+          </div>
+
+          <!-- TOTP Form -->
+          <form id="verifyForm" class="space-y-6">
+            <!-- 6-Digit Input -->
+            <div>
+              <label for="totpCode" class="block text-sm font-semibold text-gray-900 mb-4 text-center">
+                Enter Code
+              </label>
+              <input
+                type="text"
+                id="totpCode"
+                placeholder="000000"
+                maxlength="6"
+                pattern="[0-9]{6}"
+                required
+                autofocus
+                class="totp-input w-full px-4 py-4 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+              />
+              <div class="text-center text-xs text-gray-500 mt-2">
+                Code expires every 30 seconds
+              </div>
+            </div>
+
+            <!-- Error Alert -->
+            <div id="errorAlert" class="hidden bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"></div>
+
+            <!-- Submit Button -->
+            <button
+              type="submit"
+              id="verifyBtn"
+              class="w-full bg-gradient text-white font-semibold py-3 rounded-lg hover:shadow-lg transition duration-200 flex items-center justify-center space-x-2"
+            >
+              <span id="btnText">Verify & Login</span>
+              <span id="loadingSpinner" class="hidden">
+                <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </span>
+            </button>
+
+            <!-- Back Button -->
+            <button
+              type="button"
+              onclick="window.location.href='login.html'"
+              class="w-full border-2 border-gray-300 text-gray-900 font-semibold py-3 rounded-lg hover:bg-gray-50 transition"
+            >
+              ← Back to Login
+            </button>
+          </form>
+
+          <!-- Info Box -->
+          <div class="mt-6 bg-amber-50 border-2 border-amber-200 rounded-lg p-4">
+            <h4 class="font-semibold text-amber-900 mb-2 flex items-center">
+              <span class="text-lg mr-2">⏱️</span> Code Timing
+            </h4>
+            <p class="text-sm text-amber-700">
+              If your code doesn't work, wait for a new one to appear in your app (typically refreshes every 30 seconds).
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    // Check if user has temp token
+    const tempToken = localStorage.getItem('tempToken');
+    const userEmail = localStorage.getItem('userEmail');
+    
+    if (!tempToken) {
+      // No temp token, redirect to login
+      window.location.href = 'login.html';
+    }
+    
+    // Display user email
+    if (userEmail) {
+      document.getElementById('userEmail').textContent = `Logging in as: ${userEmail}`;
+    }
+    
+    // Auto-format TOTP input (only numbers)
+    document.getElementById('totpCode').addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    });
+    
+    document.getElementById('verifyForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const totpCode = document.getElementById('totpCode').value;
+      
+      const errorAlert = document.getElementById('errorAlert');
+      const verifyBtn = document.getElementById('verifyBtn');
+      const loadingSpinner = document.getElementById('loadingSpinner');
+      const btnText = document.getElementById('btnText');
+      const input = document.getElementById('totpCode');
+      
+      // Validate code length
+      if (totpCode.length !== 6) {
+        errorAlert.textContent = '❌ Code must be 6 digits';
+        errorAlert.classList.remove('hidden');
+        input.classList.add('shake');
+        setTimeout(() => input.classList.remove('shake'), 500);
+        return;
+      }
+      
+      // Hide error, show loading
+      errorAlert.classList.add('hidden');
+      verifyBtn.disabled = true;
+      loadingSpinner.classList.remove('hidden');
+      btnText.classList.add('hidden');
+      
+      try {
+        const response = await fetch('http://localhost:3000/api/verify-2fa', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${tempToken}`
+          },
+          body: JSON.stringify({ token: totpCode })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          // Store full access token
+          localStorage.setItem('accessToken', data.accessToken);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          
+          // Clear temp token
+          localStorage.removeItem('tempToken');
+          
+          // Redirect to dashboard
+          window.location.href = 'dashboard.html';
+        } else {
+          errorAlert.textContent = `❌ ${data.message || '2FA verification failed'}`;
+          errorAlert.classList.remove('hidden');
+          verifyBtn.disabled = false;
+          loadingSpinner.classList.add('hidden');
+          btnText.classList.remove('hidden');
+          
+          // Shake animation
+          input.classList.add('shake');
+          setTimeout(() => input.classList.remove('shake'), 500);
+          
+          // Clear the input for retry
+          input.value = '';
+          input.focus();
+        }
+      } catch (error) {
+        errorAlert.textContent = '❌ Connection error. Is the server running?';
+        errorAlert.classList.remove('hidden');
+        verifyBtn.disabled = false;
+        loadingSpinner.classList.add('hidden');
+        btnText.classList.remove('hidden');
+      }
+    });
+  </script>
+</body>
+</html>
+    <script src="js/auth.js"></script>
+    <script>
+        // Check if user has temp token
+        const tempToken = localStorage.getItem('tempToken');
+        const userEmail = localStorage.getItem('userEmail');
+        
+        if (!tempToken) {
+            // No temp token, redirect to login
+            window.location.href = 'login.html';
+        }
+        
+        // Display user email
+        if (userEmail) {
+            document.getElementById('userEmail').textContent = `Logging in as: ${userEmail}`;
+        }
+        
+        // Auto-format TOTP input (only numbers)
+        document.getElementById('totpCode').addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        });
+        
+        document.getElementById('verifyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const totpCode = document.getElementById('totpCode').value;
+            
+            const errorAlert = document.getElementById('errorAlert');
+            const verifyBtn = document.getElementById('verifyBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            
+            // Validate code length
+            if (totpCode.length !== 6) {
+                errorAlert.textContent = 'Code must be 6 digits';
+                errorAlert.classList.remove('d-none');
+                return;
+            }
+            
+            // Hide error, show loading
+            errorAlert.classList.add('d-none');
+            verifyBtn.disabled = true;
+            loadingSpinner.classList.remove('d-none');
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/verify-2fa', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${tempToken}`
+                    },
+                    body: JSON.stringify({ token: totpCode })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Store full access token
+                    localStorage.setItem('accessToken', data.accessToken);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    // Clear temp token
+                    localStorage.removeItem('tempToken');
+                    
+                    // Redirect to dashboard
+                    window.location.href = 'dashboard.html';
+                } else {
+                    errorAlert.textContent = data.message || '2FA verification failed';
+                    errorAlert.classList.remove('d-none');
+                    verifyBtn.disabled = false;
+                    loadingSpinner.classList.add('d-none');
+                    
+                    // Clear the input for retry
+                    document.getElementById('totpCode').value = '';
+                    document.getElementById('totpCode').focus();
+                }
+            } catch (error) {
+                errorAlert.textContent = 'Connection error. Is the server running?';
+                errorAlert.classList.remove('d-none');
+                verifyBtn.disabled = false;
+                loadingSpinner.classList.add('d-none');
+            }
+        });
+    </script>
+</body>
+</html>

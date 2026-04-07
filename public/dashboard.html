@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - SecureAuth</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Inter', sans-serif;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+    }
+    .bg-gradient {
+      background: linear-gradient(135deg, #003366 0%, #0066CC 100%);
+    }
+    .stat-card {
+      transition: all 0.3s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 51, 102, 0.15);
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <!-- Top Navigation -->
+  <nav class="bg-gradient text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Logo -->
+        <div class="flex items-center space-x-2">
+          <div class="text-2xl">🔐</div>
+          <span class="text-xl font-bold">SecureAuth</span>
+        </div>
+
+        <!-- User Menu -->
+        <div class="flex items-center space-x-4">
+          <span class="text-sm" id="userNameDisplay"></span>
+          <button
+            onclick="logout()"
+            class="bg-white text-blue-900 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Welcome Section -->
+    <div class="mb-12">
+      <div class="bg-white rounded-xl shadow-lg p-8 border-l-4 border-blue-500">
+        <h1 class="text-4xl font-bold text-gray-900 mb-2">Welcome, <span id="welcomeName"></span>! 👋</h1>
+        <p class="text-xl text-gray-600">Your account is protected with enterprise-grade two-factor authentication</p>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid md:grid-cols-4 gap-6 mb-12">
+      <!-- Account Status -->
+      <div class="stat-card bg-white rounded-xl shadow-lg p-6 border-t-4 border-blue-500">
+        <div class="text-4xl mb-2">✓</div>
+        <h3 class="text-gray-600 text-sm font-semibold mb-2">Account Status</h3>
+        <p class="text-2xl font-bold text-gray-900" id="accountStatus">Active</p>
+        <p class="text-xs text-gray-500 mt-2" id="accountCreated"></p>
+      </div>
+
+      <!-- 2FA Status -->
+      <div class="stat-card bg-white rounded-xl shadow-lg p-6 border-t-4 border-green-500">
+        <div class="text-4xl mb-2">🛡️</div>
+        <h3 class="text-gray-600 text-sm font-semibold mb-2">2FA Status</h3>
+        <p class="text-2xl font-bold text-green-600">Enabled</p>
+        <p class="text-xs text-gray-500 mt-2">Google Authenticator</p>
+      </div>
+
+      <!-- Total Users -->
+      <div class="stat-card bg-white rounded-xl shadow-lg p-6 border-t-4 border-purple-500">
+        <div class="text-4xl mb-2">👥</div>
+        <h3 class="text-gray-600 text-sm font-semibold mb-2">Total Users</h3>
+        <p class="text-2xl font-bold text-gray-900" id="totalUsers">-</p>
+        <p class="text-xs text-gray-500 mt-2">Registered this month</p>
+      </div>
+
+      <!-- Last Login -->
+      <div class="stat-card bg-white rounded-xl shadow-lg p-6 border-t-4 border-amber-500">
+        <div class="text-4xl mb-2">🕐</div>
+        <h3 class="text-gray-600 text-sm font-semibold mb-2">Current Session</h3>
+        <p class="text-2xl font-bold text-gray-900" id="loginTime">Now</p>
+        <p class="text-xs text-gray-500 mt-2">Expires in 24 hours</p>
+      </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="grid lg:grid-cols-3 gap-6 mb-12">
+      <!-- Profile Card -->
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+            <span class="text-2xl mr-2">👤</span> Your Profile
+          </h2>
+          <div class="space-y-4">
+            <div>
+              <p class="text-sm text-gray-500 font-semibold mb-1">Full Name</p>
+              <p class="text-lg font-bold text-gray-900" id="fullName"></p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500 font-semibold mb-1">Email Address</p>
+              <p class="text-sm font-mono text-gray-900" id="email"></p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500 font-semibold mb-1">User ID</p>
+              <p class="text-xs font-mono text-gray-500" id="userId"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security Status Card -->
+      <div class="lg:col-span-2">
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+            <span class="text-2xl mr-2">🔐</span> Security Status
+          </h2>
+          <div class="space-y-4">
+            <!-- 2FA -->
+            <div class="flex items-center justify-between p-4 bg-green-50 border-l-4 border-green-500 rounded-lg">
+              <div>
+                <p class="font-semibold text-gray-900">Two-Factor Authentication</p>
+                <p class="text-sm text-gray-600">RFC 6238 TOTP</p>
+              </div>
+              <span class="status-badge bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+                ✓ Active
+              </span>
+            </div>
+
+            <!-- Password -->
+            <div class="flex items-center justify-between p-4 bg-green-50 border-l-4 border-green-500 rounded-lg">
+              <div>
+                <p class="font-semibold text-gray-900">Password Security</p>
+                <p class="text-sm text-gray-600">bcrypt Hashing (Cost 12)</p>
+              </div>
+              <span class="status-badge bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+                ✓ Secure
+              </span>
+            </div>
+
+            <!-- Session -->
+            <div class="flex items-center justify-between p-4 bg-green-50 border-l-4 border-green-500 rounded-lg">
+              <div>
+                <p class="font-semibold text-gray-900">Session Token</p>
+                <p class="text-sm text-gray-600">JWT (24-hour validity)</p>
+              </div>
+              <span class="status-badge bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+                ✓ Valid
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-12">
+      <h2 class="text-2xl font-bold text-gray-900 mb-8 flex items-center">
+        <span class="text-3xl mr-3">✨</span> SecureAuth Features
+      </h2>
+      <div class="grid md:grid-cols-3 lg:grid-cols-6 gap-6">
+        <div class="text-center">
+          <div class="text-5xl mb-3">🔐</div>
+          <h3 class="font-bold text-gray-900 mb-1">TOTP 2FA</h3>
+          <p class="text-xs text-gray-500">RFC 6238</p>
+        </div>
+        <div class="text-center">
+          <div class="text-5xl mb-3">🛡️</div>
+          <h3 class="font-bold text-gray-900 mb-1">DDoS Proof</h3>
+          <p class="text-xs text-gray-500">6 Layers</p>
+        </div>
+        <div class="text-center">
+          <div class="text-5xl mb-3">🔑</div>
+          <h3 class="font-bold text-gray-900 mb-1">JWT Auth</h3>
+          <p class="text-xs text-gray-500">Stateless</p>
+        </div>
+        <div class="text-center">
+          <div class="text-5xl mb-3">⚡</div>
+          <h3 class="font-bold text-gray-900 mb-1">Rate Limit</h3>
+          <p class="text-xs text-gray-500">Smart</p>
+        </div>
+        <div class="text-center">
+          <div class="text-5xl mb-3">📊</div>
+          <h3 class="font-bold text-gray-900 mb-1">Audit Log</h3>
+          <p class="text-xs text-gray-500">Complete</p>
+        </div>
+        <div class="text-center">
+          <div class="text-5xl mb-3">🔒</div>
+          <h3 class="font-bold text-gray-900 mb-1">bcrypt</h3>
+          <p class="text-xs text-gray-500">Industry</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Box -->
+    <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-6">
+      <h3 class="font-bold text-blue-900 mb-2">💡 Pro Tip</h3>
+      <p class="text-blue-700">Keep your authenticator app backed up. Your 2FA code is essential for account security.</p>
+    </div>
+  </main>
+
+  <script src="js/auth.js"></script>
+  <script>
+    // Check if user is logged in
+    const accessToken = localStorage.getItem('accessToken');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    
+    if (!accessToken || !user.email) {
+      // Not logged in, redirect to login
+      window.location.href = 'login.html';
+    }
+    
+    // Load user data from localStorage
+    function loadUserData() {
+      document.getElementById('userNameDisplay').textContent = user.fullName || user.email;
+      document.getElementById('welcomeName').textContent = (user.fullName || user.email).split(' ')[0];
+      document.getElementById('fullName').textContent = user.fullName;
+      document.getElementById('email').textContent = user.email;
+      document.getElementById('userId').textContent = user.id;
+      
+      // Format created date
+      if (user.createdAt) {
+        const date = new Date(user.createdAt);
+        document.getElementById('accountCreated').textContent = `Account created ${date.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        })}`;
+      }
+    }
+    
+    // Fetch dashboard data from API
+    async function loadDashboardData() {
+      try {
+        const response = await fetch('http://localhost:3000/api/dashboard', {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          
+          // Update stats
+          document.getElementById('totalUsers').textContent = data.stats?.totalUsers || '-';
+          
+          // Format login time
+          if (data.stats?.loginTime) {
+            const loginDate = new Date(data.stats.loginTime);
+            document.getElementById('loginTime').textContent = loginDate.toLocaleTimeString('en-US', {
+              hour: '2-digit',
+              minute: '2-digit'
+            });
+          }
+        } else if (response.status === 401) {
+          // Token expired, logout
+          logout();
+        }
+      } catch (error) {
+        console.log('Error loading dashboard data:', error);
+      }
+    }
+    
+    // Logout function
+    function logout() {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('user');
+      localStorage.removeItem('tempToken');
+      localStorage.removeItem('userEmail');
+      window.location.href = 'login.html';
+    }
+    
+    // Load data on page load
+    loadUserData();
+    loadDashboardData();
+  </script>
+</body>
+</html>
+    <script src="js/auth.js"></script>
+    <script>
+        // Check if user is logged in
+        const accessToken = localStorage.getItem('accessToken');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        
+        if (!accessToken || !user.email) {
+            // Not logged in, redirect to login
+            window.location.href = 'login.html';
+        }
+        
+        // Load user data from localStorage
+        function loadUserData() {
+            document.getElementById('userNameDisplay').textContent = user.fullName || user.email;
+            document.getElementById('welcomeMessage').textContent = `You've successfully logged in with two-factor authentication. Your account is secure.`;
+            document.getElementById('fullName').textContent = user.fullName;
+            document.getElementById('email').textContent = user.email;
+            document.getElementById('userId').textContent = user.id;
+            
+            // Format created date
+            if (user.createdAt) {
+                const date = new Date(user.createdAt);
+                document.getElementById('createdAt').textContent = date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+        }
+        
+        // Fetch dashboard data from API
+        async function loadDashboardData() {
+            try {
+                const response = await fetch('http://localhost:3000/api/dashboard', {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Update stats
+                    document.getElementById('totalUsers').textContent = data.stats.totalUsers;
+                    
+                    // Format login time
+                    if (data.stats.loginTime) {
+                        const loginDate = new Date(data.stats.loginTime);
+                        document.getElementById('loginTime').textContent = loginDate.toLocaleTimeString('en-US');
+                    }
+                } else if (response.status === 401) {
+                    // Token expired, logout
+                    logout();
+                }
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+        
+        // Logout function
+        function logout() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('user');
+            localStorage.removeItem('tempToken');
+            localStorage.removeItem('userEmail');
+            window.location.href = 'login.html';
+        }
+        
+        // Load data on page load
+        loadUserData();
+        loadDashboardData();
+    </script>
+</body>
+</html>

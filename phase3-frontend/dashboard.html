@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SecureAuth</title>
+    
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'cuz-blue': '#003366',
+                        'cuz-blue-light': '#0066CC',
+                        'cuz-blue-dark': '#002244',
+                        'metallic': '#6C757D',
+                        'light-gray': '#F8F9FA',
+                        'dark-gray': '#343A40',
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        * {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        .btn-scale {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .btn-scale:hover {
+            transform: scale(1.02);
+        }
+        
+        .card-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,51,102,0.1);
+        }
+        
+        /* Table row hover */
+        .table-row:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* Mobile menu */
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .mobile-menu.open {
+            max-height: 400px;
+        }
+        
+        /* Status dot animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .status-pulse {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body class="bg-light-gray min-h-screen">
+    <!-- Top Navigation -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-cuz-blue rounded-lg flex items-center justify-center">
+                        <i data-lucide="shield-check" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <span class="text-xl font-bold text-cuz-blue">SecureAuth</span>
+                    <span class="hidden sm:inline text-metallic text-sm ml-2">| Dashboard</span>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <div class="flex items-center space-x-2 text-dark-gray">
+                        <div class="w-8 h-8 bg-cuz-blue/10 rounded-full flex items-center justify-center">
+                            <i data-lucide="user" class="w-4 h-4 text-cuz-blue"></i>
+                        </div>
+                        <span id="userNameDisplay" class="font-medium text-sm"></span>
+                    </div>
+                    <button onclick="logout()" class="flex items-center space-x-1 text-metallic hover:text-red-600 transition-colors px-3 py-2 rounded-lg hover:bg-red-50">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                        <span class="font-medium text-sm">Logout</span>
+                    </button>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 text-metallic hover:text-cuz-blue">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <!-- Mobile Navigation -->
+            <div id="mobile-menu" class="mobile-menu md:hidden border-t border-gray-200">
+                <div class="py-4 space-y-3">
+                    <div class="flex items-center space-x-2 text-dark-gray px-2">
+                        <div class="w-8 h-8 bg-cuz-blue/10 rounded-full flex items-center justify-center">
+                            <i data-lucide="user" class="w-4 h-4 text-cuz-blue"></i>
+                        </div>
+                        <span id="userNameDisplayMobile" class="font-medium text-sm"></span>
+                    </div>
+                    <button onclick="logout()" class="w-full flex items-center space-x-2 text-red-600 hover:bg-red-50 px-2 py-2 rounded-lg transition-colors">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                        <span class="font-medium">Logout</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Welcome Section -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-dark-gray mb-2">
+                Welcome back, <span id="welcomeName"></span>! 
+            </h1>
+            <p class="text-metallic flex items-center">
+                <i data-lucide="shield-check" class="w-5 h-5 mr-2 text-green-500"></i>
+                Your account is protected with two-factor authentication
+            </p>
+        </div>
+        
+        <!-- Stats Grid -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Account Status -->
+            <div class="bg-white rounded-xl p-6 shadow-sm card-lift">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <i data-lucide="calendar" class="w-6 h-6 text-cuz-blue"></i>
+                    </div>
+                    <span class="text-xs font-medium text-metallic bg-gray-100 px-2 py-1 rounded-full">Active</span>
+                </div>
+                <p class="text-metallic text-sm mb-1">Account Status</p>
+                <p class="text-lg font-semibold text-dark-gray" id="accountStatus">Active</p>
+                <p class="text-xs text-metallic mt-1" id="createdAt"></p>
+            </div>
+            
+            <!-- 2FA Status -->
+            <div class="bg-white rounded-xl p-6 shadow-sm card-lift">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <i data-lucide="shield" class="w-6 h-6 text-green-600"></i>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        <div class="w-2 h-2 bg-green-500 rounded-full status-pulse"></div>
+                        <span class="text-xs font-medium text-green-600">Enabled</span>
+                    </div>
+                </div>
+                <p class="text-metallic text-sm mb-1">2FA Protection</p>
+                <p class="text-lg font-semibold text-dark-gray">TOTP Active</p>
+                <p class="text-xs text-metallic mt-1">Google Authenticator</p>
+            </div>
+            
+            <!-- Total Users -->
+            <div class="bg-white rounded-xl p-6 shadow-sm card-lift">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <i data-lucide="users" class="w-6 h-6 text-purple-600"></i>
+                    </div>
+                </div>
+                <p class="text-metallic text-sm mb-1">Total Users</p>
+                <p class="text-2xl font-bold text-dark-gray" id="totalUsers">-</p>
+                <p class="text-xs text-metallic mt-1">Registered accounts</p>
+            </div>
+            
+            <!-- Last Login -->
+            <div class="bg-white rounded-xl p-6 shadow-sm card-lift">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                        <i data-lucide="clock" class="w-6 h-6 text-orange-600"></i>
+                    </div>
+                </div>
+                <p class="text-metallic text-sm mb-1">Last Login</p>
+                <p class="text-lg font-semibold text-dark-gray" id="lastLogin">-</p>
+                <p class="text-xs text-metallic mt-1">Current session</p>
+            </div>
+        </div>
+        
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Left Column: Profile & Security -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Profile Card -->
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h3 class="text-lg font-bold text-dark-gray mb-4 flex items-center">
+                        <i data-lucide="user" class="w-5 h-5 mr-2 text-cuz-blue"></i>
+                        Profile Information
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-xs text-metallic uppercase tracking-wider mb-1">Full Name</p>
+                            <p class="font-semibold text-dark-gray" id="fullName">-</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-metallic uppercase tracking-wider mb-1">Email Address</p>
+                            <p class="font-semibold text-dark-gray" id="email">-</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-metallic uppercase tracking-wider mb-1">User ID</p>
+                            <p class="font-mono text-sm text-metallic" id="userId">-</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Security Settings -->
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h3 class="text-lg font-bold text-dark-gray mb-4 flex items-center">
+                        <i data-lucide="settings" class="w-5 h-5 mr-2 text-cuz-blue"></i>
+                        Security Settings
+                    </h3>
+                    <div class="space-y-3">
+                        <button onclick="alert('Feature coming soon: Change Password')" class="w-full flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:border-cuz-blue hover:bg-cuz-blue/5 transition-colors text-left">
+                            <div class="flex items-center space-x-3">
+                                <i data-lucide="lock" class="w-5 h-5 text-metallic"></i>
+                                <span class="font-medium text-dark-gray text-sm">Change Password</span>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-metallic"></i>
+                        </button>
+                        <button onclick="alert('Feature coming soon: Regenerate 2FA')" class="w-full flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:border-cuz-blue hover:bg-cuz-blue/5 transition-colors text-left">
+                            <div class="flex items-center space-x-3">
+                                <i data-lucide="refresh-cw" class="w-5 h-5 text-metallic"></i>
+                                <span class="font-medium text-dark-gray text-sm">Regenerate 2FA Secret</span>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-metallic"></i>
+                        </button>
+                        <button onclick="alert('Feature coming soon: Backup Codes')" class="w-full flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:border-cuz-blue hover:bg-cuz-blue/5 transition-colors text-left">
+                            <div class="flex items-center space-x-3">
+                                <i data-lucide="download" class="w-5 h-5 text-metallic"></i>
+                                <span class="font-medium text-dark-gray text-sm">Download Backup Codes</span>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-metallic"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column: Login History -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-gray-100">
+                        <h3 class="text-lg font-bold text-dark-gray flex items-center">
+                            <i data-lucide="history" class="w-5 h-5 mr-2 text-cuz-blue"></i>
+                            Login History
+                        </h3>
+                        <p class="text-sm text-metallic mt-1">Recent login activity on your account</p>
+                    </div>
+                    
+                    <!-- Desktop Table -->
+                    <div class="hidden md:block overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-light-gray">
+                                <tr>
+                                    <th class="text-left text-xs font-semibold text-metallic uppercase tracking-wider px-6 py-3">Action</th>
+                                    <th class="text-left text-xs font-semibold text-metallic uppercase tracking-wider px-6 py-3">IP Address</th>
+                                    <th class="text-left text-xs font-semibold text-metallic uppercase tracking-wider px-6 py-3">Device</th>
+                                    <th class="text-left text-xs font-semibold text-metallic uppercase tracking-wider px-6 py-3">Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="loginHistoryTable" class="divide-y divide-gray-100">
+                                <!-- Populated by JavaScript -->
+                                <tr>
+                                    <td colspan="4" class="px-6 py-8 text-center text-metallic">
+                                        <div class="flex justify-center">
+                                            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-cuz-blue"></div>
+                                        </div>
+                                        <p class="mt-2 text-sm">Loading login history...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Mobile Cards -->
+                    <div class="md:hidden divide-y divide-gray-100" id="loginHistoryMobile">
+                        <!-- Populated by JavaScript -->
+                        <div class="p-4 text-center text-metallic">
+                            <div class="flex justify-center">
+                                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-cuz-blue"></div>
+                            </div>
+                            <p class="mt-2 text-sm">Loading login history...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Initialize Lucide Icons -->
+    <script src="js/auth.js"></script>
+    <script>
+        lucide.createIcons();
+        
+        // Check authentication
+        const accessToken = localStorage.getItem('accessToken');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        
+        if (!accessToken || !user.email) {
+            window.location.href = 'login.html';
+        }
+        
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('open');
+        });
+        
+        // Load user data
+        function loadUserData() {
+            document.getElementById('userNameDisplay').textContent = user.fullName || user.email;
+            document.getElementById('userNameDisplayMobile').textContent = user.fullName || user.email;
+            document.getElementById('welcomeName').textContent = user.fullName?.split(' ')[0] || 'User';
+            document.getElementById('fullName').textContent = user.fullName || '-';
+            document.getElementById('email').textContent = user.email || '-';
+            document.getElementById('userId').textContent = user.id || '-';
+            
+            // Format created date
+            if (user.createdAt) {
+                const date = new Date(user.createdAt);
+                document.getElementById('createdAt').textContent = 'Since ' + date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+            }
+        }
+        
+        // Fetch dashboard data
+        async function loadDashboardData() {
+            try {
+                const response = await fetch('http://localhost:3000/api/dashboard', {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Update stats
+                    document.getElementById('totalUsers').textContent = data.stats?.totalUsers || '-';
+                    
+                    // Format last login
+                    if (data.stats?.loginTime) {
+                        const loginDate = new Date(data.stats.loginTime);
+                        document.getElementById('lastLogin').textContent = loginDate.toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                    }
+                    
+                    // Update login history
+                    updateLoginHistory(data.user?.loginHistory || []);
+                } else if (response.status === 401) {
+                    logout();
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+        
+        // Update login history table
+        function updateLoginHistory(history) {
+            const tableBody = document.getElementById('loginHistoryTable');
+            const mobileContainer = document.getElementById('loginHistoryMobile');
+            
+            if (!history || history.length === 0) {
+                const emptyMessage = '<tr><td colspan="4" class="px-6 py-8 text-center text-metallic">No login history available</td></tr>';
+                tableBody.innerHTML = emptyMessage;
+                mobileContainer.innerHTML = '<div class="p-4 text-center text-metallic">No login history available</div>';
+                return;
+            }
+            
+            // Take last 10 entries, reverse to show newest first
+            const recentHistory = history.slice(-10).reverse();
+            
+            // Desktop table rows
+            let tableHTML = '';
+            recentHistory.forEach(entry => {
+                const success = entry.action === 'LOGIN_SUCCESS';
+                const statusColor = success ? 'bg-green-500' : 'bg-red-500';
+                const actionText = success ? 'Login Success' : (entry.action === 'LOGIN_FAILURE' ? 'Login Failed' : entry.action);
+                
+                const date = new Date(entry.timestamp);
+                const timeStr = date.toLocaleString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                tableHTML += `
+                    <tr class="table-row transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 ${statusColor} rounded-full mr-3"></div>
+                                <span class="text-sm font-medium text-dark-gray">${actionText}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-metallic font-mono">${entry.ip}</td>
+                        <td class="px-6 py-4 text-sm text-metallic">${entry.device || 'Unknown'}</td>
+                        <td class="px-6 py-4 text-sm text-metallic">${timeStr}</td>
+                    </tr>
+                `;
+            });
+            tableBody.innerHTML = tableHTML;
+            
+            // Mobile cards
+            let mobileHTML = '';
+            recentHistory.forEach(entry => {
+                const success = entry.action === 'LOGIN_SUCCESS';
+                const statusColor = success ? 'bg-green-500' : 'bg-red-500';
+                const actionText = success ? 'Login Success' : (entry.action === 'LOGIN_FAILURE' ? 'Login Failed' : entry.action);
+                
+                const date = new Date(entry.timestamp);
+                const timeStr = date.toLocaleString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                mobileHTML += `
+                    <div class="p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 ${statusColor} rounded-full mr-2"></div>
+                                <span class="font-medium text-dark-gray text-sm">${actionText}</span>
+                            </div>
+                            <span class="text-xs text-metallic">${timeStr}</span>
+                        </div>
+                        <div class="text-xs text-metallic space-y-1">
+                            <p><span class="font-medium">IP:</span> ${entry.ip}</p>
+                            <p><span class="font-medium">Device:</span> ${entry.device || 'Unknown'}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            mobileContainer.innerHTML = mobileHTML;
+        }
+        
+        // Logout function
+        function logout() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('user');
+            localStorage.removeItem('tempToken');
+            localStorage.removeItem('userEmail');
+            window.location.href = 'login.html';
+        }
+        
+        // Load data
+        loadUserData();
+        loadDashboardData();
+    </script>
+</body>
+</html>

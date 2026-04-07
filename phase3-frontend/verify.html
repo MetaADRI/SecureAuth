@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2FA Verification - SecureAuth</title>
+    
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'cuz-blue': '#003366',
+                        'cuz-blue-light': '#0066CC',
+                        'cuz-blue-dark': '#002244',
+                        'metallic': '#6C757D',
+                        'light-gray': '#F8F9FA',
+                        'dark-gray': '#343A40',
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        * {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        .btn-scale {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .btn-scale:hover {
+            transform: scale(1.02);
+        }
+        
+        .btn-scale:active {
+            transform: scale(0.98);
+        }
+        
+        /* 2FA Input styling */
+        .otp-input {
+            width: 56px;
+            height: 64px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        
+        .otp-input:focus {
+            border-color: #003366;
+            box-shadow: 0 0 0 4px rgba(0, 51, 102, 0.1);
+            outline: none;
+        }
+        
+        .otp-input.filled {
+            border-color: #003366;
+            background-color: #f0f7ff;
+        }
+        
+        /* Shake animation for error */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .shake {
+            animation: shake 0.5s ease;
+        }
+        
+        /* Timer progress bar */
+        .timer-bar {
+            transition: width 1s linear;
+        }
+        
+        /* Success checkmark animation */
+        @keyframes checkmark {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .checkmark-animate {
+            animation: checkmark 0.5s ease;
+        }
+        
+        @media (max-width: 640px) {
+            .otp-input {
+                width: 44px;
+                height: 52px;
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-light-gray to-gray-100 min-h-screen flex items-center justify-center p-4">
+    
+    <div class="w-full max-w-md">
+        <!-- Logo Header -->
+        <div class="text-center mb-8">
+            <a href="index.html" class="inline-flex items-center space-x-2 mb-4">
+                <div class="w-12 h-12 bg-cuz-blue rounded-xl flex items-center justify-center shadow-lg">
+                    <i data-lucide="shield-check" class="w-7 h-7 text-white"></i>
+                </div>
+                <span class="text-2xl font-bold text-cuz-blue">SecureAuth</span>
+            </a>
+        </div>
+        
+        <!-- 2FA Verification Card -->
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+            <!-- Icon -->
+            <div class="text-center mb-6">
+                <div class="w-20 h-20 bg-cuz-blue/10 rounded-full flex items-center justify-center mx-auto">
+                    <i data-lucide="shield-check" class="w-10 h-10 text-cuz-blue"></i>
+                </div>
+            </div>
+            
+            <div id="verifySection">
+                <h1 class="text-2xl font-bold text-dark-gray text-center mb-2">Two-Factor Authentication</h1>
+                <p class="text-metallic text-center mb-6">
+                    Enter the 6-digit code from your authenticator app
+                </p>
+                
+                <!-- OTP Inputs -->
+                <form id="verifyForm" class="mb-6">
+                    <div class="flex justify-center gap-2 sm:gap-3 mb-6">
+                        <input type="text" maxlength="1" class="otp-input" id="otp1" autocomplete="off">
+                        <input type="text" maxlength="1" class="otp-input" id="otp2" autocomplete="off">
+                        <input type="text" maxlength="1" class="otp-input" id="otp3" autocomplete="off">
+                        <input type="text" maxlength="1" class="otp-input" id="otp4" autocomplete="off">
+                        <input type="text" maxlength="1" class="otp-input" id="otp5" autocomplete="off">
+                        <input type="text" maxlength="1" class="otp-input" id="otp6" autocomplete="off">
+                    </div>
+                    
+                    <!-- Error Alert -->
+                    <div id="errorAlert" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm mb-4">
+                        <div class="flex items-center justify-center">
+                            <i data-lucide="alert-circle" class="w-4 h-4 mr-2"></i>
+                            <span id="errorMessage">Invalid verification code</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Timer -->
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center text-sm text-metallic mb-2">
+                            <span>Code expires in</span>
+                            <span id="timerText" class="font-semibold text-cuz-blue">30s</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div id="timerBar" class="bg-cuz-blue h-2 rounded-full timer-bar" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit" 
+                        id="verifyBtn"
+                        class="w-full bg-cuz-blue hover:bg-cuz-blue-light text-white py-3.5 rounded-xl font-semibold btn-scale transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled
+                    >
+                        <svg id="loadingSpinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span id="btnText">Verify & Login</span>
+                    </button>
+                </form>
+                
+                <!-- Back Link -->
+                <div class="text-center">
+                    <button id="backBtn" class="text-metallic hover:text-cuz-blue transition-colors flex items-center justify-center mx-auto text-sm">
+                        <i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i>
+                        Use different account
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Success State (Hidden initially) -->
+            <div id="successSection" class="hidden text-center py-4">
+                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 checkmark-animate">
+                    <i data-lucide="check" class="w-10 h-10 text-green-600"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-dark-gray mb-2">Verification Successful!</h3>
+                <p class="text-metallic mb-4">Redirecting to your dashboard...</p>
+                <div class="flex justify-center">
+                    <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-cuz-blue"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Help Text -->
+        <div class="text-center mt-6">
+            <p class="text-sm text-metallic">
+                Lost access to your authenticator?
+                <a href="#" class="text-cuz-blue hover:text-cuz-blue-light font-medium transition-colors" onclick="alert('Please contact your administrator to reset 2FA'); return false;">
+                    Contact support
+                </a>
+            </p>
+        </div>
+    </div>
+    
+    <!-- Initialize Lucide Icons -->
+    <script src="js/auth.js"></script>
+    <script>
+        lucide.createIcons();
+        
+        // Check if user has temp token
+        const tempToken = localStorage.getItem('tempToken');
+        const userEmail = localStorage.getItem('userEmail');
+        
+        if (!tempToken) {
+            window.location.href = 'login.html';
+        }
+        
+        // OTP Input handling
+        const otpInputs = document.querySelectorAll('.otp-input');
+        const verifyBtn = document.getElementById('verifyBtn');
+        const errorAlert = document.getElementById('errorAlert');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        // Focus first input on load
+        otpInputs[0].focus();
+        
+        // Handle input
+        otpInputs.forEach((input, index) => {
+            // Only allow numbers
+            input.addEventListener('keypress', (e) => {
+                if (!/[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                }
+            });
+            
+            input.addEventListener('input', (e) => {
+                const value = e.target.value;
+                
+                if (value.length === 1) {
+                    input.classList.add('filled');
+                    // Move to next input
+                    if (index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus();
+                    }
+                } else {
+                    input.classList.remove('filled');
+                }
+                
+                // Check if all filled
+                const allFilled = Array.from(otpInputs).every(inp => inp.value.length === 1);
+                verifyBtn.disabled = !allFilled;
+                
+                // Auto-submit if all filled
+                if (allFilled) {
+                    setTimeout(() => verifyForm.dispatchEvent(new Event('submit')), 100);
+                }
+            });
+            
+            // Handle backspace
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !input.value && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
+            });
+            
+            // Handle paste
+            input.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+                
+                pastedData.split('').forEach((digit, i) => {
+                    if (otpInputs[i]) {
+                        otpInputs[i].value = digit;
+                        otpInputs[i].classList.add('filled');
+                    }
+                });
+                
+                // Focus last filled or next empty
+                const lastIndex = Math.min(pastedData.length, 5);
+                otpInputs[lastIndex].focus();
+                
+                // Check if all filled
+                const allFilled = Array.from(otpInputs).every(inp => inp.value.length === 1);
+                verifyBtn.disabled = !allFilled;
+                
+                if (allFilled) {
+                    setTimeout(() => verifyForm.dispatchEvent(new Event('submit')), 100);
+                }
+            });
+        });
+        
+        // Timer countdown (30 seconds for TOTP)
+        let timeLeft = 30;
+        const timerText = document.getElementById('timerText');
+        const timerBar = document.getElementById('timerBar');
+        
+        const timerInterval = setInterval(() => {
+            timeLeft--;
+            timerText.textContent = timeLeft + 's';
+            timerBar.style.width = (timeLeft / 30 * 100) + '%';
+            
+            if (timeLeft <= 10) {
+                timerBar.classList.remove('bg-cuz-blue');
+                timerBar.classList.add('bg-red-500');
+                timerText.classList.add('text-red-600');
+            }
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                timerText.textContent = 'Expired';
+                errorMessage.textContent = 'Code expired. Please wait for a new code in your authenticator app.';
+                errorAlert.classList.remove('hidden');
+                verifyBtn.disabled = true;
+            }
+        }, 1000);
+        
+        // Form submission
+        const verifyForm = document.getElementById('verifyForm');
+        
+        verifyForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Get all OTP values
+            const code = Array.from(otpInputs).map(input => input.value).join('');
+            
+            if (code.length !== 6) return;
+            
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const btnText = document.getElementById('btnText');
+            
+            // Hide error, show loading
+            errorAlert.classList.add('hidden');
+            verifyBtn.disabled = true;
+            loadingSpinner.classList.remove('hidden');
+            btnText.textContent = 'Verifying...';
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/verify-2fa', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        email: userEmail,
+                        code: code,
+                        tempToken: tempToken
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Store tokens
+                    localStorage.setItem('accessToken', data.accessToken);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    // Clear temp data
+                    localStorage.removeItem('tempToken');
+                    localStorage.removeItem('userEmail');
+                    
+                    // Show success
+                    document.getElementById('verifySection').classList.add('hidden');
+                    document.getElementById('successSection').classList.remove('hidden');
+                    lucide.createIcons();
+                    
+                    // Redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1500);
+                } else {
+                    errorMessage.textContent = data.message || 'Invalid verification code';
+                    errorAlert.classList.remove('hidden');
+                    errorAlert.classList.add('shake');
+                    setTimeout(() => errorAlert.classList.remove('shake'), 500);
+                    
+                    // Clear inputs
+                    otpInputs.forEach(input => {
+                        input.value = '';
+                        input.classList.remove('filled');
+                    });
+                    otpInputs[0].focus();
+                    
+                    verifyBtn.disabled = false;
+                    loadingSpinner.classList.add('hidden');
+                    btnText.textContent = 'Verify & Login';
+                }
+            } catch (error) {
+                errorMessage.textContent = 'Connection error. Is the server running?';
+                errorAlert.classList.remove('hidden');
+                errorAlert.classList.add('shake');
+                setTimeout(() => errorAlert.classList.remove('shake'), 500);
+                verifyBtn.disabled = false;
+                loadingSpinner.classList.add('hidden');
+                btnText.textContent = 'Verify & Login';
+            }
+        });
+        
+        // Back button
+        document.getElementById('backBtn').addEventListener('click', () => {
+            localStorage.removeItem('tempToken');
+            localStorage.removeItem('userEmail');
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>

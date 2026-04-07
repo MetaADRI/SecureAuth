@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - SecureAuth</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Inter', sans-serif;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+    }
+    .bg-gradient {
+      background: linear-gradient(135deg, #003366 0%, #0066CC 100%);
+    }
+    input:focus {
+      border-color: #0066CC;
+      box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+    }
+    .form-input {
+      transition: all 0.3s ease;
+    }
+    button.btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 51, 102, 0.3);
+    }
+    button.btn-primary:active:not(:disabled) {
+      transform: translateY(0);
+    }
+    .password-toggle {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <div class="min-h-screen flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-md">
+      <!-- Back Button -->
+      <a href="index.html" class="text-blue-900 font-semibold text-sm mb-8 inline-flex items-center hover:opacity-70 transition">
+        ← Back to Home
+      </a>
+
+      <!-- Card -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient text-white p-8 text-center">
+          <div class="text-4xl mb-3">🔐</div>
+          <h1 class="text-3xl font-bold mb-2">Create Your Account</h1>
+          <p class="text-blue-100">Start protecting your applications with 2FA</p>
+        </div>
+
+        <!-- Content -->
+        <div class="p-8">
+          <!-- Registration Form -->
+          <form id="registerForm" class="space-y-5">
+            <!-- Full Name -->
+            <div>
+              <label for="fullName" class="block text-sm font-semibold text-gray-900 mb-2">
+                <span class="inline-flex items-center">👤 Full Name</span>
+              </label>
+              <input
+                type="text"
+                id="fullName"
+                placeholder="John Doe"
+                class="form-input w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                required
+              />
+            </div>
+
+            <!-- Email -->
+            <div>
+              <label for="email" class="block text-sm font-semibold text-gray-900 mb-2">
+                <span class="inline-flex items-center">✉️ Email Address</span>
+              </label>
+              <input
+                type="email"
+                id="email"
+                placeholder="you@example.com"
+                class="form-input w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                required
+              />
+              <p class="text-xs text-gray-500 mt-1">We'll never share your email</p>
+            </div>
+
+            <!-- Password -->
+            <div>
+              <label for="password" class="block text-sm font-semibold text-gray-900 mb-2">
+                <span class="inline-flex items-center">🔒 Password</span>
+              </label>
+              <div class="relative">
+                <input
+                  type="password"
+                  id="password"
+                  placeholder="••••••••"
+                  class="form-input w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none pr-10"
+                  required
+                  minlength="8"
+                />
+                <button
+                  type="button"
+                  onclick="togglePassword('password')"
+                  class="password-toggle absolute right-3 top-3 text-gray-500 hover:text-gray-700"
+                >
+                  👁️
+                </button>
+              </div>
+              <p class="text-xs text-gray-500 mt-1">Minimum 8 characters</p>
+            </div>
+
+            <!-- Confirm Password -->
+            <div>
+              <label for="confirmPassword" class="block text-sm font-semibold text-gray-900 mb-2">
+                <span class="inline-flex items-center">✓ Confirm Password</span>
+              </label>
+              <div class="relative">
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  placeholder="••••••••"
+                  class="form-input w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none pr-10"
+                  required
+                />
+                <button
+                  type="button"
+                  onclick="togglePassword('confirmPassword')"
+                  class="password-toggle absolute right-3 top-3 text-gray-500 hover:text-gray-700"
+                >
+                  👁️
+                </button>
+              </div>
+            </div>
+
+            <!-- Error Alert -->
+            <div id="errorAlert" class="hidden bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"></div>
+
+            <!-- Submit Button -->
+            <button
+              type="submit"
+              id="registerBtn"
+              class="w-full bg-gradient text-white font-semibold py-3 rounded-lg hover:shadow-lg transition duration-200 flex items-center justify-center space-x-2"
+            >
+              <span id="btnText">Register & Generate 2FA</span>
+              <span id="loadingSpinner" class="hidden">
+                <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </span>
+            </button>
+
+            <!-- Login Link -->
+            <p class="text-center text-sm text-gray-600">
+              Already have an account?
+              <a href="login.html" class="text-blue-900 font-semibold hover:opacity-70 transition">Log in</a>
+            </p>
+          </form>
+
+          <!-- QR Code Section (Hidden) -->
+          <div id="qrSection" class="hidden space-y-6">
+            <div class="bg-green-50 border-2 border-green-200 rounded-lg p-6 text-center">
+              <div class="text-5xl mb-3">✅</div>
+              <h3 class="text-xl font-bold text-green-900 mb-1">Registration Successful!</h3>
+              <p class="text-green-700">Scan this QR code with Google Authenticator</p>
+            </div>
+
+            <!-- QR Code Image -->
+            <div class="flex justify-center">
+              <div class="bg-gray-50 p-6 rounded-xl border-2 border-gray-200">
+                <img id="qrCodeImage" alt="QR Code" class="w-64 h-64">
+              </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-6">
+              <h4 class="font-semibold text-blue-900 mb-4 flex items-center">
+                <span class="text-2xl mr-2">📱</span> Setup Instructions
+              </h4>
+              <ol class="space-y-3 text-sm text-blue-900">
+                <li class="flex items-start">
+                  <span class="font-Bold mr-3">1.</span>
+                  <span>Open <strong>Google Authenticator</strong> on your smartphone</span>
+                </li>
+                <li class="flex items-start">
+                  <span class="font-bold mr-3">2.</span>
+                  <span>Tap the <strong>"+"</strong> button</span>
+                </li>
+                <li class="flex items-start">
+                  <span class="font-bold mr-3">3.</span>
+                  <span>Select <strong>"Scan a QR code"</strong></span>
+                </li>
+                <li class="flex items-start">
+                  <span class="font-bold mr-3">4.</span>
+                  <span>Scan the QR code above</span>
+                </li>
+                <li class="flex items-start">
+                  <span class="font-bold mr-3">5.</span>
+                  <span>SecureAuth will appear in your app</span>
+                </li>
+              </ol>
+            </div>
+
+            <!-- Proceed Button -->
+            <a
+              href="login.html"
+              class="block w-full bg-gradient text-white font-semibold py-3 rounded-lg text-center hover:shadow-lg transition duration-200"
+            >
+              Proceed to Login
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    function togglePassword(fieldId) {
+      const field = document.getElementById(fieldId);
+      field.type = field.type === 'password' ? 'text' : 'password';
+    }
+
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const fullName = document.getElementById('fullName').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
+      const errorAlert = document.getElementById('errorAlert');
+      const registerBtn = document.getElementById('registerBtn');
+      const loadingSpinner = document.getElementById('loadingSpinner');
+      const btnText = document.getElementById('btnText');
+      
+      // Validate passwords match
+      if (password !== confirmPassword) {
+        errorAlert.textContent = '❌ Passwords do not match';
+        errorAlert.classList.remove('hidden');
+        return;
+      }
+      
+      // Hide error, show loading
+      errorAlert.classList.add('hidden');
+      registerBtn.disabled = true;
+      loadingSpinner.classList.remove('hidden');
+      btnText.classList.add('hidden');
+      
+      try {
+        const response = await fetch('http://localhost:3000/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fullName, email, password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          // Hide form, show QR code
+          document.getElementById('registerForm').classList.add('hidden');
+          document.getElementById('qrSection').classList.remove('hidden');
+          document.getElementById('qrCodeImage').src = data.qrCode;
+        } else {
+          errorAlert.textContent = `❌ ${data.message || 'Registration failed'}`;
+          errorAlert.classList.remove('hidden');
+          registerBtn.disabled = false;
+          loadingSpinner.classList.add('hidden');
+          btnText.classList.remove('hidden');
+        }
+      } catch (error) {
+        errorAlert.textContent = '❌ Connection error. Is the server running?';
+        errorAlert.classList.remove('hidden');
+        registerBtn.disabled = false;
+        loadingSpinner.classList.add('hidden');
+        btnText.classList.remove('hidden');
+      }
+    });
+  </script>
+</body>
+</html>
+    <script src="js/auth.js"></script>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            const errorAlert = document.getElementById('errorAlert');
+            const registerBtn = document.getElementById('registerBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                errorAlert.textContent = 'Passwords do not match';
+                errorAlert.classList.remove('d-none');
+                return;
+            }
+            
+            // Hide error, show loading
+            errorAlert.classList.add('d-none');
+            registerBtn.disabled = true;
+            loadingSpinner.classList.remove('d-none');
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fullName, email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Hide form, show QR code
+                    document.getElementById('registerForm').classList.add('d-none');
+                    document.getElementById('qrSection').classList.remove('d-none');
+                    document.getElementById('qrCodeImage').src = data.qrCode;
+                } else {
+                    errorAlert.textContent = data.message || 'Registration failed';
+                    errorAlert.classList.remove('d-none');
+                    registerBtn.disabled = false;
+                    loadingSpinner.classList.add('d-none');
+                }
+            } catch (error) {
+                errorAlert.textContent = 'Connection error. Is the server running?';
+                errorAlert.classList.remove('d-none');
+                registerBtn.disabled = false;
+                loadingSpinner.classList.add('d-none');
+            }
+        });
+    </script>
+</body>
+</html>

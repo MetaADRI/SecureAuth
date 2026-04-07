@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SecureAuth - Enterprise Two-Factor Authentication</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.1/dist/umd/lucide.min.js"></script>
+  <style>
+    * {
+      font-family: 'Inter', sans-serif;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+    }
+    .hero-gradient {
+      background: linear-gradient(135deg, #003366 0%, #0066CC 100%);
+    }
+    .fade-in-on-scroll {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .fade-in-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .btn-primary {
+      background-color: #003366;
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+      background-color: #001f3f;
+      transform: scale(1.02);
+      box-shadow: 0 10px 25px rgba(0, 51, 102, 0.2);
+    }
+    .btn-outline {
+      border: 2px solid #003366;
+      color: #003366;
+      transition: all 0.3s ease;
+    }
+    .btn-outline:hover {
+      background-color: #003366;
+      color: white;
+      transform: scale(1.02);
+    }
+    .feature-card {
+      transition: all 0.3s ease;
+      border: 1px solid #E5E7EB;
+    }
+    .feature-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 51, 102, 0.1);
+      border-color: #0066CC;
+    }
+    .navbar {
+      backdrop-filter: blur(10px);
+      background-color: rgba(255, 255, 255, 0.95);
+    }
+  </style>
+</head>
+<body class="bg-white">
+  <!-- Sticky Navigation -->
+  <nav class="navbar sticky top-0 z-50 border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Logo -->
+        <div class="flex items-center space-x-2">
+          <div class="text-2xl">🔐</div>
+          <span class="text-xl font-bold text-gray-900">SecureAuth</span>
+        </div>
+        
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center space-x-8">
+          <a href="#features" class="text-gray-600 hover:text-gray-900 transition">Features</a>
+          <a href="#how-it-works" class="text-gray-600 hover:text-gray-900 transition">How It Works</a>
+          <a href="#footer" class="text-gray-600 hover:text-gray-900 transition">Contact</a>
+        </div>
+        
+        <!-- CTA Button -->
+        <a href="register.html" class="btn-primary text-white px-6 py-2 rounded-lg font-semibold">
+          Get Started
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-gradient text-white py-20 md:py-32">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+            Enterprise Two-Factor Authentication Made Simple
+          </h1>
+          <p class="text-lg md:text-xl text-blue-100 mb-8 leading-relaxed">
+            Protect your applications with military-grade 2FA, DDoS protection, and JWT session management — all in 10 minutes.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4">
+            <a href="register.html" class="btn-primary text-white px-8 py-3 rounded-lg font-semibold text-center">
+              Start Free Trial
+            </a>
+            <button class="btn-outline px-8 py-3 rounded-lg font-semibold bg-white text-blue-900 hover:text-white">
+              View Demo
+            </button>
+          </div>
+        </div>
+        <div class="hidden md:flex items-center justify-center">
+          <div class="text-9xl opacity-20">🛡️</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="bg-gray-50 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div class="text-center">
+          <div class="text-4xl font-bold text-blue-900 mb-2">16</div>
+          <p class="text-gray-600">Security Features</p>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl font-bold text-blue-900 mb-2">$0</div>
+          <p class="text-gray-600">Infrastructure Cost</p>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl font-bold text-blue-900 mb-2">10m</div>
+          <p class="text-gray-600">To Deploy</p>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl font-bold text-blue-900 mb-2">∞</div>
+          <p class="text-gray-600">Scale</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="py-20 md:py-32">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          Everything You Need to Secure Your Application
+        </h2>
+        <p class="text-xl text-gray-600">
+          Comprehensive security features built for modern applications
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- Feature 1 -->
+        <div class="feature-card bg-white p-8 rounded-xl shadow-sm">
+          <div class="text-4xl mb-4">🔐</div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">TOTP Two-Factor Authentication</h3>
+          <p class="text-gray-600">RFC 6238 compliant, works seamlessly with Google Authenticator</p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="feature-card bg-white p-8 rounded-xl shadow-sm fade-in-on-scroll">
+          <div class="text-4xl mb-4">🛡️</div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">DDoS Protection</h3>
+          <p class="text-gray-600">6-layer security with IP auto-banning and rate limiting</p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="feature-card bg-white p-8 rounded-xl shadow-sm fade-in-on-scroll">
+          <div class="text-4xl mb-4">🔑</div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">JWT Session Management</h3>
+          <p class="text-gray-600">Stateless authentication with automatic refresh</p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="feature-card bg-white p-8 rounded-xl shadow-sm fade-in-on-scroll">
+          <div class="text-4xl mb-4">⏱️</div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Inactivity Auto-Logout</h3>
+          <p class="text-gray-600">Configurable timeout with activity tracking</p>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="feature-card bg-white p-8 rounded-xl shadow-sm fade-in-on-scroll">
+          <div class="text-4xl mb-4">🚫</div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Account Lockout</h3>
+          <p class="text-gray-600">Protection against brute-force attacks</p>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="feature-card bg-white p-8 rounded-xl shadow-sm fade-in-on-scroll">
+          <div class="text-4xl mb-4">📊</div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Login History</h3>
+          <p class="text-gray-600">Audit trail with IP and device tracking</p>
+        </div>
+
+        <!-- Feature 7 -->
+        <div class="feature-card bg-white p-8 rounded-xl shadow-sm fade-in-on-scroll">
+          <div class="text-4xl mb-4">⚡</div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Rate Limiting</h3>
+          <p class="text-gray-600">Configurable request throttling per endpoint</p>
+        </div>
+
+        <!-- Feature 8 -->
+        <div class="feature-card bg-white p-8 rounded-xl shadow-sm fade-in-on-scroll">
+          <div class="text-4xl mb-4">🔒</div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">bcrypt Password Hashing</h3>
+          <p class="text-gray-600">Industry-standard with adjustable cost</p>
+        </div>
+
+        <!-- Feature 9 -->
+        <div class="feature-card bg-white p-8 rounded-xl shadow-sm fade-in-on-scroll">
+          <div class="text-4xl mb-4">📱</div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">QR Code Generation</h3>
+          <p class="text-gray-600">One-click setup with authenticator apps</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section id="how-it-works" class="bg-gray-50 py-20 md:py-32">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          Deploy in Three Simple Steps
+        </h2>
+        <p class="text-xl text-gray-600">
+          Get SecureAuth running faster than ever
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- Step 1 -->
+        <div class="fade-in-on-scroll">
+          <div class="bg-blue-100 text-blue-900 rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mb-4">1</div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Install</h3>
+          <p class="text-gray-600 mb-4">Add to your project with npm</p>
+          <div class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+            npm install secureauth
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="fade-in-on-scroll">
+          <div class="bg-blue-100 text-blue-900 rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mb-4">2</div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Integrate</h3>
+          <p class="text-gray-600 mb-4">Add middleware to Express</p>
+          <div class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+            <div>app.use(auth.middleware();</div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="fade-in-on-scroll">
+          <div class="bg-blue-100 text-blue-900 rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mb-4">✓</div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Deploy</h3>
+          <p class="text-gray-600 mb-4">Protected in production</p>
+          <div class="bg-green-50 border-2 border-green-500 text-green-900 p-4 rounded-lg font-semibold text-center">
+            Ready to Go
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="hero-gradient text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-4xl font-bold mb-4">Ready to Secure Your Application?</h2>
+      <p class="text-xl text-blue-100 mb-8">Join developers protecting their applications</p>
+      <a href="register.html" class="inline-block bg-white text-blue-900 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+        Create Free Account
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="footer" class="bg-gray-900 text-gray-300 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-3 gap-12 mb-12">
+        <!-- Left Column -->
+        <div>
+          <div class="flex items-center space-x-2 mb-4">
+            <div class="text-2xl">🔐</div>
+            <span class="text-xl font-bold text-white">SecureAuth</span>
+          </div>
+          <p class="mb-4">Built by Bwalya Adrian Mange</p>
+          <p class="text-sm">Student ID: 106-293</p>
+          <p class="text-sm">Cavendish University Zambia</p>
+          <p class="text-sm mt-2">BSc Computing (Year 4) - Cybersecurity</p>
+        </div>
+
+        <!-- Middle Column -->
+        <div>
+          <h4 class="text-white font-semibold mb-4">Links</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#features" class="hover:text-white transition">Features</a></li>
+            <li><a href="#how-it-works" class="hover:text-white transition">Documentation</a></li>
+            <li><a href="https://github.com" class="hover:text-white transition">GitHub</a></li>
+          </ul>
+        </div>
+
+        <!-- Right Column -->
+        <div>
+          <h4 class="text-white font-semibold mb-4">Get in Touch</h4>
+          <p class="mb-4 text-sm">Interested in using SecureAuth?</p>
+          <button class="btn-primary text-white px-6 py-2 rounded-lg font-semibold text-sm">
+            Contact Us
+          </button>
+          <p class="text-sm mt-4">Email: contact@secureauth.dev</p>
+        </div>
+      </div>
+
+      <!-- Bottom -->
+      <div class="border-t border-gray-700 pt-8 text-center text-sm">
+        <p>&copy; 2026 SecureAuth. All rights reserved. | Built with ❤️ for security-first developers</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scroll Animations Script -->
+  <script src="js/animations.js"></script>
+</body>
+</html>
