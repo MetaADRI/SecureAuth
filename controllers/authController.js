@@ -50,7 +50,7 @@ async function register(req, res) {
     }
 
     // Check if email already exists
-    const existingUser = userModel.findByEmail(email);
+    const existingUser = await userModel.findByEmail(email);
     if (existingUser) {
       return res.status(400).json({
         error: 'Email already registered',
@@ -72,7 +72,7 @@ async function register(req, res) {
     const userId = uuidv4();
     const createdAt = new Date().toISOString();
 
-    userModel.createUser({
+    await userModel.createUser({
       id: userId,
       full_name: fullName,
       email: email,
@@ -84,7 +84,7 @@ async function register(req, res) {
     // Log registration
     const ipAddress = req.ip || req.connection.remoteAddress || 'unknown';
     const userAgent = req.get('User-Agent') || 'unknown';
-    insertAuditLog(userId, 'register', ipAddress, userAgent);
+    await insertAuditLog(userId, 'register', ipAddress, userAgent);
 
     console.log(`✓ User registered successfully: ${email}`);
 
@@ -127,12 +127,12 @@ async function loginStep1(req, res) {
     }
 
     // Find user
-    const user = userModel.findByEmail(email);
+    const user = await userModel.findByEmail(email);
 
     if (!user) {
       const ipAddress = req.ip || 'unknown';
       const userAgent = req.get('User-Agent') || 'unknown';
-      insertAuditLog(null, 'login_attempt_failed', ipAddress, userAgent);
+      await insertAuditLog(null, 'login_attempt_failed', ipAddress, userAgent);
 
       return res.status(401).json({
         error: 'Invalid credentials',
@@ -148,7 +148,7 @@ async function loginStep1(req, res) {
 
         const ipAddress = req.ip || 'unknown';
         const userAgent = req.get('User-Agent') || 'unknown';
-        insertAuditLog(user.id, 'login_attempt_locked', ipAddress, userAgent);
+        await insertAuditLog(user.id, 'login_attempt_locked', ipAddress, userAgent);
 
         return res.status(403).json({
           error: 'Account locked',
@@ -158,7 +158,7 @@ async function loginStep1(req, res) {
         });
       } else {
         // Lock expired, reset attempts
-        userModel.resetFailedAttempts(user.id);
+        await userModel.resetFailedAttempts(user.id);
       }
     }
 
@@ -167,16 +167,16 @@ async function loginStep1(req, res) {
 
     if (!isValid) {
       // Increment failed attempts
-      const failedAttempts = userModel.incrementFailedAttempts(user.id);
+      const failedAttempts = await userModel.incrementFailedAttempts(user.id);
 
       const ipAddress = req.ip || 'unknown';
       const userAgent = req.get('User-Agent') || 'unknown';
-      insertAuditLog(user.id, 'login_attempt_failed', ipAddress, userAgent);
+      await insertAuditLog(user.id, 'login_attempt_failed', ipAddress, userAgent);
 
       // Lock account if max attempts reached
       if (failedAttempts >= MAX_FAILED_ATTEMPTS) {
-        userModel.lockAccount(user.id, LOCKOUT_DURATION_MINUTES);
-        insertAuditLog(user.id, 'account_locked', ipAddress, userAgent);
+        await userModel.lockAccount(user.id, LOCKOUT_DURATION_MINUTES);
+        await insertAuditLog(user.id, 'account_locked', ipAddress, userAgent);
 
         return res.status(403).json({
           error: 'Account locked',
@@ -195,7 +195,7 @@ async function loginStep1(req, res) {
     }
 
     // Password correct - reset failed attempts
-    userModel.resetFailedAttempts(user.id);
+    await userModel.resetFailedAttempts(user.id);
 
     // Generate temporary JWT
     const tempToken = jwtUtils.generateTempJWT(user.id, user.email);
@@ -203,7 +203,7 @@ async function loginStep1(req, res) {
     // Log successful password verification
     const ipAddress = req.ip || 'unknown';
     const userAgent = req.get('User-Agent') || 'unknown';
-    insertAuditLog(user.id, 'login_step1_success', ipAddress, userAgent);
+    await insertAuditLog(user.id, 'login_step1_success', ipAddress, userAgent);
 
     console.log(`✓ Password verified for: ${email}`);
 
@@ -226,7 +226,7 @@ async function loginStep1(req, res) {
 /**
  * PHASE 2 - TOTP Verification and Full JWT Issuance
  */
-function verifyTOTP(req, res) {
+async function verifyTOTP(req, res) {
   try {
     const { token: totpCode, code } = req.body;
     const finalCode = totpCode || code;
@@ -269,7 +269,7 @@ function verifyTOTP(req, res) {
 
     // Get user
     const userId = payload.user_id;
-    const user = userModel.findById(userId);
+    const user = await userModel.findById(userId);
 
     if (!user) {
       return res.status(401).json({
@@ -285,7 +285,7 @@ function verifyTOTP(req, res) {
     const userAgent = req.get('User-Agent') || 'unknown';
 
     if (!isValid) {
-      insertAuditLog(userId, '2fa_fail', ipAddress, userAgent);
+      await insertAuditLog(userId, '2fa_fail', ipAddress, userAgent);
 
       return res.status(401).json({
         error: 'Invalid TOTP code',
@@ -297,8 +297,8 @@ function verifyTOTP(req, res) {
     const fullToken = jwtUtils.generateFullJWT(user.id, user.email, user.full_name);
 
     // Log successful 2FA and login
-    insertAuditLog(userId, '2fa_success', ipAddress, userAgent);
-    insertAuditLog(userId, 'login_success', ipAddress, userAgent);
+    await insertAuditLog(userId, '2fa_success', ipAddress, userAgent);
+    await insertAuditLog(userId, 'login_success', ipAddress, userAgent);
 
     console.log(`✓ 2FA successful for: ${user.email}`);
 
@@ -325,11 +325,11 @@ function verifyTOTP(req, res) {
 /**
  * PHASE 2 - Protected Dashboard Route
  */
-function getDashboard(req, res) {
+async function getDashboard(req, res) {
   try {
     // User data attached by middleware
     const userId = req.user.user_id;
-    const user = userModel.findById(userId);
+    const user = await userModel.findById(userId);
 
     if (!user) {
       return res.status(401).json({
@@ -337,6 +337,8 @@ function getDashboard(req, res) {
         message: 'Invalid token'
       });
     }
+
+    const totalUsers = await userModel.countUsers();
 
     return res.status(200).json({
       message: 'Welcome to your secure dashboard!',
@@ -348,7 +350,7 @@ function getDashboard(req, res) {
         createdAt: user.created_at
       },
       stats: {
-        totalUsers: userModel.countUsers(),
+        totalUsers: totalUsers,
         loginTime: new Date().toISOString()
       }
     });
@@ -365,20 +367,21 @@ function getDashboard(req, res) {
 /**
  * PHASE 4 - Get Login History
  */
-function getLoginHistory(req, res) {
+async function getLoginHistory(req, res) {
   try {
     const userId = req.user.user_id;
 
-    const stmt = db.prepare(`
+    const query = `
       SELECT action, ip_address, user_agent, timestamp
       FROM audit_logs
-      WHERE user_id = ? 
+      WHERE user_id = $1 
       AND action IN ('login_success', 'login_attempt_failed', 'login_attempt_locked', '2fa_success', '2fa_fail')
       ORDER BY timestamp DESC
       LIMIT 10
-    `);
+    `;
 
-    const rows = stmt.all(userId);
+    const result = await db.query(query, [userId]);
+    const rows = result.rows;
 
     const history = rows.map(row => ({
       action: row.action,

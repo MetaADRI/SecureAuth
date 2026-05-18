@@ -380,7 +380,7 @@
             
             try {
                 // FIXED: Added Authorization header and unified payload
-                const response = await fetch('http://localhost:3000/api/verify-2fa', {
+                const response = await fetch(`${SecureAuth.API_BASE_URL}/verify-2fa`, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',

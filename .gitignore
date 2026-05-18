@@ -32,6 +32,8 @@ Thumbs.db
 # Build
 dist/
 build/
+frontend/dist/
+frontend/node_modules/
 
 # Test
 coverage/

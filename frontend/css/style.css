@@ -1,0 +1,240 @@
+/* SecureAuth Custom Styles - Cavendish University Zambia Theme */
+/* Primary Color: Cavendish Blue #003366 */
+
+:root {
+    --cuz-blue: #003366;
+    --cuz-blue-light: #0055aa;
+    --cuz-blue-dark: #002244;
+    --success-green: #198754;
+    --warning-yellow: #ffc107;
+    --danger-red: #dc3545;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px 0;
+}
+
+/* Override Bootstrap primary color with Cavendish blue */
+.btn-primary {
+    background-color: var(--cuz-blue);
+    border-color: var(--cuz-blue);
+}
+
+.btn-primary:hover {
+    background-color: var(--cuz-blue-light);
+    border-color: var(--cuz-blue-light);
+}
+
+.btn-primary:active,
+.btn-primary:focus {
+    background-color: var(--cuz-blue-dark);
+    border-color: var(--cuz-blue-dark);
+}
+
+.btn-outline-primary {
+    color: var(--cuz-blue);
+    border-color: var(--cuz-blue);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--cuz-blue);
+    border-color: var(--cuz-blue);
+}
+
+.bg-primary {
+    background-color: var(--cuz-blue) !important;
+}
+
+.text-primary {
+    color: var(--cuz-blue) !important;
+}
+
+.navbar-dark .navbar-brand {
+    font-size: 1.5rem;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.card-header {
+    border-bottom: none;
+    font-weight: 600;
+}
+
+/* Logo Circle */
+.logo-circle {
+    width: 120px;
+    height: 120px;
+    background: var(--cuz-blue);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+/* Feature Boxes */
+.feature-box {
+    padding: 20px;
+    border-radius: 10px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.feature-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.feature-icon-lg {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+/* QR Code Container */
+.qr-container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    display: inline-block;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.qr-container img {
+    max-width: 300px;
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Auth Icon */
+.auth-icon {
+    display: inline-block;
+    padding: 20px;
+    background: #e8f5e9;
+    border-radius: 50%;
+}
+
+/* Stats */
+.stat-box {
+    padding: 15px;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--cuz-blue);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-top: 5px;
+}
+
+/* Form Controls */
+.form-control:focus {
+    border-color: var(--cuz-blue);
+    box-shadow: 0 0 0 0.2rem rgba(0, 51, 102, 0.25);
+}
+
+.form-control-lg {
+    padding: 12px 16px;
+    font-size: 1.1rem;
+}
+
+/* Buttons */
+.btn-lg {
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Alerts */
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+.alert-info {
+    background-color: #e3f2fd;
+    color: #1565c0;
+}
+
+.alert-success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Spinner */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Shadows */
+.shadow-lg {
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .logo-circle {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .display-4 {
+        font-size: 2rem;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+}
+
+/* Loading State */
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--cuz-blue);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--cuz-blue-dark);
+}

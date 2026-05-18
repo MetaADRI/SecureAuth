@@ -176,51 +176,54 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(PHASE3_FRONTEND_DIR, 'index.html'));
 });
 
-// Initialize database
-initDatabase();
+// Initialize database and start server
+async function startServer() {
+  await initDatabase();
 
-// Start server
-app.listen(PORT, () => {
-  // #region agent log
-  agentLog({
-    runId: 'pre-fix',
-    hypothesisId: 'H3',
-    message: 'Server started',
-    data: { port: PORT, pid: process.pid, node: process.version },
+  app.listen(PORT, () => {
+    // #region agent log
+    agentLog({
+      runId: 'pre-fix',
+      hypothesisId: 'H3',
+      message: 'Server started',
+      data: { port: PORT, pid: process.pid, node: process.version },
+    });
+    // #endregion
+    console.log('\n' + '='.repeat(70));
+    console.log('  🔐  SECUREAUTH SERVER RUNNING (Node.js/Express)  🔐');
+    console.log('='.repeat(70));
+    console.log(`\n✓ Server:        http://localhost:${PORT}`);
+    console.log('✓ Framework:     Express + Node.js');
+    console.log('✓ Version:       2.1.0 (With DDoS Protection)');
+    console.log('\n📋 Available Endpoints:');
+    console.log('   POST /api/register       - Register new user with 2FA');
+    console.log('   POST /api/login          - Login Step 1 (Password)');
+    console.log('   POST /api/verify-2fa     - Login Step 2 (TOTP)');
+    console.log('   GET  /api/dashboard      - Protected route');
+    console.log('   GET  /api/login-history  - User login history');
+    console.log('   POST /api/refresh        - Refresh JWT token');
+    console.log('   GET  /api/health         - System health check');
+    console.log('   GET  /api/ddos-stats     - DDoS protection stats');
+    console.log('\n🔐 Security Features:');
+    console.log('   ✓ TOTP Two-Factor Authentication');
+    console.log('   ✓ JWT Session Management');
+    console.log('   ✓ Inactivity Auto-Logout (5 minutes)');
+    console.log('   ✓ Account Lockout (5 failed attempts)');
+    console.log('   ✓ Login History Tracking');
+    console.log('   ✓ Rate Limiting');
+    console.log('   ✓ bcrypt Password Hashing');
+    console.log('\n🛡️  DDoS Protection (6 Layers):');
+    console.log('   ✓ Security Headers (Helmet.js)');
+    console.log('   ✓ Request Size Limits (100KB max)');
+    console.log('   ✓ IP-Based Auto-Banning (100 req/min limit)');
+    console.log('   ✓ Connection Limiting (100 per IP)');
+    console.log('   ✓ Malformed Request Detection');
+    console.log('   ✓ Progressive Slow-Down');
+    console.log('\n' + '='.repeat(70) + '\n');
   });
-  // #endregion
-  console.log('\n' + '='.repeat(70));
-  console.log('  🔐  SECUREAUTH SERVER RUNNING (Node.js/Express)  🔐');
-  console.log('='.repeat(70));
-  console.log(`\n✓ Server:        http://localhost:${PORT}`);
-  console.log('✓ Framework:     Express + Node.js');
-  console.log('✓ Version:       2.1.0 (With DDoS Protection)');
-  console.log('\n📋 Available Endpoints:');
-  console.log('   POST /api/register       - Register new user with 2FA');
-  console.log('   POST /api/login          - Login Step 1 (Password)');
-  console.log('   POST /api/verify-2fa     - Login Step 2 (TOTP)');
-  console.log('   GET  /api/dashboard      - Protected route');
-  console.log('   GET  /api/login-history  - User login history');
-  console.log('   POST /api/refresh        - Refresh JWT token');
-  console.log('   GET  /api/health         - System health check');
-  console.log('   GET  /api/ddos-stats     - DDoS protection stats');
-  console.log('\n🔐 Security Features:');
-  console.log('   ✓ TOTP Two-Factor Authentication');
-  console.log('   ✓ JWT Session Management');
-  console.log('   ✓ Inactivity Auto-Logout (5 minutes)');
-  console.log('   ✓ Account Lockout (5 failed attempts)');
-  console.log('   ✓ Login History Tracking');
-  console.log('   ✓ Rate Limiting');
-  console.log('   ✓ bcrypt Password Hashing');
-  console.log('\n🛡️  DDoS Protection (6 Layers):');
-  console.log('   ✓ Security Headers (Helmet.js)');
-  console.log('   ✓ Request Size Limits (100KB max)');
-  console.log('   ✓ IP-Based Auto-Banning (100 req/min limit)');
-  console.log('   ✓ Connection Limiting (100 per IP)');
-  console.log('   ✓ Malformed Request Detection');
-  console.log('   ✓ Progressive Slow-Down');
-  console.log('\n' + '='.repeat(70) + '\n');
-});
+}
+
+startServer();
 
 // Graceful shutdown
 process.on('SIGINT', () => {

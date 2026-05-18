@@ -11,95 +11,94 @@ const { db } = require('../database/db');
 /**
  * Find user by email
  */
-function findByEmail(email) {
-  const stmt = db.prepare('SELECT * FROM users WHERE email = ?');
-  return stmt.get(email);
+async function findByEmail(email) {
+  const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+  return result.rows[0];
 }
 
 /**
  * Find user by ID
  */
-function findById(userId) {
-  const stmt = db.prepare('SELECT * FROM users WHERE id = ?');
-  return stmt.get(userId);
+async function findById(userId) {
+  const result = await db.query('SELECT * FROM users WHERE id = $1', [userId]);
+  return result.rows[0];
 }
 
 /**
  * Create new user
  */
-function createUser(userData) {
-  const stmt = db.prepare(`
+async function createUser(userData) {
+  const query = `
     INSERT INTO users (id, full_name, email, password_hash, totp_secret, created_at)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `);
+    VALUES ($1, $2, $3, $4, $5, $6)
+    RETURNING *
+  `;
 
-  stmt.run(
+  const result = await db.query(query, [
     userData.id,
     userData.full_name,
     userData.email,
     userData.password_hash,
     userData.totp_secret,
     userData.created_at
-  );
+  ]);
 
-  return findById(userData.id);
+  return result.rows[0];
 }
 
 /**
  * Count total users
  */
-function countUsers() {
-  const stmt = db.prepare('SELECT COUNT(*) as count FROM users');
-  const result = stmt.get();
-  return result.count;
+async function countUsers() {
+  const result = await db.query('SELECT COUNT(*) as count FROM users');
+  return parseInt(result.rows[0].count);
 }
 
 /**
  * Increment failed login attempts
  */
-function incrementFailedAttempts(userId) {
-  const stmt = db.prepare(`
+async function incrementFailedAttempts(userId) {
+  const query = `
     UPDATE users 
     SET failed_login_attempts = failed_login_attempts + 1,
-        last_failed_login = ?
-    WHERE id = ?
-  `);
+        last_failed_login = $1
+    WHERE id = $2
+    RETURNING failed_login_attempts
+  `;
 
-  stmt.run(new Date().toISOString(), userId);
-
-  const user = findById(userId);
-  return user ? user.failed_login_attempts : 0;
+  const result = await db.query(query, [new Date().toISOString(), userId]);
+  return result.rows[0] ? result.rows[0].failed_login_attempts : 0;
 }
 
 /**
  * Reset failed login attempts
  */
-function resetFailedAttempts(userId) {
-  const stmt = db.prepare(`
+async function resetFailedAttempts(userId) {
+  const query = `
     UPDATE users 
     SET failed_login_attempts = 0,
         locked_until = NULL,
         last_failed_login = NULL
-    WHERE id = ?
-  `);
+    WHERE id = $1
+  `;
 
-  stmt.run(userId);
+  await db.query(query, [userId]);
 }
 
 /**
  * Lock user account
  */
-function lockAccount(userId, lockoutDurationMinutes) {
+async function lockAccount(userId, lockoutDurationMinutes) {
   const lockedUntil = new Date();
   lockedUntil.setMinutes(lockedUntil.getMinutes() + lockoutDurationMinutes);
 
-  const stmt = db.prepare(`
+  const query = `
     UPDATE users 
-    SET locked_until = ?
-    WHERE id = ?
-  `);
+    SET locked_until = $1
+    WHERE id = $2
+  `;
 
-  stmt.run(lockedUntil.toISOString(), userId);
+  await db.query(query, [lockedUntil.toISOString(), userId]);
 }
 
 module.exports = {
