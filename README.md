@@ -223,12 +223,4 @@ MIT — see repository license file if included.
 **Bwalya Adrian Mange** — Student ID: 106-293 — Cavendish University Zambia — BSc Computing (Cybersecurity).
 
 ---
-
-## Pushing to GitHub
-
-1. Create the repo on GitHub (empty or with README is fine).
-2. Locally: `git init`, `git add .`, `git commit -m "Initial commit"`.
-3. `git remote add origin https://github.com/<user>/<repo>.git`
-4. `git branch -M main` and `git push -u origin main`
-
 Ensure `.env` and `*.db` are **not** committed (already in `.gitignore`). Consider adding a **`.env.example`** with dummy values for collaborators.
