@@ -57,7 +57,7 @@ The **default web app** served at `http://localhost:3000` lives in **`phase3-fro
 |------|------------|
 | Runtime | Node.js 18+ |
 | HTTP | Express 4.x |
-| Database | SQLite via **better-sqlite3** |
+| Database | PostgreSQL (Supabase) |
 | Crypto / auth | bcrypt, jsonwebtoken, speakeasy (TOTP), qrcode |
 | Limits / safety | express-rate-limit, express-slow-down |
 | Headers | helmet |
