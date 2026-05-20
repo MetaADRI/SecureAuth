@@ -6,7 +6,7 @@
   <title>SecureAuth - Enterprise Two-Factor Authentication</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.1/dist/umd/lucide.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     * {
       font-family: 'Inter', sans-serif;
@@ -68,7 +68,9 @@
       <div class="flex justify-between items-center h-16">
         <!-- Logo -->
         <div class="flex items-center space-x-2">
-          <div class="text-2xl">🔐</div>
+          <div class="w-10 h-10 bg-blue-900 rounded-xl flex items-center justify-center text-white shadow-md">
+            <i data-lucide="shield-check" class="w-6 h-6"></i>
+          </div>
           <span class="text-xl font-bold text-gray-900">SecureAuth</span>
         </div>
         
@@ -108,7 +110,9 @@
           </div>
         </div>
         <div class="hidden md:flex items-center justify-center">
-          <div class="text-9xl opacity-20">🛡️</div>
+          <div class="w-64 h-64 bg-white/10 rounded-[3rem] flex items-center justify-center">
+            <i data-lucide="shield-check" class="w-40 h-40 text-white opacity-40"></i>
+          </div>
         </div>
       </div>
     </div>
@@ -120,19 +124,19 @@
       <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
         <div class="text-center">
           <div class="text-4xl font-bold text-blue-900 mb-2">16</div>
-          <p class="text-gray-600">Security Features</p>
+          <p class="text-gray-600 font-bold uppercase tracking-widest text-xs">Security Modules</p>
         </div>
         <div class="text-center">
           <div class="text-4xl font-bold text-blue-900 mb-2">$0</div>
-          <p class="text-gray-600">Infrastructure Cost</p>
+          <p class="text-gray-600 font-bold uppercase tracking-widest text-xs">Infrastructure Cost</p>
         </div>
         <div class="text-center">
           <div class="text-4xl font-bold text-blue-900 mb-2">10m</div>
-          <p class="text-gray-600">To Deploy</p>
+          <p class="text-gray-600 font-bold uppercase tracking-widest text-xs">To Deploy</p>
         </div>
         <div class="text-center">
           <div class="text-4xl font-bold text-blue-900 mb-2">∞</div>
-          <p class="text-gray-600">Scale</p>
+          <p class="text-gray-600 font-bold uppercase tracking-widest text-xs">Elastic Scale</p>
         </div>
       </div>
     </div>
@@ -143,121 +147,66 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
         <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          Everything You Need to Secure Your Application
+          Robust Security Infrastructure
         </h2>
-        <p class="text-xl text-gray-600">
-          Comprehensive security features built for modern applications
+        <p class="text-xl text-gray-600 font-medium">
+          Comprehensive security features built for mission-critical applications
         </p>
       </div>
 
       <div class="grid md:grid-cols-3 gap-8">
         <!-- Feature 1 -->
         <div class="feature-card bg-white p-8 rounded-xl shadow-sm">
-          <div class="text-4xl mb-4">🔐</div>
-          <h3 class="text-xl font-bold text-gray-900 mb-2">TOTP Two-Factor Authentication</h3>
-          <p class="text-gray-600">RFC 6238 compliant, works seamlessly with Google Authenticator</p>
+          <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-900 mb-6">
+            <i data-lucide="shield-check" class="w-7 h-7"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">TOTP 2FA Authentication</h3>
+          <p class="text-gray-600">RFC 6238 compliant, works seamlessly with Google Authenticator and Authy.</p>
         </div>
 
         <!-- Feature 2 -->
         <div class="feature-card bg-white p-8 rounded-xl shadow-sm fade-in-on-scroll">
-          <div class="text-4xl mb-4">🛡️</div>
-          <h3 class="text-xl font-bold text-gray-900 mb-2">DDoS Protection</h3>
-          <p class="text-gray-600">6-layer security with IP auto-banning and rate limiting</p>
+          <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-900 mb-6">
+            <i data-lucide="activity" class="w-7 h-7"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">DDoS Defense Systems</h3>
+          <p class="text-gray-600">6-layer security with IP auto-banning and intelligent request rate limiting.</p>
         </div>
 
         <!-- Feature 3 -->
         <div class="feature-card bg-white p-8 rounded-xl shadow-sm fade-in-on-scroll">
-          <div class="text-4xl mb-4">🔑</div>
-          <h3 class="text-xl font-bold text-gray-900 mb-2">JWT Session Management</h3>
-          <p class="text-gray-600">Stateless authentication with automatic refresh</p>
+          <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-900 mb-6">
+            <i data-lucide="key" class="w-7 h-7"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">JWT Session Governance</h3>
+          <p class="text-gray-600">Stateless, hardened authentication with automated session refresh protocols.</p>
         </div>
 
         <!-- Feature 4 -->
         <div class="feature-card bg-white p-8 rounded-xl shadow-sm fade-in-on-scroll">
-          <div class="text-4xl mb-4">⏱️</div>
-          <h3 class="text-xl font-bold text-gray-900 mb-2">Inactivity Auto-Logout</h3>
-          <p class="text-gray-600">Configurable timeout with activity tracking</p>
+          <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-900 mb-6">
+            <i data-lucide="clock" class="w-7 h-7"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Auto-Expiry Protocols</h3>
+          <p class="text-gray-600">Configurable inactivity detection with secure, graceful session termination.</p>
         </div>
 
         <!-- Feature 5 -->
         <div class="feature-card bg-white p-8 rounded-xl shadow-sm fade-in-on-scroll">
-          <div class="text-4xl mb-4">🚫</div>
-          <h3 class="text-xl font-bold text-gray-900 mb-2">Account Lockout</h3>
-          <p class="text-gray-600">Protection against brute-force attacks</p>
+          <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-900 mb-6">
+            <i data-lucide="lock" class="w-7 h-7"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Account Lockout Protection</h3>
+          <p class="text-gray-600">Industrial protection against brute-force and dictionary-based attacks.</p>
         </div>
 
         <!-- Feature 6 -->
         <div class="feature-card bg-white p-8 rounded-xl shadow-sm fade-in-on-scroll">
-          <div class="text-4xl mb-4">📊</div>
-          <h3 class="text-xl font-bold text-gray-900 mb-2">Login History</h3>
-          <p class="text-gray-600">Audit trail with IP and device tracking</p>
-        </div>
-
-        <!-- Feature 7 -->
-        <div class="feature-card bg-white p-8 rounded-xl shadow-sm fade-in-on-scroll">
-          <div class="text-4xl mb-4">⚡</div>
-          <h3 class="text-xl font-bold text-gray-900 mb-2">Rate Limiting</h3>
-          <p class="text-gray-600">Configurable request throttling per endpoint</p>
-        </div>
-
-        <!-- Feature 8 -->
-        <div class="feature-card bg-white p-8 rounded-xl shadow-sm fade-in-on-scroll">
-          <div class="text-4xl mb-4">🔒</div>
-          <h3 class="text-xl font-bold text-gray-900 mb-2">bcrypt Password Hashing</h3>
-          <p class="text-gray-600">Industry-standard with adjustable cost</p>
-        </div>
-
-        <!-- Feature 9 -->
-        <div class="feature-card bg-white p-8 rounded-xl shadow-sm fade-in-on-scroll">
-          <div class="text-4xl mb-4">📱</div>
-          <h3 class="text-xl font-bold text-gray-900 mb-2">QR Code Generation</h3>
-          <p class="text-gray-600">One-click setup with authenticator apps</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- How It Works Section -->
-  <section id="how-it-works" class="bg-gray-50 py-20 md:py-32">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16">
-        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          Deploy in Three Simple Steps
-        </h2>
-        <p class="text-xl text-gray-600">
-          Get SecureAuth running faster than ever
-        </p>
-      </div>
-
-      <div class="grid md:grid-cols-3 gap-8">
-        <!-- Step 1 -->
-        <div class="fade-in-on-scroll">
-          <div class="bg-blue-100 text-blue-900 rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mb-4">1</div>
-          <h3 class="text-xl font-bold text-gray-900 mb-2">Install</h3>
-          <p class="text-gray-600 mb-4">Add to your project with npm</p>
-          <div class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-            npm install secureauth
+          <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-900 mb-6">
+            <i data-lucide="bar-chart-3" class="w-7 h-7"></i>
           </div>
-        </div>
-
-        <!-- Step 2 -->
-        <div class="fade-in-on-scroll">
-          <div class="bg-blue-100 text-blue-900 rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mb-4">2</div>
-          <h3 class="text-xl font-bold text-gray-900 mb-2">Integrate</h3>
-          <p class="text-gray-600 mb-4">Add middleware to Express</p>
-          <div class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-            <div>app.use(auth.middleware();</div>
-          </div>
-        </div>
-
-        <!-- Step 3 -->
-        <div class="fade-in-on-scroll">
-          <div class="bg-blue-100 text-blue-900 rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mb-4">✓</div>
-          <h3 class="text-xl font-bold text-gray-900 mb-2">Deploy</h3>
-          <p class="text-gray-600 mb-4">Protected in production</p>
-          <div class="bg-green-50 border-2 border-green-500 text-green-900 p-4 rounded-lg font-semibold text-center">
-            Ready to Go
-          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Security Ledger</h3>
+          <p class="text-gray-600">Real-time audit trail with IP, device, and geolocation tracking capabilities.</p>
         </div>
       </div>
     </div>
@@ -266,59 +215,158 @@
   <!-- CTA Section -->
   <section class="hero-gradient text-white py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <h2 class="text-4xl font-bold mb-4">Ready to Secure Your Application?</h2>
-      <p class="text-xl text-blue-100 mb-8">Join developers protecting their applications</p>
-      <a href="register.html" class="inline-block bg-white text-blue-900 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
-        Create Free Account
+      <h2 class="text-4xl font-black mb-4">Enterprise-Ready Deployment</h2>
+      <p class="text-xl text-blue-100 mb-8 font-medium">Join organizations protecting their systems with SecureAuth.</p>
+      <a href="register.html" class="inline-block bg-white text-blue-900 px-10 py-4 rounded-xl font-black uppercase tracking-widest hover:bg-gray-100 transition shadow-2xl">
+        Get Started Now
       </a>
     </div>
   </section>
 
+  <!-- Protected Companies Section -->
+    <section class="py-24 bg-white overflow-hidden border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="inline-block bg-blue-900/10 text-blue-900 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">Infrastructure Partners</span>
+                <h2 class="text-3xl font-black text-gray-900 tracking-tight">Protected Ecosystem</h2>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-12 items-center opacity-60">
+                <div class="flex flex-col items-center space-y-4 group transition-all duration-700 hover:scale-110">
+                    <div class="w-20 h-20 bg-gray-50 rounded-[2.5rem] flex items-center justify-center text-blue-900 group-hover:bg-blue-900 group-hover:text-white transition-all duration-500 shadow-sm group-hover:shadow-2xl">
+                        <i data-lucide="cpu" class="w-10 h-10"></i>
+                    </div>
+                    <span class="text-xs font-black text-gray-400 group-hover:text-gray-900 transition-colors uppercase tracking-widest">TechGuard</span>
+                </div>
+                <div class="flex flex-col items-center space-y-4 group transition-all duration-700 hover:scale-110">
+                    <div class="w-20 h-20 bg-gray-50 rounded-[2.5rem] flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 shadow-sm group-hover:shadow-2xl">
+                        <i data-lucide="cloud" class="w-10 h-10"></i>
+                    </div>
+                    <span class="text-xs font-black text-gray-400 group-hover:text-gray-900 transition-colors uppercase tracking-widest">CloudShield</span>
+                </div>
+                <div class="flex flex-col items-center space-y-4 group transition-all duration-700 hover:scale-110">
+                    <div class="w-20 h-20 bg-gray-50 rounded-[2.5rem] flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-500 shadow-sm group-hover:shadow-2xl">
+                        <i data-lucide="database" class="w-10 h-10"></i>
+                    </div>
+                    <span class="text-xs font-black text-gray-400 group-hover:text-gray-900 transition-colors uppercase tracking-widest">DataFortress</span>
+                </div>
+                <div class="flex flex-col items-center space-y-4 group transition-all duration-700 hover:scale-110">
+                    <div class="w-20 h-20 bg-gray-50 rounded-[2.5rem] flex items-center justify-center text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-all duration-500 shadow-sm group-hover:shadow-2xl">
+                        <i data-lucide="lock" class="w-10 h-10"></i>
+                    </div>
+                    <span class="text-xs font-black text-gray-400 group-hover:text-gray-900 transition-colors uppercase tracking-widest">CyberArmor</span>
+                </div>
+                <div class="flex flex-col items-center space-y-4 group transition-all duration-700 hover:scale-110 col-span-2 md:col-span-1">
+                    <div class="w-20 h-20 bg-gray-50 rounded-[2.5rem] flex items-center justify-center text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-all duration-500 shadow-sm group-hover:shadow-2xl">
+                        <i data-lucide="activity" class="w-10 h-10"></i>
+                    </div>
+                    <span class="text-xs font-black text-gray-400 group-hover:text-gray-900 transition-colors uppercase tracking-widest">SecureNet</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
   <!-- Footer -->
-  <footer id="footer" class="bg-gray-900 text-gray-300 py-16">
+  <footer id="footer" class="bg-gray-900 text-gray-300 py-24">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid md:grid-cols-3 gap-12 mb-12">
+      <div class="grid md:grid-cols-3 gap-16 mb-16">
         <!-- Left Column -->
-        <div>
-          <div class="flex items-center space-x-2 mb-4">
-            <div class="text-2xl">🔐</div>
-            <span class="text-xl font-bold text-white">SecureAuth</span>
+        <div class="space-y-8">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-blue-900 shadow-2xl">
+                <i data-lucide="shield-check" class="w-7 h-7"></i>
+            </div>
+            <span class="text-3xl font-black tracking-tighter text-white">SecureAuth</span>
           </div>
-          <p class="mb-4">Built by Bwalya Adrian Mange</p>
-          <p class="text-sm">Student ID: 106-293</p>
-          <p class="text-sm">Cavendish University Zambia</p>
-          <p class="text-sm mt-2">BSc Computing (Year 4) - Cybersecurity</p>
+          <p class="leading-relaxed text-lg font-medium text-gray-400">Advanced 2FA and DDoS defense systems engineered for absolute protection. The definitive security standard for enterprise authentication.</p>
+          <div class="flex space-x-5">
+              <a href="https://github.com/MetaADRI" target="_blank" class="w-12 h-12 bg-gray-800 rounded-2xl flex items-center justify-center hover:bg-white hover:text-gray-900 transition-all duration-500 hover:-translate-y-2 shadow-lg">
+                  <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.372.79 1.102.79 2.222v3.293c0 .319.21.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+              </a>
+              <a href="https://www.linkedin.com/in/bwalya-adrian-mange-4101a8396" target="_blank" class="w-12 h-12 bg-gray-800 rounded-2xl flex items-center justify-center hover:bg-white hover:text-gray-900 transition-all duration-500 hover:-translate-y-2 shadow-lg">
+                  <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.6 1.437-1.237 2.673-1.237 2.856 0 3.385 1.88 3.385 4.327v6.804zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              </a>
+              <a href="mailto:adrianmange00@gmail.com" class="w-12 h-12 bg-gray-800 rounded-2xl flex items-center justify-center hover:bg-white hover:text-gray-900 transition-all duration-500 hover:-translate-y-2 shadow-lg">
+                  <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 5.457v13.909c0 .904-.732 1.634-1.634 1.634h-20.732c-.902 0-1.634-.73-1.634-1.634v-13.909l12 7 12-7zm-12 4.671l-10.756-6.271c-.269.172-.444.47-.444.808v.537l11.2 6.533 11.2-6.533v-.537c0-.338-.175-.636-.444-.808l-10.756 6.271z"/></svg>
+              </a>
+          </div>
         </div>
 
         <!-- Middle Column -->
-        <div>
-          <h4 class="text-white font-semibold mb-4">Links</h4>
-          <ul class="space-y-2 text-sm">
-            <li><a href="#features" class="hover:text-white transition">Features</a></li>
-            <li><a href="#how-it-works" class="hover:text-white transition">Documentation</a></li>
-            <li><a href="https://github.com" class="hover:text-white transition">GitHub</a></li>
+        <div class="space-y-8">
+          <h4 class="text-white font-black border-b border-gray-800 pb-5 uppercase tracking-widest text-gray-500">Global Contact</h4>
+          <ul class="space-y-6">
+            <li>
+                <a href="mailto:adrianmange00@gmail.com" class="group flex items-center space-x-5 text-gray-400 hover:text-white transition-all duration-300">
+                    <div class="w-12 h-12 rounded-2xl bg-gray-800 flex items-center justify-center group-hover:bg-blue-600 transition-all duration-500 group-hover:scale-110">
+                        <i data-lucide="mail" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-lg font-bold">adrianmange00@gmail.com</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.linkedin.com/in/bwalya-adrian-mange-4101a8396" target="_blank" class="group flex items-center space-x-5 text-gray-400 hover:text-white transition-all duration-300">
+                    <div class="w-12 h-12 rounded-2xl bg-gray-800 flex items-center justify-center group-hover:bg-blue-600 transition-all duration-500 group-hover:scale-110">
+                        <i data-lucide="linkedin" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-lg font-bold">Professional LinkedIn</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/MetaADRI" target="_blank" class="group flex items-center space-x-5 text-gray-400 hover:text-white transition-all duration-300">
+                    <div class="w-12 h-12 rounded-2xl bg-gray-800 flex items-center justify-center group-hover:bg-blue-600 transition-all duration-500 group-hover:scale-110">
+                        <i data-lucide="github" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-lg font-bold">GitHub Archive</span>
+                </a>
+            </li>
           </ul>
         </div>
 
         <!-- Right Column -->
-        <div>
-          <h4 class="text-white font-semibold mb-4">Get in Touch</h4>
-          <p class="mb-4 text-sm">Interested in using SecureAuth?</p>
-          <button class="btn-primary text-white px-6 py-2 rounded-lg font-semibold text-sm">
-            Contact Us
-          </button>
-          <p class="text-sm mt-4">Email: contact@secureauth.dev</p>
+        <div class="space-y-8">
+            <h4 class="text-white font-black border-b border-gray-800 pb-5 uppercase tracking-widest text-gray-500">Project Foundation</h4>
+            <div class="bg-gray-800/40 p-8 rounded-[2rem] border border-gray-800 hover:border-blue-600 transition-all duration-500 shadow-inner group">
+                <div class="space-y-4">
+                    <p class="text-white font-black text-2xl tracking-tight">Bwalya Adrian Mange</p>
+                    <div class="space-y-2">
+                        <p class="text-gray-400 font-bold flex items-center"><i data-lucide="hash" class="w-4 h-4 mr-2"></i> 106-293</p>
+                        <p class="text-gray-400 font-bold flex items-center"><i data-lucide="graduation-cap" class="w-4 h-4 mr-2"></i> Cavendish University</p>
+                        <p class="text-gray-500 italic font-medium">BSc Computing Capstone</p>
+                    </div>
+                </div>
+                <div class="mt-8 pt-8 border-t border-gray-700 flex justify-between items-center">
+                    <span class="inline-flex items-center px-4 py-2 bg-blue-600/20 text-blue-600 rounded-2xl text-[10px] font-black uppercase tracking-widest">
+                        <i data-lucide="shield" class="w-3 h-3 mr-2"></i>
+                        Cybersecurity
+                    </span>
+                </div>
+            </div>
         </div>
       </div>
 
       <!-- Bottom -->
-      <div class="border-t border-gray-700 pt-8 text-center text-sm">
-        <p>&copy; 2026 SecureAuth. All rights reserved. | Built with ❤️ for security-first developers</p>
+      <div class="border-t border-gray-800 pt-8 text-center text-sm font-black uppercase tracking-[0.2em] text-gray-500">
+        <p>&copy; 2026 SECUREAUTH INFRASTRUCTURE. ALL RIGHTS RESERVED.</p>
       </div>
     </div>
   </footer>
 
-  <!-- Scroll Animations Script -->
-  <script src="js/animations.js"></script>
+  <!-- Initialization -->
+  <script>
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
+    // Simple fade-in observer
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in-on-scroll').forEach(el => observer.observe(el));
+  </script>
 </body>
 </html>

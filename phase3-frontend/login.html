@@ -13,6 +13,9 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
     <script>
         tailwind.config = {
             theme: {
@@ -72,19 +75,15 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen flex items-center justify-center p-4">
+<body class="bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen flex flex-col items-center p-4">
     
-    <div class="w-full max-w-md">
-        <!-- Logo Header - Logo on top, text below -->
+    <div class="w-full max-w-md mt-12 mb-12">
+        <!-- Logo Header -->
         <div class="text-center mb-8">
             <a href="index.html" class="inline-flex flex-col items-center">
-                <!-- Logo Icon -->
                 <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-3 shadow-lg" style="background: linear-gradient(135deg, #003366 0%, #0066CC 100%);">
-                    <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                    </svg>
+                    <i data-lucide="shield-check" class="w-9 h-9 text-white"></i>
                 </div>
-                <!-- SecureAuth Text Below -->
                 <span class="text-2xl font-bold text-cuz-blue">SecureAuth</span>
             </a>
             <h1 class="text-2xl font-bold text-dark-gray mt-4">Welcome Back</h1>
@@ -102,9 +101,7 @@
                     </label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="w-5 h-5 text-metallic" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
-                            </svg>
+                            <i data-lucide="mail" class="w-5 h-5 text-metallic"></i>
                         </div>
                         <input 
                             type="email" 
@@ -123,9 +120,7 @@
                     </label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="w-5 h-5 text-metallic" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                            </svg>
+                            <i data-lucide="lock" class="w-5 h-5 text-metallic"></i>
                         </div>
                         <input 
                             type="password" 
@@ -139,10 +134,7 @@
                             id="togglePassword"
                             class="absolute inset-y-0 right-0 pr-3 flex items-center text-metallic hover:text-cuz-blue transition-colors"
                         >
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="eyeIcon">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                            </svg>
+                            <i data-lucide="eye" class="w-5 h-5" id="eyeIcon"></i>
                         </button>
                     </div>
                 </div>
@@ -150,19 +142,15 @@
                 <!-- Error Alert -->
                 <div id="errorAlert" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
                     <div class="flex items-center">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
+                        <i data-lucide="alert-circle" class="w-4 h-4 mr-2"></i>
                         <span id="errorMessage"></span>
                     </div>
                 </div>
                 
-                <!-- Lockout Warning (Hidden by default) -->
+                <!-- Lockout Warning -->
                 <div id="lockoutWarning" class="hidden bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-xl text-sm">
                     <div class="flex items-center mb-2">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                        </svg>
+                        <i data-lucide="alert-triangle" class="w-4 h-4 mr-2"></i>
                         <span class="font-semibold">Account Lockout Warning</span>
                     </div>
                     <p id="attemptsText" class="mb-2 text-yellow-700"></p>
@@ -185,12 +173,10 @@
                 </button>
             </form>
             
-            <!-- 2FA Success State (Hidden initially) -->
+            <!-- Success State -->
             <div id="successSection" class="hidden text-center py-4">
                 <div class="w-16 h-16 bg-cuz-blue/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-8 h-8 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                    </svg>
+                    <i data-lucide="check-circle" class="w-8 h-8 text-cuz-blue"></i>
                 </div>
                 <h3 class="text-xl font-bold text-dark-gray mb-2">Password Verified</h3>
                 <p class="text-metallic mb-4">Redirecting to 2FA verification...</p>
@@ -206,25 +192,147 @@
                 Don't have an account? 
                 <a href="register.html" class="text-cuz-blue hover:text-cuz-blue-light font-semibold transition-colors">Register</a>
             </p>
-            <a href="index.html" class="inline-flex items-center text-metallic hover:text-cuz-blue transition-colors text-sm">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                </svg>
+            <a href="index.html" class="inline-flex items-center text-metallic hover:text-cuz-blue transition-colors text-sm font-medium">
+                <i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i>
                 Back to Home
             </a>
         </div>
-        
-        <!-- Security Badge -->
-        <div class="flex items-center justify-center mt-8 text-metallic text-sm">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-            </svg>
-            <span>Protected by 256-bit encryption</span>
-        </div>
     </div>
+
+    <!-- Protected Companies Section -->
+    <section class="py-16 bg-white overflow-hidden border-t border-gray-100 mt-auto w-full">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-sm font-semibold text-metallic uppercase tracking-widest mb-12">Trusted by Industry Leaders</p>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-8 items-center opacity-70">
+                <div class="flex flex-col items-center space-y-2 group transition-all duration-500 hover:scale-110">
+                    <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-cuz-blue group-hover:bg-cuz-blue group-hover:text-white transition-colors duration-300">
+                        <i data-lucide="cpu" class="w-8 h-8"></i>
+                    </div>
+                    <span class="text-sm font-bold text-dark-gray">TechGuard</span>
+                </div>
+                <div class="flex flex-col items-center space-y-2 group transition-all duration-500 hover:scale-110">
+                    <div class="w-16 h-16 bg-cyan-50 rounded-2xl flex items-center justify-center text-cuz-blue-light group-hover:bg-cuz-blue-light group-hover:text-white transition-colors duration-300">
+                        <i data-lucide="cloud" class="w-8 h-8"></i>
+                    </div>
+                    <span class="text-sm font-bold text-dark-gray">CloudShield</span>
+                </div>
+                <div class="flex flex-col items-center space-y-2 group transition-all duration-500 hover:scale-110">
+                    <div class="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-300">
+                        <i data-lucide="database" class="w-8 h-8"></i>
+                    </div>
+                    <span class="text-sm font-bold text-dark-gray">DataFortress</span>
+                </div>
+                <div class="flex flex-col items-center space-y-2 group transition-all duration-500 hover:scale-110">
+                    <div class="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-colors duration-300">
+                        <i data-lucide="lock" class="w-8 h-8"></i>
+                    </div>
+                    <span class="text-sm font-bold text-dark-gray">CyberArmor</span>
+                </div>
+                <div class="flex flex-col items-center space-y-2 group transition-all duration-500 hover:scale-110 col-span-2 md:col-span-1">
+                    <div class="w-16 h-16 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors duration-300">
+                        <i data-lucide="activity" class="w-8 h-8"></i>
+                    </div>
+                    <span class="text-sm font-bold text-dark-gray">SecureNet</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-cuz-blue-dark text-white py-16 w-full">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-3 gap-12">
+                <!-- Company Info -->
+                <div class="space-y-6">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
+                            <i data-lucide="shield-check" class="w-6 h-6 text-cuz-blue"></i>
+                        </div>
+                        <span class="text-2xl font-bold tracking-tight">SecureAuth</span>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">
+                        Enterprise-grade two-factor authentication and DDoS protection system. Engineered for absolute security, designed for seamless user experience.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="https://github.com/MetaADRI" target="_blank" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-white hover:text-cuz-blue-dark transition-all duration-300">
+                            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.372.79 1.102.79 2.222v3.293c0 .319.21.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                        </a>
+                        <a href="https://www.linkedin.com/in/bwalya-adrian-mange-4101a8396" target="_blank" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-white hover:text-cuz-blue-dark transition-all duration-300">
+                            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.6 1.437-1.237 2.673-1.237 2.856 0 3.385 1.88 3.385 4.327v6.804zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                        </a>
+                        <a href="mailto:adrianmange00@gmail.com" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-white hover:text-cuz-blue-dark transition-all duration-300">
+                            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 5.457v13.909c0 .904-.732 1.634-1.634 1.634h-20.732c-.902 0-1.634-.73-1.634-1.634v-13.909l12 7 12-7zm-12 4.671l-10.756-6.271c-.269.172-.444.47-.444.808v.537l11.2 6.533 11.2-6.533v-.537c0-.338-.175-.636-.444-.808l-10.756 6.271z"/></svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Contact Section -->
+                <div class="space-y-6">
+                    <h4 class="text-lg font-bold border-b border-gray-800 pb-2">Contact Me</h4>
+                    <ul class="space-y-4">
+                        <li>
+                            <a href="mailto:adrianmange00@gmail.com" class="group flex items-center space-x-3 text-gray-400 hover:text-white transition-colors">
+                                <div class="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center group-hover:bg-cuz-blue-light transition-colors">
+                                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 5.457v13.909c0 .904-.732 1.634-1.634 1.634h-20.732c-.902 0-1.634-.73-1.634-1.634v-13.909l12 7 12-7zm-12 4.671l-10.756-6.271c-.269.172-.444.47-.444.808v.537l11.2 6.533 11.2-6.533v-.537c0-.338-.175-.636-.444-.808l-10.756 6.271z"/></svg>
+                                </div>
+                                <span>adrianmange00@gmail.com</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.linkedin.com/in/bwalya-adrian-mange-4101a8396" target="_blank" class="group flex items-center space-x-3 text-gray-400 hover:text-white transition-colors">
+                                <div class="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center group-hover:bg-cuz-blue-light transition-colors">
+                                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.6 1.437-1.237 2.673-1.237 2.856 0 3.385 1.88 3.385 4.327v6.804zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                                </div>
+                                <span>LinkedIn Profile</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/MetaADRI" target="_blank" class="group flex items-center space-x-3 text-gray-400 hover:text-white transition-colors">
+                                <div class="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center group-hover:bg-cuz-blue-light transition-colors">
+                                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.372.79 1.102.79 2.222v3.293c0 .319.21.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                                </div>
+                                <span>GitHub Repository</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Institution Info -->
+                <div class="space-y-6">
+                    <h4 class="text-lg font-bold border-b border-gray-800 pb-2">Academic Project</h4>
+                    <div class="bg-gray-800/50 p-6 rounded-2xl border border-gray-800">
+                        <p class="text-sm text-gray-400 space-y-2">
+                            <span class="block text-white font-medium">Bwalya Adrian Mange (106-293)</span>
+                            <span class="block">Cavendish University Zambia</span>
+                            <span class="block italic">BSc Computing Final Year Project</span>
+                        </p>
+                        <div class="mt-4 pt-4 border-t border-gray-700">
+                            <span class="inline-flex items-center px-3 py-1 bg-cuz-blue-light/20 text-cuz-blue-light rounded-full text-xs font-bold uppercase tracking-wider">
+                                <i data-lucide="shield" class="w-3 h-3 mr-1"></i>
+                                Cybersecurity
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm">
+                <p>&copy; 2026 SecureAuth System. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
     
     <script src="js/auth.js"></script>
     <script>
+        // Initialize Lucide icons
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+
         // Password visibility toggle
         const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
@@ -235,10 +343,11 @@
             passwordInput.setAttribute('type', type);
             // Update icon
             if (type === 'password') {
-                eyeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>';
+                eyeIcon.setAttribute('data-lucide', 'eye');
             } else {
-                eyeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>';
+                eyeIcon.setAttribute('data-lucide', 'eye-off');
             }
+            lucide.createIcons();
         });
         
         // Login attempts tracking for UI
@@ -268,7 +377,7 @@
             btnText.textContent = 'Verifying...';
             
             try {
-                const response = await fetch('http://localhost:3000/api/login', {
+                const response = await fetch('/api/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
