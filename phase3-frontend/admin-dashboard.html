@@ -103,7 +103,7 @@
                     <span class="text-xs font-bold text-slate-300 uppercase tracking-widest">System Online</span>
                 </div>
                 
-                <button onclick="performLogout()" class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition-all">
+                <button onclick="performLogout()" class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition-all" title="Logout">
                     <i data-lucide="log-out" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -195,6 +195,7 @@
                             </thead>
                             <tbody id="logs-stream-body" class="divide-y divide-slate-800/50">
                                 <!-- Logs will appear here -->
+                                <tr><td colspan="4" class="px-8 py-10 text-center text-slate-500 italic">Initializing stream...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -218,6 +219,7 @@
                             </thead>
                             <tbody id="users-table-body" class="divide-y divide-slate-800/50">
                                 <!-- Users will appear here -->
+                                <tr><td colspan="4" class="px-8 py-10 text-center text-slate-500 italic">Fetching user registry...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -233,8 +235,21 @@
                              <input type="text" id="logSearch" placeholder="Filter logs..." class="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-xs font-bold outline-none focus:border-cuz-blue-light transition-all">
                         </div>
                     </div>
-                    <div class="overflow-x-auto custom-scrollbar" id="logs-full-container">
-                         <!-- Filled by JS -->
+                    <div class="overflow-x-auto custom-scrollbar max-h-[70vh]">
+                         <table class="w-full text-left">
+                            <thead class="bg-slate-900/50 sticky top-0">
+                                <tr>
+                                    <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">User / Actor</th>
+                                    <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">Event Protocol</th>
+                                    <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">Origin IP</th>
+                                    <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logs-full-body" class="divide-y divide-slate-800/50">
+                                <!-- Full logs will appear here -->
+                                <tr><td colspan="4" class="px-8 py-10 text-center text-slate-500 italic">Syncing full audit stream...</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -253,11 +268,16 @@
 
     <script src="js/auth.js"></script>
     <script>
+        console.log("Admin Dashboard Script Initializing...");
+
         // Check Admin Auth
         const accessToken = localStorage.getItem('accessToken');
         const user = JSON.parse(localStorage.getItem('user') || '{}');
         
+        console.log("Auth Status Check:", { hasToken: !!accessToken, role: user.role });
+
         if (!accessToken || user.role !== 'admin') {
+            console.warn("Unauthorized access detected. Redirecting to login...");
             window.location.href = 'admin-login.html';
         }
 
@@ -267,18 +287,29 @@
 
         // Tab Management
         function switchTab(tabId) {
+            console.log("Switching to tab:", tabId);
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            const targetTab = document.getElementById('tab-' + tabId);
+            if (targetTab) {
+                targetTab.classList.remove('hidden');
+            } else {
+                console.error("Target tab not found:", tabId);
+                return;
+            }
             
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('bg-cuz-blue-light', 'text-white');
                 btn.classList.add('text-slate-400');
             });
-            document.getElementById('btn-' + tabId).classList.add('bg-cuz-blue-light', 'text-white');
-            document.getElementById('btn-' + tabId).classList.remove('text-slate-400');
+            const targetBtn = document.getElementById('btn-' + tabId);
+            if (targetBtn) {
+                targetBtn.classList.add('bg-cuz-blue-light', 'text-white');
+                targetBtn.classList.remove('text-slate-400');
+            }
         }
 
         async function loadData() {
+            console.log("Loading dashboard data...");
             try {
                 // Load Stats
                 const statsRes = await fetch('/api/admin/stats', {
@@ -290,6 +321,9 @@
                     document.getElementById('stat-logs').textContent = data.stats.totalLogs;
                     document.getElementById('stat-security').textContent = data.stats.securityEvents;
                     document.getElementById('stat-health').textContent = data.stats.systemHealth;
+                    console.log("Stats loaded successfully.");
+                } else {
+                    console.error("Failed to load stats:", statsRes.status);
                 }
 
                 // Load Logs
@@ -299,6 +333,7 @@
                 if (logsRes.ok) {
                     const data = await logsRes.json();
                     renderLogs(data.logs);
+                    console.log(`Loaded ${data.logs.length} logs.`);
                     
                     // Check for deletion requests
                     const hasDeletionRequests = data.logs.some(log => log.action === 'deletion_request');
@@ -307,6 +342,8 @@
                     } else {
                         document.getElementById('deletionAlert').classList.add('hidden');
                     }
+                } else {
+                    console.error("Failed to load logs:", logsRes.status);
                 }
 
                 // Load Users
@@ -316,6 +353,9 @@
                 if (usersRes.ok) {
                     const data = await usersRes.json();
                     renderUsers(data.users);
+                    console.log(`Loaded ${data.users.length} users.`);
+                } else {
+                    console.error("Failed to load users:", usersRes.status);
                 }
 
             } catch (error) {
@@ -324,37 +364,50 @@
         }
 
         function renderLogs(logs) {
-            const streamBody = document.getElementById('logs-stream-body');
-            streamBody.innerHTML = '';
+            const targets = ['logs-stream-body', 'logs-full-body'];
             
-            logs.slice(0, 20).forEach(log => {
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-800/30 transition-colors';
+            targets.forEach(targetId => {
+                const streamBody = document.getElementById(targetId);
+                if (!streamBody) return;
                 
-                const actionClass = getActionClass(log.action);
-                const date = new Date(log.timestamp).toLocaleString();
+                streamBody.innerHTML = '';
                 
-                tr.innerHTML = `
-                    <td class="px-8 py-5">
-                        <div class="flex flex-col">
-                            <span class="text-sm font-bold text-white">${log.full_name || 'Anonymous'}</span>
-                            <span class="text-[10px] text-slate-500 font-mono">${log.email || 'system-event'}</span>
-                        </div>
-                    </td>
-                    <td class="px-8 py-5">
-                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${actionClass}">
-                            ${log.action.replace(/_/g, ' ')}
-                        </span>
-                    </td>
-                    <td class="px-8 py-5 text-xs text-slate-400 font-mono font-bold">${log.ip_address}</td>
-                    <td class="px-8 py-5 text-right text-[10px] text-slate-500 font-bold">${date}</td>
-                `;
-                streamBody.appendChild(tr);
+                // Show more logs in the full view
+                const limit = targetId === 'logs-full-body' ? 100 : 20;
+                
+                logs.slice(0, limit).forEach(log => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-800/30 transition-colors';
+                    
+                    const actionClass = getActionClass(log.action);
+                    const date = new Date(log.timestamp).toLocaleString();
+                    
+                    tr.innerHTML = `
+                        <td class="px-8 py-5">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold text-white">${log.full_name || 'Anonymous'}</span>
+                                <span class="text-[10px] text-slate-500 font-mono">${log.email || 'system-event'}</span>
+                            </div>
+                        </td>
+                        <td class="px-8 py-5">
+                            <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${actionClass}">
+                                ${log.action.replace(/_/g, ' ')}
+                            </span>
+                        </td>
+                        <td class="px-8 py-5 text-xs text-slate-400 font-mono font-bold">${log.ip_address}</td>
+                        <td class="px-8 py-5 text-right text-[10px] text-slate-500 font-bold">${date}</td>
+                    `;
+                    streamBody.appendChild(tr);
+                });
             });
+            
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
         function renderUsers(users) {
             const tableBody = document.getElementById('users-table-body');
+            if (!tableBody) return;
+            
             tableBody.innerHTML = '';
             
             users.forEach(u => {
@@ -385,7 +438,8 @@
                 `;
                 tableBody.appendChild(tr);
             });
-            lucide.createIcons();
+            
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
         function getActionClass(action) {
@@ -425,10 +479,22 @@
         }
 
         function performLogout() {
+            console.log("Performing administrator logout...");
             localStorage.removeItem('accessToken');
             localStorage.removeItem('user');
             window.location.href = 'admin-login.html';
         }
+
+        // Search filtering for logs
+        document.getElementById('logSearch').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#logs-full-body tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(term) ? '' : 'none';
+            });
+        });
 
         loadData();
         // Refresh every 30 seconds
