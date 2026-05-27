@@ -1,7 +1,7 @@
 {
   "name": "secureauth-nodejs",
   "version": "2.1.0",
-  "description": "SecureAuth - Enterprise Two-Factor Authentication System with DDoS Protection (Node.js/Express)",
+  "description": "SecureAuth - Enterprise Two-Factor Authentication System with Application Flood Protection (Node.js/Express)",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

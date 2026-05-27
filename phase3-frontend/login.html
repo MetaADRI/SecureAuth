@@ -192,10 +192,16 @@
                 Don't have an account? 
                 <a href="register.html" class="text-cuz-blue hover:text-cuz-blue-light font-semibold transition-colors">Register</a>
             </p>
-            <a href="index.html" class="inline-flex items-center text-metallic hover:text-cuz-blue transition-colors text-sm font-medium">
-                <i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i>
-                Back to Home
-            </a>
+            <div class="flex flex-col space-y-2">
+                <a href="admin-login.html" class="inline-flex items-center justify-center text-slate-400 hover:text-cuz-blue transition-colors text-xs font-bold uppercase tracking-widest">
+                    <i data-lucide="shield-alert" class="w-3 h-3 mr-1"></i>
+                    Admin Terminal
+                </a>
+                <a href="index.html" class="inline-flex items-center justify-center text-metallic hover:text-cuz-blue transition-colors text-sm font-medium">
+                    <i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i>
+                    Back to Home
+                </a>
+            </div>
         </div>
     </div>
 
@@ -251,7 +257,7 @@
                         <span class="text-2xl font-bold tracking-tight">SecureAuth</span>
                     </div>
                     <p class="text-gray-400 leading-relaxed">
-                        Enterprise-grade two-factor authentication and DDoS protection system. Engineered for absolute security, designed for seamless user experience.
+                        Enterprise-grade two-factor authentication and flood protection system. Engineered for absolute security, designed for seamless user experience.
                     </p>
                     <div class="flex space-x-4">
                         <a href="https://github.com/MetaADRI" target="_blank" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-white hover:text-cuz-blue-dark transition-all duration-300">
@@ -427,6 +433,15 @@
                 errorMessage.textContent = 'Connection error. Is the server running?';
                 errorAlert.classList.remove('hidden');
                 errorAlert.classList.add('shake');
+                setTimeout(() => errorAlert.classList.remove('shake'), 500);
+                loginBtn.disabled = false;
+                loadingSpinner.classList.add('hidden');
+                btnText.textContent = 'Continue to 2FA';
+            }
+        });
+    </script>
+</body>
+</html>rrorAlert.classList.add('shake');
                 setTimeout(() => errorAlert.classList.remove('shake'), 500);
                 loginBtn.disabled = false;
                 loadingSpinner.classList.add('hidden');

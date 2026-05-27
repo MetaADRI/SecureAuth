@@ -294,13 +294,13 @@ async function verifyTOTP(req, res) {
     }
 
     // TOTP valid - generate full access JWT
-    const fullToken = jwtUtils.generateFullJWT(user.id, user.email, user.full_name);
+    const fullToken = jwtUtils.generateFullJWT(user.id, user.email, user.full_name, user.role);
 
     // Log successful 2FA and login
     await insertAuditLog(userId, '2fa_success', ipAddress, userAgent);
     await insertAuditLog(userId, 'login_success', ipAddress, userAgent);
 
-    console.log(`✓ 2FA successful for: ${user.email}`);
+    console.log(`✓ 2FA successful for: ${user.email} (Role: ${user.role || 'user'})`);
 
     return res.status(200).json({
       message: '2FA verification successful. You are now logged in.',
@@ -309,6 +309,7 @@ async function verifyTOTP(req, res) {
         id: user.id,
         email: user.email,
         fullName: user.full_name,
+        role: user.role || 'user',
         createdAt: user.created_at
       }
     });
@@ -403,10 +404,31 @@ async function getLoginHistory(req, res) {
   }
 }
 
+/**
+ * Request account deletion
+ */
+async function requestDeletion(req, res) {
+  try {
+    const userId = req.user.user_id;
+    const ipAddress = req.ip || 'unknown';
+    const userAgent = req.get('User-Agent') || 'unknown';
+
+    await insertAuditLog(userId, 'deletion_request', ipAddress, userAgent);
+
+    return res.status(200).json({
+      message: 'Deletion request sent successfully'
+    });
+  } catch (error) {
+    console.error('Deletion request error:', error);
+    return res.status(500).json({ error: 'Failed to request deletion' });
+  }
+}
+
 module.exports = {
   register,
   loginStep1,
   verifyTOTP,
   getDashboard,
-  getLoginHistory
+  getLoginHistory,
+  requestDeletion
 };

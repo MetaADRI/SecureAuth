@@ -110,6 +110,7 @@
                 
                 <!-- Desktop Navigation -->
                 <div class="hidden md:flex items-center space-x-8">
+                    <a href="admin-dashboard.html" id="adminLink" class="hidden text-slate-500 hover:text-cuz-blue transition-all font-medium text-sm">Admin Panel</a>
                     <div class="flex items-center space-x-3 text-slate-700 bg-slate-100 px-4 py-2 rounded-full border border-slate-200">
                         <div class="w-6 h-6 bg-cuz-blue rounded-full flex items-center justify-center">
                             <i data-lucide="user" class="w-3 h-3 text-white"></i>
@@ -279,6 +280,16 @@
                             </div>
                             <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-cuz-blue transition-colors"></i>
                         </button>
+                        
+                        <button id="deleteRequestBtn" class="w-full flex items-center justify-between p-4 rounded-2xl border border-rose-100 hover:border-rose-600 hover:bg-rose-50 transition-all group text-left mt-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 bg-rose-100 rounded-xl flex items-center justify-center group-hover:bg-rose-600 group-hover:text-white transition-colors">
+                                    <i data-lucide="user-x" class="w-5 h-5"></i>
+                                </div>
+                                <span class="font-bold text-rose-700 text-sm">Request Account Deletion</span>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-rose-300 group-hover:text-rose-600 transition-colors"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -391,7 +402,7 @@
                         <span class="text-3xl font-black tracking-tighter">SecureAuth</span>
                     </div>
                     <p class="text-slate-400 leading-relaxed text-lg font-medium">
-                        Advanced 2FA and DDoS defense systems engineered for absolute protection. The definitive security standard for enterprise authentication.
+                        Advanced 2FA and flood defense systems engineered for absolute protection. The definitive security standard for enterprise authentication.
                     </p>
                     <div class="flex space-x-5">
                         <a href="https://github.com/MetaADRI" target="_blank" class="w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center hover:bg-white hover:text-cuz-blue-dark transition-all duration-500 hover:-translate-y-2 shadow-lg">
@@ -648,9 +659,73 @@
         if (logoutBtnDesktop) logoutBtnDesktop.addEventListener('click', performLogout);
         if (logoutBtnMobile) logoutBtnMobile.addEventListener('click', performLogout);
         
+        // Deletion request
+        const deleteRequestBtn = document.getElementById('deleteRequestBtn');
+        if (deleteRequestBtn) {
+            deleteRequestBtn.addEventListener('click', async () => {
+                if (confirm('Are you sure you want to request account deletion? This action cannot be undone.')) {
+                    try {
+                        const response = await fetch('/api/request-deletion', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${accessToken}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            alert('Deletion request sent to administrator.');
+                        } else {
+                            alert('Failed to send request. Please try again.');
+                        }
+                    } catch (error) {
+                        console.error('Error requesting deletion:', error);
+                    }
+                }
+            });
+        }
+        
         // Load data
         loadUserData();
         loadDashboardData();
     </script>
+</body>
+</html>ById('logoutBtnMobile');
+        
+        if (logoutBtnDesktop) logoutBtnDesktop.addEventListener('click', performLogout);
+        if (logoutBtnMobile) logoutBtnMobile.addEventListener('click', performLogout);
+        
+        // Deletion request
+        const deleteRequestBtn = document.getElementById('deleteRequestBtn');
+        if (deleteRequestBtn) {
+            deleteRequestBtn.addEventListener('click', async () => {
+                if (confirm('Are you sure you want to request account deletion? This action cannot be undone.')) {
+                    try {
+                        const response = await fetch('/api/request-deletion', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${accessToken}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            alert('Deletion request sent to administrator.');
+                        } else {
+                            alert('Failed to send request. Please try again.');
+                        }
+                    } catch (error) {
+                        console.error('Error requesting deletion:', error);
+                    }
+                }
+            });
+        }
+        
+        // Load data
+        loadUserData();
+        loadDashboardData();
+    </script>
+</body>
+</html>    </script>
 </body>
 </html>

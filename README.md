@@ -14,7 +14,7 @@
 
 ## Overview
 
-SecureAuth is a full-stack authentication system: users register with email and password, enroll **TOTP** (Google Authenticator–compatible), and sign in with a **two-step** flow (password, then 6-digit code). Sessions use **JWTs** with refresh and **inactivity** checks. The API is wrapped with **Helmet** security headers and a **multi-layer DDoS protection** stack (rate limiting, IP tracking, connection limits, request validation, and progressive slow-down).
+SecureAuth is a full-stack authentication system: users register with email and password, enroll **TOTP** (Google Authenticator–compatible), and sign in with a **two-step** flow (password, then 6-digit code). Sessions use **JWTs** with refresh and **inactivity** checks. The API is wrapped with **Helmet** security headers and a **multi-layer flood-protection** stack (rate limiting, IP tracking, connection limits, request validation, and progressive slow-down).
 
 The **default web app** served at `http://localhost:3000` lives in **`phase3-frontend/`** (five HTML pages, shared CSS/JS). A **`public/`** folder may still exist in the repo for reference or alternate layouts; the running server is configured to serve **`phase3-frontend`** so you always see the intended commercial UI.
 
@@ -35,7 +35,7 @@ The **default web app** served at `http://localhost:3000` lives in **`phase3-fro
 ### API and infrastructure security
 
 - **Helmet** — security headers including Content Security Policy (CSP) tuned for the frontend (CDNs, fonts, inline scripts where required)
-- **DDoS-oriented middleware** — IP tracking, connection limiting, malformed-request detection, request size limits, slow-down behavior
+- **Flood-oriented middleware** — IP tracking, connection limiting, malformed-request detection, request size limits, slow-down behavior
 - **`GET /api/ddos-stats`** — JSON snapshot of protection statistics (for monitoring or demos)
 - CORS enabled for API consumers
 
@@ -141,7 +141,7 @@ Copy from `.env.example` if you add one, or set at least:
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/api/ddos-stats` | DDoS protection statistics JSON |
+| GET | `/api/ddos-stats` | flood-protection statistics JSON |
 
 ---
 
@@ -162,7 +162,7 @@ Copy from `.env.example` if you add one, or set at least:
 │   └── authRoutes.js
 ├── middleware/
 │   ├── authMiddleware.js     # JWT, rate limits, refresh
-│   └── ddosMiddleware.js     # DDoS protection layers
+│   └── ddosMiddleware.js     # flood-protection layers
 ├── utils/
 │   ├── totpUtils.js
 │   └── jwtUtils.js
@@ -195,7 +195,7 @@ SQLite files (`secureauth.db` and related `-shm`/`-wal`) are created at runtime.
 - TOTP follows **RFC 6238**; compatible with common authenticator apps.
 - Passwords stored as **bcrypt** hashes — not plaintext.
 - Use a **strong, unique `JWT_SECRET`** in any shared or production environment.
-- Tune **rate limits** and DDoS settings in middleware for your traffic profile.
+- Tune **rate limits** and flood protection settings in middleware for your traffic profile.
 - Serve behind **HTTPS** in production; configure CSP and CORS for your real origin.
 
 ---
@@ -224,3 +224,4 @@ MIT — see repository license file if included.
 
 ---
 Ensure `.env` and `*.db` are **not** committed (already in `.gitignore`). Consider adding a **`.env.example`** with dummy values for collaborators.
+tors.

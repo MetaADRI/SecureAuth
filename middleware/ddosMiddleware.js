@@ -1,6 +1,6 @@
 /**
- * SecureAuth DDoS Protection Middleware (Node.js/Express)
- * Application-layer DDoS mitigation and attack prevention
+ * SecureAuth Application Flood Protection Middleware (Node.js/Express)
+ * Application-layer flood mitigation and request abuse prevention
  * 
  * Author: Bwalya Adrian Mange (106-293)
  * Cavendish University Zambia
@@ -96,11 +96,7 @@ const progressiveSlowDown = slowDown({
   delayMs: (hits) => hits * 100, // Add 100ms delay per request after threshold
   maxDelayMs: 5000, // Maximum 5 second delay
   skipSuccessfulRequests: false,
-  skipFailedRequests: false,
-  onLimitReached: (req, res, options) => {
-    const clientIP = req.ip || 'unknown';
-    console.log(`🐌 Slow-down activated for ${clientIP}: ${options.hits} requests`);
-  }
+  skipFailedRequests: false
 });
 
 /**
@@ -163,8 +159,8 @@ function validateRequestSize(req, res, next) {
 }
 
 /**
- * Malformed request detector
- * Rejects suspicious requests
+ * Automated scanner and malformed request detector
+ * Rejects suspicious requests often used by automated tools
  */
 function malformedRequestDetector(req, res, next) {
   // Check for common attack patterns
@@ -179,12 +175,12 @@ function malformedRequestDetector(req, res, next) {
     /masscan/i,
     /<script>/i,
     /\.\.\/\.\.\//,  // Path traversal
-    /union.*select/i, // SQL injection
+    /union.*select/i, // Common scanner pattern
   ];
 
   for (const pattern of suspiciousPatterns) {
     if (pattern.test(userAgent) || pattern.test(req.url)) {
-      console.log(`🚨 ATTACK DETECTED from ${clientIP}: Pattern match in ${pattern}`);
+      console.log(`🚨 SUSPICIOUS ACTIVITY DETECTED from ${clientIP}: Pattern match in ${pattern}`);
       
       // Auto-ban suspicious IPs
       const banUntil = Date.now() + (60 * 60000); // 1 hour ban
@@ -201,7 +197,7 @@ function malformedRequestDetector(req, res, next) {
 }
 
 /**
- * Get DDoS protection statistics
+ * Get flood protection statistics
  */
 function getProtectionStats() {
   const now = Date.now();

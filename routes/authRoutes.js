@@ -9,7 +9,9 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
+const adminController = require('../controllers/adminController');
 const { verifyToken, checkAndRefreshToken, createRateLimiter } = require('../middleware/authMiddleware');
+const { isAdmin } = require('../middleware/adminMiddleware');
 const jwtUtils = require('../utils/jwtUtils');
 
 // Create rate limiters
@@ -43,6 +45,11 @@ router.get('/dashboard', checkAndRefreshToken, authController.getDashboard);
  * PHASE 4
  */
 router.get('/login-history', checkAndRefreshToken, authController.getLoginHistory);
+
+/**
+ * POST /api/request-deletion - Request account deletion
+ */
+router.post('/request-deletion', checkAndRefreshToken, authController.requestDeletion);
 
 /**
  * POST /api/refresh - Refresh JWT Token
@@ -102,5 +109,30 @@ router.get('/health', (req, res) => {
     ]
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════
+// ADMIN ROUTES
+// ═══════════════════════════════════════════════════════════════════
+
+
+/**
+ * GET /api/admin/stats - System stats
+ */
+router.get('/admin/stats', checkAndRefreshToken, isAdmin, adminController.getSystemStats);
+
+/**
+ * GET /api/admin/logs - System-wide audit logs
+ */
+router.get('/admin/logs', checkAndRefreshToken, isAdmin, adminController.getSystemLogs);
+
+/**
+ * GET /api/admin/users - All users list
+ */
+router.get('/admin/users', checkAndRefreshToken, isAdmin, adminController.getAllUsers);
+
+/**
+ * DELETE /api/admin/users/:userId - Delete a user
+ */
+router.delete('/admin/users/:userId', checkAndRefreshToken, isAdmin, adminController.deleteUser);
 
 module.exports = router;

@@ -13,29 +13,11 @@ const cors = require('cors');
 const path = require('path');
 const helmet = require('helmet');
 
-// #region agent log
-function agentLog({ runId, hypothesisId, message, data }) {
-  fetch('http://127.0.0.1:7570/ingest/a233dc04-66d7-477f-97c4-8eefdbf15188', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'eb757f' },
-    body: JSON.stringify({
-      sessionId: 'eb757f',
-      runId,
-      hypothesisId,
-      location: 'server.js:agentLog',
-      message,
-      data,
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-}
-// #endregion
-
 // Import routes
 const authRoutes = require('./routes/authRoutes');
 
 // Import database initialization
-const { initDatabase } = require('./database/db');
+const { initDatabase, seedAdminUser } = require('./database/db');
 
 // Import DDoS protection middleware
 const ddos = require('./middleware/ddosMiddleware');
@@ -87,61 +69,13 @@ app.use(cors());
 app.use(express.json({ limit: process.env.MAX_REQUEST_SIZE || '100kb' }));
 app.use(express.urlencoded({ extended: true, limit: process.env.MAX_REQUEST_SIZE || '100kb' }));
 
-// #region agent log
 // Request tracing (no secrets): helps prove which frontend is actually served.
 app.use((req, res, next) => {
-  const url = req.originalUrl || req.url;
-
-  // Only log likely-frontend requests to keep noise low
-  const isFrontendish =
-    url === '/' ||
-    url.endsWith('.html') ||
-    url.endsWith('.css') ||
-    url.endsWith('.js') ||
-    url.startsWith('/css/') ||
-    url.startsWith('/js/');
-
-  if (isFrontendish) {
-    agentLog({
-      runId: 'pre-fix',
-      hypothesisId: 'H1',
-      message: 'Incoming request (frontendish)',
-      data: { method: req.method, url },
-    });
-  }
-
-  res.on('finish', () => {
-    if (isFrontendish) {
-      agentLog({
-        runId: 'pre-fix',
-        hypothesisId: 'H1',
-        message: 'Response finished (frontendish)',
-        data: {
-          method: req.method,
-          url,
-          statusCode: res.statusCode,
-          contentType: res.getHeader('content-type') || null,
-          contentLength: res.getHeader('content-length') || null,
-          cacheControl: res.getHeader('cache-control') || null,
-        },
-      });
-    }
-  });
-
   next();
 });
-// #endregion
 
 // Serve static frontend files (Phase 3 UI)
 const PHASE3_FRONTEND_DIR = path.join(__dirname, 'phase3-frontend');
-// #region agent log
-agentLog({
-  runId: 'pre-fix',
-  hypothesisId: 'H2',
-  message: 'Configured static frontend directory',
-  data: { PHASE3_FRONTEND_DIR },
-});
-// #endregion
 app.use(express.static(PHASE3_FRONTEND_DIR));
 
 // Note: we intentionally do NOT serve the legacy `public/` UI to avoid
@@ -165,30 +99,15 @@ app.get('/api/ddos-stats', (req, res) => {
 
 // Root route - serve index.html
 app.get('/', (req, res) => {
-  // #region agent log
-  agentLog({
-    runId: 'pre-fix',
-    hypothesisId: 'H2',
-    message: 'Root route sendFile',
-    data: { file: path.join(PHASE3_FRONTEND_DIR, 'index.html') },
-  });
-  // #endregion
   res.sendFile(path.join(PHASE3_FRONTEND_DIR, 'index.html'));
 });
 
 // Initialize database and start server
 async function startServer() {
   await initDatabase();
+  await seedAdminUser();
 
   app.listen(PORT, () => {
-    // #region agent log
-    agentLog({
-      runId: 'pre-fix',
-      hypothesisId: 'H3',
-      message: 'Server started',
-      data: { port: PORT, pid: process.pid, node: process.version },
-    });
-    // #endregion
     console.log('\n' + '='.repeat(70));
     console.log('  🔐  SECUREAUTH SERVER RUNNING (Node.js/Express)  🔐');
     console.log('='.repeat(70));
@@ -203,7 +122,7 @@ async function startServer() {
     console.log('   GET  /api/login-history  - User login history');
     console.log('   POST /api/refresh        - Refresh JWT token');
     console.log('   GET  /api/health         - System health check');
-    console.log('   GET  /api/ddos-stats     - DDoS protection stats');
+    console.log('   GET  /api/flood-stats     - Protection stats');
     console.log('\n🔐 Security Features:');
     console.log('   ✓ TOTP Two-Factor Authentication');
     console.log('   ✓ JWT Session Management');

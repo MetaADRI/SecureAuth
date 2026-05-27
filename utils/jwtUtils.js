@@ -35,11 +35,12 @@ function generateTempJWT(userId, email) {
 /**
  * Generate full access JWT with last_activity tracking
  */
-function generateFullJWT(userId, email, fullName) {
+function generateFullJWT(userId, email, fullName, role) {
   const payload = {
     user_id: userId,
     email: email,
     full_name: fullName,
+    role: role || 'user',
     '2fa_required': false,
     type: 'full',
     last_activity: new Date().toISOString(),
@@ -91,6 +92,7 @@ function refreshJWT(token) {
       user_id: decoded.user_id,
       email: decoded.email,
       full_name: decoded.full_name,
+      role: decoded.role || 'user',
       '2fa_required': false,
       type: 'full',
       last_activity: new Date().toISOString(),

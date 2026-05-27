@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Command Center - SecureAuth</title>
+    
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23003366%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/></svg>">
+    
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'cuz-blue': '#003366',
+                        'cuz-blue-light': '#0066CC',
+                        'cuz-blue-dark': '#002244',
+                        'slate-850': '#1e293b',
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        * {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .status-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: .5; transform: scale(1.1); }
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        .notification-glow {
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-[#0f172a] text-slate-200 min-h-screen flex flex-col antialiased">
+    <!-- Sidebar / Top Nav -->
+    <nav class="glass-panel border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-[1600px] mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-2xl rotate-3 group hover:rotate-0 transition-transform duration-300">
+                    <i data-lucide="shield-check" class="w-7 h-7 text-cuz-blue"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-black text-white tracking-tighter uppercase">SecureAuth <span class="text-cuz-blue-light">Admin</span></h1>
+                    <p class="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em]">System Command Center</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-6">
+                <div id="deletionAlert" class="hidden flex items-center space-x-2 bg-rose-500/10 text-rose-500 px-4 py-2 rounded-full border border-rose-500/20 notification-glow animate-bounce">
+                    <i data-lucide="bell" class="w-4 h-4"></i>
+                    <span class="text-xs font-black uppercase tracking-wider">Pending Deletion Request</span>
+                </div>
+                
+                <div class="flex items-center space-x-3 bg-slate-800/50 px-4 py-2 rounded-2xl border border-slate-700">
+                    <div class="w-2 h-2 bg-emerald-500 rounded-full status-pulse"></div>
+                    <span class="text-xs font-bold text-slate-300 uppercase tracking-widest">System Online</span>
+                </div>
+                
+                <button onclick="performLogout()" class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition-all">
+                    <i data-lucide="log-out" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="max-w-[1600px] mx-auto px-6 py-10 w-full flex-grow grid grid-cols-12 gap-8">
+        <!-- Sidebar Navigation -->
+        <div class="col-span-2 space-y-2">
+            <button onclick="switchTab('overview')" class="nav-btn w-full flex items-center space-x-3 px-6 py-4 rounded-2xl bg-cuz-blue-light text-white font-bold transition-all" id="btn-overview">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                <span>Overview</span>
+            </button>
+            <button onclick="switchTab('users')" class="nav-btn w-full flex items-center space-x-3 px-6 py-4 rounded-2xl text-slate-400 hover:bg-slate-800/50 hover:text-white font-bold transition-all" id="btn-users">
+                <i data-lucide="users" class="w-5 h-5"></i>
+                <span>User Registry</span>
+            </button>
+            <button onclick="switchTab('logs')" class="nav-btn w-full flex items-center space-x-3 px-6 py-4 rounded-2xl text-slate-400 hover:bg-slate-800/50 hover:text-white font-bold transition-all" id="btn-logs">
+                <i data-lucide="activity" class="w-5 h-5"></i>
+                <span>Audit Stream</span>
+            </button>
+            <div class="pt-8 mt-8 border-t border-slate-800">
+                <p class="px-6 text-[10px] font-black text-slate-600 uppercase tracking-widest mb-4">Quick Actions</p>
+                <button onclick="loadData()" class="w-full flex items-center space-x-3 px-6 py-3 text-slate-500 hover:text-cuz-blue-light text-sm font-bold transition-all">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    <span>Reload Data</span>
+                </button>
+                <a href="dashboard.html" class="w-full flex items-center space-x-3 px-6 py-3 text-slate-500 hover:text-white text-sm font-bold transition-all">
+                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                    <span>User View</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Main Content Area -->
+        <div class="col-span-10 space-y-8">
+            <!-- Stats Bar -->
+            <div class="grid grid-cols-4 gap-6">
+                <div class="glass-panel p-6 rounded-[2rem] border-l-4 border-l-cuz-blue-light">
+                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Total Managed Users</p>
+                    <div class="flex items-end justify-between">
+                        <h3 class="text-4xl font-black text-white" id="stat-users">0</h3>
+                        <i data-lucide="users" class="w-8 h-8 text-slate-700"></i>
+                    </div>
+                </div>
+                <div class="glass-panel p-6 rounded-[2rem] border-l-4 border-l-emerald-500">
+                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Audit Log Entries</p>
+                    <div class="flex items-end justify-between">
+                        <h3 class="text-4xl font-black text-white" id="stat-logs">0</h3>
+                        <i data-lucide="database" class="w-8 h-8 text-slate-700"></i>
+                    </div>
+                </div>
+                <div class="glass-panel p-6 rounded-[2rem] border-l-4 border-l-rose-500">
+                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Security Events</p>
+                    <div class="flex items-end justify-between">
+                        <h3 class="text-4xl font-black text-white" id="stat-security">0</h3>
+                        <i data-lucide="shield-alert" class="w-8 h-8 text-slate-700"></i>
+                    </div>
+                </div>
+                <div class="glass-panel p-6 rounded-[2rem] border-l-4 border-l-amber-500">
+                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">System Status</p>
+                    <div class="flex items-end justify-between">
+                        <h3 class="text-2xl font-black text-white uppercase tracking-tight" id="stat-health">Healthy</h3>
+                        <i data-lucide="activity" class="w-8 h-8 text-slate-700"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tab Contents -->
+            <div id="tab-overview" class="tab-content space-y-8">
+                <!-- Recent Logs (Live Stream Style) -->
+                <div class="glass-panel rounded-[2.5rem] overflow-hidden">
+                    <div class="p-8 border-b border-slate-800 flex justify-between items-center bg-slate-800/20">
+                        <div>
+                            <h3 class="text-xl font-black text-white tracking-tight uppercase">Recent System Activity</h3>
+                            <p class="text-xs text-slate-500 font-bold mt-1 uppercase tracking-widest">Real-time audit stream from infrastructure</p>
+                        </div>
+                        <span class="px-4 py-1 bg-cuz-blue/30 text-cuz-blue-light rounded-full text-[10px] font-black uppercase tracking-widest border border-cuz-blue/20">Live Stream</span>
+                    </div>
+                    <div class="overflow-x-auto max-h-[500px] custom-scrollbar">
+                        <table class="w-full text-left">
+                            <thead class="bg-slate-900/50 sticky top-0">
+                                <tr>
+                                    <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">User / Actor</th>
+                                    <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">Event Protocol</th>
+                                    <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">Origin IP</th>
+                                    <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logs-stream-body" class="divide-y divide-slate-800/50">
+                                <!-- Logs will appear here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="tab-users" class="tab-content hidden space-y-8">
+                <div class="glass-panel rounded-[2.5rem] overflow-hidden">
+                    <div class="p-8 border-b border-slate-800 bg-slate-800/20">
+                        <h3 class="text-xl font-black text-white tracking-tight uppercase">Authorized User Registry</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="bg-slate-900/50">
+                                    <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">Full Name</th>
+                                    <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">Email Identity</th>
+                                    <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">Role</th>
+                                    <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body" class="divide-y divide-slate-800/50">
+                                <!-- Users will appear here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="tab-logs" class="tab-content hidden">
+                <!-- Detailed logs table similar to overview but full screen -->
+                <div class="glass-panel rounded-[2.5rem] overflow-hidden">
+                    <div class="p-8 border-b border-slate-800 bg-slate-800/20 flex justify-between items-center">
+                        <h3 class="text-xl font-black text-white tracking-tight uppercase">Complete Security Audit Stream</h3>
+                        <div class="flex space-x-2">
+                             <input type="text" id="logSearch" placeholder="Filter logs..." class="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-xs font-bold outline-none focus:border-cuz-blue-light transition-all">
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto custom-scrollbar" id="logs-full-container">
+                         <!-- Filled by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="mt-auto border-t border-slate-800 py-8 bg-slate-950">
+        <div class="max-w-[1600px] mx-auto px-6 flex justify-between items-center">
+            <p class="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">&copy; 2026 SecureAuth Infrastructure Protocol. Authorized Access Only.</p>
+            <div class="flex items-center space-x-6 text-[10px] font-black text-slate-600 uppercase tracking-widest">
+                <span>Phase: 4 Implementation</span>
+                <span>Security Level: Administrator</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/auth.js"></script>
+    <script>
+        // Check Admin Auth
+        const accessToken = localStorage.getItem('accessToken');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        
+        if (!accessToken || user.role !== 'admin') {
+            window.location.href = 'admin-login.html';
+        }
+
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+
+        // Tab Management
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-cuz-blue-light', 'text-white');
+                btn.classList.add('text-slate-400');
+            });
+            document.getElementById('btn-' + tabId).classList.add('bg-cuz-blue-light', 'text-white');
+            document.getElementById('btn-' + tabId).classList.remove('text-slate-400');
+        }
+
+        async function loadData() {
+            try {
+                // Load Stats
+                const statsRes = await fetch('/api/admin/stats', {
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
+                });
+                if (statsRes.ok) {
+                    const data = await statsRes.json();
+                    document.getElementById('stat-users').textContent = data.stats.totalUsers;
+                    document.getElementById('stat-logs').textContent = data.stats.totalLogs;
+                    document.getElementById('stat-security').textContent = data.stats.securityEvents;
+                    document.getElementById('stat-health').textContent = data.stats.systemHealth;
+                }
+
+                // Load Logs
+                const logsRes = await fetch('/api/admin/logs', {
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
+                });
+                if (logsRes.ok) {
+                    const data = await logsRes.json();
+                    renderLogs(data.logs);
+                    
+                    // Check for deletion requests
+                    const hasDeletionRequests = data.logs.some(log => log.action === 'deletion_request');
+                    if (hasDeletionRequests) {
+                        document.getElementById('deletionAlert').classList.remove('hidden');
+                    } else {
+                        document.getElementById('deletionAlert').classList.add('hidden');
+                    }
+                }
+
+                // Load Users
+                const usersRes = await fetch('/api/admin/users', {
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
+                });
+                if (usersRes.ok) {
+                    const data = await usersRes.json();
+                    renderUsers(data.users);
+                }
+
+            } catch (error) {
+                console.error('Data load error:', error);
+            }
+        }
+
+        function renderLogs(logs) {
+            const streamBody = document.getElementById('logs-stream-body');
+            streamBody.innerHTML = '';
+            
+            logs.slice(0, 20).forEach(log => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-800/30 transition-colors';
+                
+                const actionClass = getActionClass(log.action);
+                const date = new Date(log.timestamp).toLocaleString();
+                
+                tr.innerHTML = `
+                    <td class="px-8 py-5">
+                        <div class="flex flex-col">
+                            <span class="text-sm font-bold text-white">${log.full_name || 'Anonymous'}</span>
+                            <span class="text-[10px] text-slate-500 font-mono">${log.email || 'system-event'}</span>
+                        </div>
+                    </td>
+                    <td class="px-8 py-5">
+                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${actionClass}">
+                            ${log.action.replace(/_/g, ' ')}
+                        </span>
+                    </td>
+                    <td class="px-8 py-5 text-xs text-slate-400 font-mono font-bold">${log.ip_address}</td>
+                    <td class="px-8 py-5 text-right text-[10px] text-slate-500 font-bold">${date}</td>
+                `;
+                streamBody.appendChild(tr);
+            });
+        }
+
+        function renderUsers(users) {
+            const tableBody = document.getElementById('users-table-body');
+            tableBody.innerHTML = '';
+            
+            users.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-800/30 transition-colors';
+                
+                const isSelf = u.email === user.email;
+                
+                tr.innerHTML = `
+                    <td class="px-8 py-5">
+                        <span class="text-sm font-bold text-white">${u.full_name}</span>
+                    </td>
+                    <td class="px-8 py-5">
+                        <span class="text-sm text-slate-400 font-medium">${u.email}</span>
+                    </td>
+                    <td class="px-8 py-5">
+                        <span class="px-3 py-1 bg-slate-800 text-slate-300 rounded-full text-[10px] font-black uppercase tracking-widest">
+                            ${u.role}
+                        </span>
+                    </td>
+                    <td class="px-8 py-5 text-right">
+                        ${isSelf ? '' : `
+                        <button onclick="confirmDelete('${u.id}', '${u.full_name}')" class="p-2 text-rose-500 hover:bg-rose-500/10 rounded-xl transition-all">
+                            <i data-lucide="trash-2" class="w-5 h-5"></i>
+                        </button>
+                        `}
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+            lucide.createIcons();
+        }
+
+        function getActionClass(action) {
+            switch(action) {
+                case 'login_success':
+                case '2fa_success':
+                case 'register':
+                    return 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20';
+                case 'login_attempt_failed':
+                case '2fa_fail':
+                case 'account_locked':
+                    return 'bg-rose-500/10 text-rose-500 border border-rose-500/20';
+                case 'deletion_request':
+                    return 'bg-amber-500/10 text-amber-500 border border-amber-500/20 animate-pulse';
+                default:
+                    return 'bg-slate-500/10 text-slate-400 border border-slate-500/20';
+            }
+        }
+
+        async function confirmDelete(userId, userName) {
+            if (confirm(`CRITICAL ACTION: Are you sure you want to PERMANENTLY DELETE user "${userName}"? This will remove all associated logs and credentials.`)) {
+                try {
+                    const res = await fetch(`/api/admin/users/${userId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${accessToken}` }
+                    });
+                    if (res.ok) {
+                        alert('User successfully purged from system.');
+                        loadData();
+                    } else {
+                        alert('Error: Failed to delete user.');
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+        }
+
+        function performLogout() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('user');
+            window.location.href = 'admin-login.html';
+        }
+
+        loadData();
+        // Refresh every 30 seconds
+        setInterval(loadData, 30000);
+    </script>
+</body>
+</html>
