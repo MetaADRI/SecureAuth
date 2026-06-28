@@ -78,30 +78,34 @@
         }
     </style>
 </head>
-<body class="bg-[#0f172a] text-slate-200 min-h-screen flex flex-col antialiased">
+    <body class="bg-[#0f172a] text-slate-200 min-h-screen flex flex-col antialiased">
     <!-- Sidebar / Top Nav -->
     <nav class="glass-panel border-b border-slate-800 sticky top-0 z-50">
-        <div class="max-w-[1600px] mx-auto px-6 h-20 flex items-center justify-between">
-            <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-2xl rotate-3 group hover:rotate-0 transition-transform duration-300">
-                    <i data-lucide="shield-check" class="w-7 h-7 text-cuz-blue"></i>
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3 sm:space-x-4">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-2xl flex items-center justify-center shadow-2xl rotate-3 group hover:rotate-0 transition-transform duration-300">
+                    <i data-lucide="shield-check" class="w-6 h-6 sm:w-7 sm:h-7 text-cuz-blue"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-black text-white tracking-tighter uppercase">SecureAuth <span class="text-cuz-blue-light">Admin</span></h1>
+                    <h1 class="text-lg sm:text-xl font-black text-white tracking-tighter uppercase">SecureAuth <span class="text-cuz-blue-light">Admin</span></h1>
                     <p class="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em]">System Command Center</p>
                 </div>
             </div>
             
-            <div class="flex items-center space-x-6">
-                <div id="deletionAlert" class="hidden flex items-center space-x-2 bg-rose-500/10 text-rose-500 px-4 py-2 rounded-full border border-rose-500/20 notification-glow animate-bounce">
+            <div class="flex items-center space-x-3 sm:space-x-6">
+                <div id="deletionAlert" class="hidden items-center space-x-2 bg-rose-500/10 text-rose-500 px-3 sm:px-4 py-2 rounded-full border border-rose-500/20 notification-glow">
                     <i data-lucide="bell" class="w-4 h-4"></i>
-                    <span class="text-xs font-black uppercase tracking-wider">Pending Deletion Request</span>
+                    <span class="hidden sm:inline text-xs font-black uppercase tracking-wider">Pending Deletion Request</span>
                 </div>
                 
-                <div class="flex items-center space-x-3 bg-slate-800/50 px-4 py-2 rounded-2xl border border-slate-700">
+                <div class="hidden sm:flex items-center space-x-3 bg-slate-800/50 px-4 py-2 rounded-2xl border border-slate-700">
                     <div class="w-2 h-2 bg-emerald-500 rounded-full status-pulse"></div>
                     <span class="text-xs font-bold text-slate-300 uppercase tracking-widest">System Online</span>
                 </div>
+                
+                <button id="mobileMenuBtn" class="sm:hidden w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white transition-all" title="Menu">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
                 
                 <button onclick="performLogout()" class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition-all" title="Logout">
                     <i data-lucide="log-out" class="w-5 h-5"></i>
@@ -110,28 +114,28 @@
         </div>
     </nav>
     
-    <main class="max-w-[1600px] mx-auto px-6 py-10 w-full flex-grow grid grid-cols-12 gap-8">
+    <main class="max-w-[1600px] mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full flex-grow grid grid-cols-12 gap-4 sm:gap-8">
         <!-- Sidebar Navigation -->
-        <div class="col-span-2 space-y-2">
-            <button onclick="switchTab('overview')" class="nav-btn w-full flex items-center space-x-3 px-6 py-4 rounded-2xl bg-cuz-blue-light text-white font-bold transition-all" id="btn-overview">
+        <div id="sidebarNav" class="col-span-12 sm:col-span-3 lg:col-span-2 space-y-2 sm:block">
+            <button onclick="switchTab('overview')" class="nav-btn w-full flex items-center space-x-3 px-4 sm:px-6 py-3 sm:py-4 rounded-2xl bg-cuz-blue-light text-white font-bold transition-all" id="btn-overview">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span>Overview</span>
             </button>
-            <button onclick="switchTab('users')" class="nav-btn w-full flex items-center space-x-3 px-6 py-4 rounded-2xl text-slate-400 hover:bg-slate-800/50 hover:text-white font-bold transition-all" id="btn-users">
+            <button onclick="switchTab('users')" class="nav-btn w-full flex items-center space-x-3 px-4 sm:px-6 py-3 sm:py-4 rounded-2xl text-slate-400 hover:bg-slate-800/50 hover:text-white font-bold transition-all" id="btn-users">
                 <i data-lucide="users" class="w-5 h-5"></i>
                 <span>User Registry</span>
             </button>
-            <button onclick="switchTab('logs')" class="nav-btn w-full flex items-center space-x-3 px-6 py-4 rounded-2xl text-slate-400 hover:bg-slate-800/50 hover:text-white font-bold transition-all" id="btn-logs">
+            <button onclick="switchTab('logs')" class="nav-btn w-full flex items-center space-x-3 px-4 sm:px-6 py-3 sm:py-4 rounded-2xl text-slate-400 hover:bg-slate-800/50 hover:text-white font-bold transition-all" id="btn-logs">
                 <i data-lucide="activity" class="w-5 h-5"></i>
                 <span>Audit Stream</span>
             </button>
-            <div class="pt-8 mt-8 border-t border-slate-800">
-                <p class="px-6 text-[10px] font-black text-slate-600 uppercase tracking-widest mb-4">Quick Actions</p>
-                <button onclick="loadData()" class="w-full flex items-center space-x-3 px-6 py-3 text-slate-500 hover:text-cuz-blue-light text-sm font-bold transition-all">
+            <div class="pt-6 sm:pt-8 mt-6 sm:mt-8 border-t border-slate-800">
+                <p class="px-4 sm:px-6 text-[10px] font-black text-slate-600 uppercase tracking-widest mb-4">Quick Actions</p>
+                <button onclick="loadData()" class="w-full flex items-center space-x-3 px-4 sm:px-6 py-3 text-slate-500 hover:text-cuz-blue-light text-sm font-bold transition-all">
                     <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                     <span>Reload Data</span>
                 </button>
-                <a href="dashboard.html" class="w-full flex items-center space-x-3 px-6 py-3 text-slate-500 hover:text-white text-sm font-bold transition-all">
+                <a href="dashboard.html" class="w-full flex items-center space-x-3 px-4 sm:px-6 py-3 text-slate-500 hover:text-white text-sm font-bold transition-all">
                     <i data-lucide="external-link" class="w-4 h-4"></i>
                     <span>User View</span>
                 </a>
@@ -139,9 +143,9 @@
         </div>
         
         <!-- Main Content Area -->
-        <div class="col-span-10 space-y-8">
+        <div class="col-span-12 sm:col-span-9 lg:col-span-10 space-y-6 sm:space-y-8">
             <!-- Stats Bar -->
-            <div class="grid grid-cols-4 gap-6">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6">
                 <div class="glass-panel p-6 rounded-[2rem] border-l-4 border-l-cuz-blue-light">
                     <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Total Managed Users</p>
                     <div class="flex items-end justify-between">
@@ -183,8 +187,8 @@
                         </div>
                         <span class="px-4 py-1 bg-cuz-blue/30 text-cuz-blue-light rounded-full text-[10px] font-black uppercase tracking-widest border border-cuz-blue/20">Live Stream</span>
                     </div>
-                    <div class="overflow-x-auto max-h-[500px] custom-scrollbar">
-                        <table class="w-full text-left">
+                        <div class="overflow-x-auto max-h-[500px] custom-scrollbar -mx-4 sm:mx-0">
+                            <table class="w-full text-left min-w-[500px]">
                             <thead class="bg-slate-900/50 sticky top-0">
                                 <tr>
                                     <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">User / Actor</th>
@@ -207,8 +211,8 @@
                     <div class="p-8 border-b border-slate-800 bg-slate-800/20">
                         <h3 class="text-xl font-black text-white tracking-tight uppercase">Authorized User Registry</h3>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left">
+                        <div class="overflow-x-auto -mx-4 sm:mx-0">
+                            <table class="w-full text-left min-w-[500px]">
                             <thead>
                                 <tr class="bg-slate-900/50">
                                     <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">Full Name</th>
@@ -232,7 +236,7 @@
                     <div class="p-8 border-b border-slate-800 bg-slate-800/20 flex justify-between items-center">
                         <h3 class="text-xl font-black text-white tracking-tight uppercase">Complete Security Audit Stream</h3>
                         <div class="flex space-x-2">
-                             <input type="text" id="logSearch" placeholder="Filter logs..." class="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-xs font-bold outline-none focus:border-cuz-blue-light transition-all">
+                             <input type="text" id="logSearch" placeholder="Filter logs..." class="bg-slate-900 border border-slate-700 rounded-xl px-3 sm:px-4 py-2 text-xs font-bold outline-none focus:border-cuz-blue-light transition-all w-full sm:w-auto">
                         </div>
                     </div>
                     <div class="overflow-x-auto custom-scrollbar max-h-[70vh]">
@@ -256,12 +260,12 @@
         </div>
     </main>
 
-    <footer class="mt-auto border-t border-slate-800 py-8 bg-slate-950">
-        <div class="max-w-[1600px] mx-auto px-6 flex justify-between items-center">
-            <p class="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">&copy; 2026 SecureAuth Infrastructure Protocol. Authorized Access Only.</p>
-            <div class="flex items-center space-x-6 text-[10px] font-black text-slate-600 uppercase tracking-widest">
-                <span>Phase: 4 Implementation</span>
-                <span>Security Level: Administrator</span>
+    <footer class="mt-auto border-t border-slate-800 py-6 sm:py-8 bg-slate-950">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
+            <p class="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] text-center sm:text-left">&copy; 2026 SecureAuth Infrastructure Protocol. Authorized Access Only.</p>
+            <div class="flex items-center space-x-4 sm:space-x-6 text-[10px] font-black text-slate-600 uppercase tracking-widest">
+                <span>Phase: 4</span>
+                <span>Security: Admin</span>
             </div>
         </div>
     </footer>
@@ -495,6 +499,15 @@
                 row.style.display = text.includes(term) ? '' : 'none';
             });
         });
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebarNav = document.getElementById('sidebarNav');
+        if (mobileMenuBtn && sidebarNav) {
+            mobileMenuBtn.addEventListener('click', () => {
+                sidebarNav.classList.toggle('hidden');
+            });
+        }
 
         loadData();
         // Refresh every 30 seconds

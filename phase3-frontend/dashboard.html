@@ -153,7 +153,7 @@
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow">
         <!-- Welcome Section -->
         <div class="mb-10 animate-fade-in">
-            <h1 class="text-4xl font-extrabold text-slate-900 mb-3 tracking-tight flex items-center">
+            <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-3 tracking-tight flex flex-wrap items-center">
                 Welcome back, <span id="welcomeName" class="text-cuz-blue mx-2"></span>
                 <span class="inline-flex items-center justify-center w-8 h-8 bg-cuz-blue/10 text-cuz-blue rounded-full">
                     <i data-lucide="check-check" class="w-4 h-4"></i>
@@ -236,9 +236,9 @@
             <!-- Left Column: Profile & Security -->
             <div class="lg:col-span-1 space-y-8">
                 <!-- Profile Card -->
-                <div class="bg-white rounded-3xl shadow-sm p-8 border border-slate-100">
-                    <h3 class="text-xl font-black text-slate-900 mb-6 flex items-center">
-                        <i data-lucide="user-check" class="w-6 h-6 mr-3 text-cuz-blue"></i>
+                <div class="bg-white rounded-3xl shadow-sm p-6 sm:p-8 border border-slate-100">
+                    <h3 class="text-lg sm:text-xl font-black text-slate-900 mb-6 flex items-center">
+                        <i data-lucide="user-check" class="w-5 h-5 sm:w-6 sm:h-6 mr-3 text-cuz-blue"></i>
                         Profile Identity
                     </h3>
                     <div class="space-y-6">
@@ -258,9 +258,9 @@
                 </div>
                 
                 <!-- Security Settings -->
-                <div class="bg-white rounded-3xl shadow-sm p-8 border border-slate-100">
-                    <h3 class="text-xl font-black text-slate-900 mb-6 flex items-center">
-                        <i data-lucide="settings" class="w-6 h-6 mr-3 text-cuz-blue"></i>
+                <div class="bg-white rounded-3xl shadow-sm p-6 sm:p-8 border border-slate-100">
+                    <h3 class="text-lg sm:text-xl font-black text-slate-900 mb-6 flex items-center">
+                        <i data-lucide="settings" class="w-5 h-5 sm:w-6 sm:h-6 mr-3 text-cuz-blue"></i>
                         Core Controls
                     </h3>
                     <div class="space-y-4">
@@ -301,8 +301,8 @@
                 <div class="bg-white rounded-3xl shadow-sm overflow-hidden border border-slate-100 h-full">
                     <div class="p-8 border-b border-slate-50 flex items-center justify-between">
                         <div>
-                            <h3 class="text-2xl font-black text-slate-900 flex items-center tracking-tight">
-                                <i data-lucide="history" class="w-7 h-7 mr-3 text-cuz-blue"></i>
+                            <h3 class="text-xl sm:text-2xl font-black text-slate-900 flex items-center tracking-tight">
+                                <i data-lucide="history" class="w-6 h-6 sm:w-7 sm:h-7 mr-3 text-cuz-blue"></i>
                                 Login Ledger
                             </h3>
                             <p class="text-sm text-slate-400 mt-1 font-medium">Real-time audit of account access</p>
@@ -661,43 +661,5 @@
         loadUserData();
         loadDashboardData();
     </script>
-</body>
-</html>ById('logoutBtnMobile');
-        
-        if (logoutBtnDesktop) logoutBtnDesktop.addEventListener('click', performLogout);
-        if (logoutBtnMobile) logoutBtnMobile.addEventListener('click', performLogout);
-        
-        // Deletion request
-        const deleteRequestBtn = document.getElementById('deleteRequestBtn');
-        if (deleteRequestBtn) {
-            deleteRequestBtn.addEventListener('click', async () => {
-                if (confirm('Are you sure you want to request account deletion? This action cannot be undone.')) {
-                    try {
-                        const response = await fetch('/api/request-deletion', {
-                            method: 'POST',
-                            headers: {
-                                'Authorization': `Bearer ${accessToken}`,
-                                'Content-Type': 'application/json'
-                            }
-                        });
-                        
-                        if (response.ok) {
-                            alert('Deletion request sent to administrator.');
-                        } else {
-                            alert('Failed to send request. Please try again.');
-                        }
-                    } catch (error) {
-                        console.error('Error requesting deletion:', error);
-                    }
-                }
-            });
-        }
-        
-        // Load data
-        loadUserData();
-        loadDashboardData();
-    </script>
-</body>
-</html>    </script>
 </body>
 </html>
