@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SecureAuth Demo Sandbox</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .btn-scale {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .btn-scale:hover {
+            transform: scale(1.02);
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        .fade-in-up.delay-1 { animation-delay: 0.1s; }
+        .fade-in-up.delay-2 { animation-delay: 0.2s; }
+        .fade-in-up.delay-3 { animation-delay: 0.3s; }
+        .fade-in-up.delay-4 { animation-delay: 0.4s; }
+        .copy-tooltip {
+            transition: opacity 0.2s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-dark-gray antialiased min-h-screen flex flex-col">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md border-b border-gray-200 z-50">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center h-16">
+                <a href="index.html" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #003366 0%, #0066CC 100%);">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold text-cuz-blue">SecureAuth</span>
+                </a>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-sm text-metallic hover:text-cuz-blue font-medium transition-colors">Home</a>
+                    <a href="login.html" class="text-sm text-cuz-blue hover:text-cuz-blue-light font-medium transition-colors">Log in</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="pt-32 pb-16" style="background: linear-gradient(135deg, #003366 0%, #0066CC 100%);">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+            <div class="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6 fade-in-up">
+                <i data-lucide="flask" class="w-4 h-4 text-yellow-300"></i>
+                <span class="text-sm font-semibold text-white/90">Live Sandbox — No Signup Required</span>
+            </div>
+            <h1 class="text-4xl sm:text-5xl font-bold text-white leading-tight mb-6 fade-in-up delay-1">
+                Explore SecureAuth<br />
+                <span class="text-white/70">In 30 Seconds</span>
+            </h1>
+            <p class="text-lg text-white/80 max-w-xl mx-auto mb-8 fade-in-up delay-2">
+                Click one button to jump into a fully functional demo. You'll land in the user dashboard with admin access — no registration, no authenticator app, no friction.
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="py-16 bg-gray-50 flex-grow">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6">
+
+            <!-- Credentials Card -->
+            <div class="bg-white rounded-3xl shadow-xl border border-gray-200 p-8 sm:p-10 mb-8 fade-in-up delay-2">
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h2 class="text-2xl font-bold text-dark-gray">Demo Credentials</h2>
+                        <p class="text-metallic text-sm mt-1">Pre-configured admin account for instant access</p>
+                    </div>
+                    <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center">
+                        <i data-lucide="key" class="w-6 h-6 text-amber-600"></i>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-gray-50 rounded-xl px-5 py-4 border border-gray-100">
+                        <div>
+                            <p class="text-xs font-bold text-metallic uppercase tracking-wider mb-1">Email</p>
+                            <p class="text-dark-gray font-mono font-semibold text-sm sm:text-base">demo@secureauth.com</p>
+                        </div>
+                        <button data-action="copyText('demo@secureauth.com')" class="mt-2 sm:mt-0 text-sm text-cuz-blue hover:text-cuz-blue-light font-medium transition-colors self-start">
+                            Copy
+                        </button>
+                    </div>
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-gray-50 rounded-xl px-5 py-4 border border-gray-100">
+                        <div>
+                            <p class="text-xs font-bold text-metallic uppercase tracking-wider mb-1">Password</p>
+                            <p class="text-dark-gray font-mono font-semibold text-sm sm:text-base">Demo@123</p>
+                        </div>
+                        <button data-action="copyText('Demo@123')" class="mt-2 sm:mt-0 text-sm text-cuz-blue hover:text-cuz-blue-light font-medium transition-colors self-start">
+                            Copy
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between bg-gray-50 rounded-xl px-5 py-4 border border-gray-100">
+                        <div>
+                            <p class="text-xs font-bold text-metallic uppercase tracking-wider mb-1">Account Type</p>
+                            <p class="text-dark-gray font-semibold text-sm sm:text-base">Administrator (full access)</p>
+                        </div>
+                        <span class="inline-flex items-center px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold uppercase tracking-wider">
+                            Active
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Launch Button -->
+            <div class="text-center mb-8 fade-in-up delay-3">
+                <button data-action="launchDemo()" id="demoBtn" style="background:#003366;" class="hover:bg-[#004080] text-white px-12 py-5 rounded-2xl font-bold text-lg btn-scale shadow-xl transition-all inline-flex items-center space-x-3">
+                    <i data-lucide="rocket" class="w-6 h-6"></i>
+                    <span id="demoBtnText">Launch Demo</span>
+                    <svg id="demoSpinner" class="hidden animate-spin w-6 h-6" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                </button>
+                <p class="text-metallic text-sm mt-4 font-medium">No registration. No 2FA. Just explore.</p>
+            </div>
+
+            <!-- Feature Grid -->
+            <div class="grid sm:grid-cols-2 gap-4 fade-in-up delay-4">
+                <div class="bg-white rounded-2xl p-6 border border-gray-100">
+                    <div class="w-10 h-10 bg-cuz-blue/10 rounded-xl flex items-center justify-center mb-4">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5 text-cuz-blue"></i>
+                    </div>
+                    <h3 class="font-bold text-dark-gray mb-2">User Dashboard</h3>
+                    <p class="text-sm text-metallic">Profile overview, security status, and personal login ledger with real-time audit trail.</p>
+                </div>
+                <div class="bg-white rounded-2xl p-6 border border-gray-100">
+                    <div class="w-10 h-10 bg-cuz-blue/10 rounded-xl flex items-center justify-center mb-4">
+                        <i data-lucide="shield" class="w-5 h-5 text-cuz-blue"></i>
+                    </div>
+                    <h3 class="font-bold text-dark-gray mb-2">Admin Panel</h3>
+                    <p class="text-sm text-metallic">System-wide user registry, global audit logs, and security event monitoring. Role-gated.</p>
+                </div>
+                <div class="bg-white rounded-2xl p-6 border border-gray-100">
+                    <div class="w-10 h-10 bg-cuz-blue/10 rounded-xl flex items-center justify-center mb-4">
+                        <i data-lucide="activity" class="w-5 h-5 text-cuz-blue"></i>
+                    </div>
+                    <h3 class="font-bold text-dark-gray mb-2">Audit Stream</h3>
+                    <p class="text-sm text-metallic">Every login, logout, and security event logged with IP, device fingerprint, and timestamp.</p>
+                </div>
+                <div class="bg-white rounded-2xl p-6 border border-gray-100">
+                    <div class="w-10 h-10 bg-cuz-blue/10 rounded-xl flex items-center justify-center mb-4">
+                        <i data-lucide="users" class="w-5 h-5 text-cuz-blue"></i>
+                    </div>
+                    <h3 class="font-bold text-dark-gray mb-2">User Management</h3>
+                    <p class="text-sm text-metallic">View and manage registered users. Process account deletion requests. Full CRUD from admin panel.</p>
+                </div>
+            </div>
+
+            <!-- Note -->
+            <div class="mt-10 bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center">
+                <div class="flex items-center justify-center space-x-2 mb-2">
+                    <i data-lucide="info" class="w-5 h-5 text-amber-600"></i>
+                    <span class="font-bold text-amber-800">Sandbox Environment</span>
+                </div>
+                <p class="text-sm text-amber-700">
+                    This is a live demo connected to the real database. Feel free to explore, but don't store sensitive data here. The demo account resets automatically.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-cuz-blue-dark text-white py-12">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center">
+            <div class="flex items-center justify-center space-x-3 mb-4">
+                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
+                    <i data-lucide="shield-check" class="w-6 h-6 text-cuz-blue"></i>
+                </div>
+                <span class="text-xl font-bold">SecureAuth</span>
+            </div>
+            <p class="text-gray-400 text-sm">Bwalya Adrian Mange (106-293) — Cavendish University Zambia</p>
+            <p class="text-gray-500 text-xs mt-2">BSc Computing Final Year Project — Cybersecurity Capstone</p>
+        </div>
+    </footer>
+
+    <script>
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const original = btn.textContent;
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = original, 1500);
+            });
+        }
+
+        async function launchDemo() {
+            const btn = document.getElementById('demoBtn');
+            const btnText = document.getElementById('demoBtnText');
+            const spinner = document.getElementById('demoSpinner');
+
+            btn.disabled = true;
+            btnText.textContent = 'Spinning up...';
+            spinner.classList.remove('hidden');
+
+            try {
+                const response = await fetch('/api/demo/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'demo@secureauth.com',
+                        password: 'Demo@123'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('accessToken', data.accessToken);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    localStorage.setItem('demoMode', 'true');
+
+                    btnText.textContent = 'Redirecting...';
+
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 600);
+                } else {
+                    btnText.textContent = 'Launch Demo';
+                    spinner.classList.add('hidden');
+                    btn.disabled = false;
+                    alert(data.message || 'Demo unavailable. Try again later.');
+                }
+            } catch (err) {
+                btnText.textContent = 'Launch Demo';
+                spinner.classList.add('hidden');
+                btn.disabled = false;
+                alert('Connection error. Is the server running?');
+            }
+        }
+
+        // CSP-safe click delegation
+        document.addEventListener('click', function(e) {
+            var cardEl = e.target.closest('[data-card-idx]');
+            if (cardEl && typeof ariaCardsData !== 'undefined' && ariaCardsData.length > 0) {
+                var idx = parseInt(cardEl.getAttribute('data-card-idx'));
+                var c = ariaCardsData[idx];
+                if (c) { ariaShowCardDetail(c.title, c.desc, c.threat); return; }
+            }
+            var btn = e.target.closest('[data-action]');
+            if (!btn) return;
+            var action = (btn.getAttribute('data-action') || '').trim();
+            var argsAttr = btn.getAttribute('data-args');
+            if (argsAttr !== null) { if (typeof window[action] === 'function') { window[action](argsAttr); } return; }
+            if (btn.hasAttribute('data-self')) { if (typeof window[action] === 'function') { window[action](btn); } return; }
+            if (typeof window[action] === 'function') { window[action](); return; }
+            var m1 = action.match(/^(\w[\w.]*)\(\)$/);
+            if (m1 && typeof window[m1[1]] === 'function') { window[m1[1]](); return; }
+            var m2 = action.match(/^(\w[\w.]*)\(\s*'([^']*)'\s*(?:,\s*'([^']*)'\s*)?\)$/);
+            if (m2 && typeof window[m2[1]] === 'function') { var a = [m2[2]]; if (m2[3] !== undefined) a.push(m2[3]); window[m2[1]].apply(null, a); return; }
+            if (action.match(/^alert\s*\(/)) { var m = action.match(/['"]([^'"]+)['"]/); if (m) alert(m[1]); return; }
+            var m4 = action.match(/^window\.location\.href\s*=\s*'([^']+)'$/);
+            if (m4) { window.location.href = m4[1]; return; }
+            var m5 = action.match(/^(\w[\w.]*)\(\s*'([^']*)'\s*(?:,\s*'([^']*)'\s*)?\);\s*return\s+false;?$/);
+            if (m5 && typeof window[m5[1]] === 'function') { var a = [m5[2]]; if (m5[3] !== undefined) a.push(m5[3]); window[m5[1]].apply(null, a); return; }
+            console.warn('CSP action unhandled:', action);
+        });
+    </script>
+</body>
+</html>

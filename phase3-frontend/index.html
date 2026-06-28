@@ -121,6 +121,432 @@
         .shield-glow {
             filter: drop-shadow(0 0 30px rgba(255,255,255,0.4));
         }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(ellipse at 70% 30%, rgba(74,125,255,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 70%, rgba(255,255,255,0.04) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+            animation: bgShift 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes bgShift {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(5%, -5%) rotate(-3deg); }
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #0a1628 0%, #132044 30%, #1a2d5a 60%, #1e3a6e 100%);
+        }
+
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: floatShape var(--dur) ease-in-out infinite alternate;
+            animation-delay: var(--delay);
+        }
+
+@keyframes floatShape {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33%      { transform: translate(-60px, -50px) scale(1.15); }
+    66%      { transform: translate(40px, 50px) scale(0.85); }
+}
+
+        /* ===== ARIA Overlay ===== */
+        .aria-overlay {
+            position: fixed; inset: 0;
+            background: linear-gradient(135deg, #050d18 0%, #0a1628 30%, #0f1e38 60%, #162d52 100%);
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 20px;
+        }
+        .aria-overlay.active { display: flex; }
+        .aria-orbs {
+            position: absolute; inset: 0;
+            pointer-events: none; z-index: 0;
+        }
+        .aria-orb {
+            position: absolute;
+            border-radius: 50%;
+            animation: floatEnhanced var(--duration) ease-in-out infinite;
+            animation-delay: var(--delay);
+        }
+        @keyframes floatEnhanced {
+            0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            25%      { transform: translate(-70px, -60px) scale(1.2) rotate(5deg); }
+            50%      { transform: translate(50px, -30px) scale(0.8) rotate(-3deg); }
+            75%      { transform: translate(-30px, 60px) scale(1.15) rotate(2deg); }
+        }
+
+        /* Loading screen */
+        .aria-loading {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            z-index: 20;
+            background: linear-gradient(135deg, #050d18 0%, #0a1628 30%, #0f1e38 60%, #162d52 100%);
+            opacity: 1;
+            transition: opacity 0.8s ease;
+        }
+        .aria-loading.hidden { opacity: 0; pointer-events: none; }
+        .aria-loading-shield {
+            width: 56px; height: 56px;
+            animation: loadPulse 1.5s ease-in-out infinite;
+            margin-bottom: 24px;
+        }
+        @keyframes loadPulse {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.15); opacity: 1; }
+        }
+        @keyframes ariaBlink {
+            0%, 85%, 100% { transform: scaleY(1); }
+            87%, 93% { transform: scaleY(0.08); }
+        }
+        .aria-eye { animation: ariaBlink 4s ease-in-out infinite; transform-origin: center; }
+        .aria-loading-text {
+            font-family: 'Inter', monospace;
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 0.15em;
+            margin-bottom: 16px;
+            min-height: 20px;
+        }
+        .aria-loading-bar-track {
+            width: 220px; height: 2px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .aria-loading-bar-fill {
+            height: 100%; width: 0%;
+            background: linear-gradient(90deg, #4a7dff, #7baaff, #4a7dff);
+            background-size: 200% 100%;
+            animation: shimmer 1s linear infinite;
+            border-radius: 2px;
+            transition: width 0.4s ease;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Welcome screen */
+        .aria-welcome {
+            position: absolute; inset: 0;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        .aria-welcome.active { display: flex; opacity: 1; }
+        .aria-welcome-icon {
+            width: 80px; height: 80px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #4a7dff, #2a4dcc);
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 32px;
+            box-shadow: 0 0 60px rgba(74,125,255,0.3);
+            animation: welcomeIcon 3s ease-in-out infinite;
+        }
+        @keyframes welcomeIcon {
+            0%, 100% { transform: translateY(0); box-shadow: 0 0 60px rgba(74,125,255,0.3); }
+            50% { transform: translateY(-6px); box-shadow: 0 0 80px rgba(74,125,255,0.5); }
+        }
+        .aria-welcome-title {
+            font-size: 36px; font-weight: 700;
+            color: white; margin-bottom: 16px;
+        }
+        .aria-welcome-sub {
+            font-size: 16px; line-height: 1.7;
+            color: rgba(255,255,255,0.6);
+            max-width: 520px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .aria-welcome-btns {
+            display: flex; gap: 16px;
+            flex-wrap: wrap; justify-content: center;
+        }
+        .aria-welcome-btn {
+            padding: 14px 36px;
+            border-radius: 12px;
+            font-weight: 600; font-size: 15px;
+            cursor: pointer; transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+            border: none;
+        }
+        .aria-welcome-btn.primary {
+            background: linear-gradient(135deg, #4a7dff, #3a6dff);
+            color: white;
+        }
+        .aria-welcome-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(74,125,255,0.4);
+        }
+        .aria-welcome-btn.secondary {
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.7);
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+        .aria-welcome-btn.secondary:hover { background: rgba(255,255,255,0.12); color: white; }
+
+        /* Main experience */
+        .aria-experience {
+            position: absolute; inset: 0;
+            display: none;
+            flex-direction: row;
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            overflow: hidden;
+        }
+        .aria-experience.active { display: flex; opacity: 1; }
+
+        /* Assistant panel */
+        .aria-assistant {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10,22,40,0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(74,125,255,0.2);
+            border-radius: 20px;
+            padding: 24px 32px;
+            max-width: 560px;
+            width: calc(100% - 80px);
+            z-index: 10;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+            animation: assistantEnter 0.6s ease-out;
+        }
+        @keyframes assistantEnter {
+            from { transform: translateX(-50%) translateY(20px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+        .assistant-header {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 12px;
+        }
+        .assistant-avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a7dff, #2a4dcc);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .assistant-name { font-size: 14px; font-weight: 600; color: white; }
+        .assistant-status {
+            font-size: 11px; color: rgba(255,255,255,0.35);
+            display: flex; align-items: center; gap: 6px;
+        }
+        .assistant-status-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #4ade80;
+            animation: statusBlink 2s ease-in-out infinite;
+        }
+        @keyframes statusBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .assistant-message {
+            font-size: 15px; line-height: 1.7;
+            color: rgba(255,255,255,0.8);
+            min-height: 60px;
+            max-height: 55vh;
+            overflow-y: auto;
+            padding-right: 4px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(74,125,255,0.3) transparent;
+        }
+        .assistant-message::-webkit-scrollbar { width: 4px; }
+        .assistant-message::-webkit-scrollbar-thumb { background: rgba(74,125,255,0.3); border-radius: 2px; }
+        .assistant-message .aria-cursor {
+            display: inline-block;
+            width: 2px; height: 1.1em;
+            background: #4a7dff;
+            margin-left: 2px;
+            animation: blink 1s infinite;
+            vertical-align: text-bottom;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .assistant-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+        .assistant-btn {
+            padding: 10px 24px; border-radius: 10px;
+            font-weight: 600; font-size: 13px;
+            cursor: pointer; transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.7);
+        }
+        .assistant-btn:hover { background: rgba(255,255,255,0.12); color: white; }
+        .assistant-btn.primary {
+            background: linear-gradient(135deg, #4a7dff, #3a6dff);
+            border-color: transparent; color: white;
+        }
+        .assistant-btn.primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(74,125,255,0.4);
+        }
+        .assistant-btn.outline {
+            background: transparent;
+            border-color: rgba(74,125,255,0.3);
+            color: #7baaff;
+        }
+        .assistant-btn.outline:hover { background: rgba(74,125,255,0.1); }
+
+        .aria-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px; width: 100%;
+            max-width: 580px; margin: 0 auto 20px;
+        }
+        .aria-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px; padding: 16px;
+            text-align: center; transition: all 0.4s; cursor: pointer;
+        }
+        .aria-card:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(74,125,255,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(74,125,255,0.15);
+        }
+        .aria-card-icon {
+            width: 40px; height: 40px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 10px;
+        }
+        .aria-card-title { font-size: 13px; font-weight: 600; color: white; margin-bottom: 4px; }
+        .aria-card-desc { font-size: 11px; color: rgba(255,255,255,0.5); line-height: 1.4; }
+
+        .aria-attack {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 10px; padding: 10px 14px;
+            margin: 0 auto 8px; max-width: 480px;
+        }
+        .aria-attack-header {
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 6px; font-size: 13px; font-weight: 600; color: white;
+        }
+        .aria-attack-visual {
+            height: 28px; background: rgba(255,255,255,0.03);
+            border-radius: 6px; display: flex;
+            align-items: center; justify-content: center; gap: 6px;
+            font-size: 11px; color: rgba(255,255,255,0.4);
+            margin-bottom: 6px;
+        }
+        .aria-attack-text { font-size: 12px; color: rgba(255,255,255,0.6); line-height: 1.4; }
+
+        .aria-close {
+            position: fixed; top: 24px; right: 24px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 50%; width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: rgba(255,255,255,0.6);
+            transition: all 0.3s; font-size: 20px; z-index: 30;
+        }
+        .aria-close:hover { background: rgba(255,255,255,0.15); color: white; }
+
+        @media (max-width: 640px) {
+            .aria-welcome-title { font-size: 26px; }
+            .aria-welcome-sub { font-size: 14px; }
+            .aria-assistant { padding: 20px; max-width: calc(100% - 40px); }
+            .assistant-message { font-size: 14px; }
+            .aria-cards { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 480px) {
+            .aria-overlay { padding: 12px; }
+            .aria-welcome-title { font-size: 22px; }
+            .aria-welcome-icon { width: 60px; height: 60px; border-radius: 18px; margin-bottom: 24px; }
+            .aria-welcome-icon svg { width: 28px; height: 28px; }
+            .aria-welcome-sub { font-size: 13px; max-width: 100%; margin-bottom: 28px; }
+            .aria-welcome-btn { padding: 12px 24px; font-size: 14px; }
+            .aria-assistant { padding: 16px; max-width: calc(100% - 24px); bottom: 24px; }
+            .assistant-header { gap: 8px; }
+            .assistant-name { font-size: 13px; }
+            .assistant-message { font-size: 13px; max-height: 40vh; }
+            .assistant-btn { padding: 8px 16px; font-size: 12px; }
+            .aria-cards { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .aria-card { padding: 12px 8px; }
+            .aria-card-title { font-size: 12px; }
+            .aria-card-icon { width: 32px; height: 32px; }
+            .aria-card-icon svg { width: 16px; height: 16px; }
+            .aria-attack { max-width: 100%; padding: 8px 12px; }
+            .aria-close { top: 12px; right: 12px; width: 36px; height: 36px; font-size: 18px; }
+            .aria-qr-diagram { gap: 8px; }
+            .aria-qr-arrow { font-size: 14px; }
+            .aria-qr-node-icon { width: 44px; height: 44px; }
+            .aria-qr-node-icon svg { width: 20px; height: 20px; }
+            .aria-pw-list { gap: 6px; }
+            .aria-pw-item { font-size: 11px; padding: 4px 10px; }
+            .aria-ctrl-btn { width: 28px; height: 28px; }
+            .aria-ctrl-btn svg { width: 14px; height: 14px; }
+        }
+        @media (max-width: 360px) {
+            .aria-welcome-title { font-size: 18px; }
+            .aria-assistant { padding: 12px; bottom: 16px; max-width: calc(100% - 16px); }
+            .assistant-message { font-size: 12px; }
+            .aria-cards { grid-template-columns: 1fr; }
+            .assistant-actions { gap: 6px; }
+            .assistant-btn { padding: 6px 12px; font-size: 11px; }
+        }
+        .aria-ctrl-btn {
+            width: 32px; height: 32px; border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.6);
+            cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
+            transition: all 0.2s; flex-shrink: 0; padding: 0;
+        }
+        .aria-ctrl-btn:hover {
+            background: rgba(255,255,255,0.12);
+            color: white; border-color: rgba(255,255,255,0.2);
+        }
+        .aria-ctrl-btn.active {
+            color: #7baaff;
+            border-color: rgba(74,125,255,0.3);
+            background: rgba(74,125,255,0.12);
+        }
+        @keyframes ariaConfettiFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        @keyframes ariaBalloonFloat {
+            0% { transform: translateY(0); opacity: 0.9; }
+            100% { transform: translateY(-110vh); opacity: 0; }
+        }
+        @keyframes ariaFirework {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
     </style>
 </head>
 <body class="bg-white text-dark-gray antialiased">
@@ -146,18 +572,22 @@
                     <a href="#contact" class="text-metallic hover:text-cuz-blue link-underline transition-colors font-medium">Contact</a>
                 </div>
                 
-                <div class="hidden md:flex items-center space-x-4">
-                    <a href="login.html" class="text-cuz-blue hover:text-cuz-blue-light font-medium transition-colors">Log in</a>
-                    <a href="register.html" class="bg-cuz-blue hover:bg-cuz-blue-light text-white px-5 py-2.5 rounded-lg font-semibold btn-scale transition-colors">
+                <div class="flex items-center space-x-3">
+                    <a href="register.html" class="md:hidden bg-cuz-blue hover:bg-cuz-blue-light text-white px-4 py-2 rounded-lg font-semibold text-sm btn-scale transition-colors whitespace-nowrap">
                         Get Started
                     </a>
+                    <div class="hidden md:flex items-center space-x-4">
+                        <a href="login.html" class="text-cuz-blue hover:text-cuz-blue-light font-medium transition-colors">Log in</a>
+                        <a href="register.html" class="bg-cuz-blue hover:bg-cuz-blue-light text-white px-5 py-2.5 rounded-lg font-semibold btn-scale transition-colors">
+                            Get Started
+                        </a>
+                    </div>
+                    <button id="mobile-menu-btn" class="md:hidden p-2 text-metallic hover:text-cuz-blue rounded-lg hover:bg-gray-100 active:bg-gray-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
                 </div>
-                
-                <button id="mobile-menu-btn" class="md:hidden p-2 text-metallic hover:text-cuz-blue">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                </button>
             </div>
             
             <div id="mobile-menu" class="mobile-menu md:hidden">
@@ -176,8 +606,19 @@
     </nav>
     
     <!-- Hero Section -->
-    <section class="min-h-screen flex items-center pt-16" style="background: linear-gradient(135deg, #003366 0%, #0066CC 100%);">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <section id="hero" class="min-h-screen flex items-center pt-16 relative overflow-hidden">
+        <!-- Navy Blue Background -->
+        <div class="hero-bg"></div>
+        
+        <!-- Floating Orbs -->
+        <div class="absolute inset-0 pointer-events-none" style="z-index: 1;">
+            <div class="floating-orb" style="width:250px;height:250px;background:radial-gradient(circle,rgba(74,125,255,0.45) 0%,transparent 70%);top:15%;right:10%;--dur:28s;--delay:0s;"></div>
+            <div class="floating-orb" style="width:180px;height:180px;background:radial-gradient(circle,rgba(122,170,255,0.35) 0%,transparent 70%);bottom:20%;left:8%;--dur:22s;--delay:-8s;"></div>
+            <div class="floating-orb" style="width:120px;height:120px;background:radial-gradient(circle,rgba(74,125,255,0.5) 0%,transparent 70%);top:50%;left:50%;--dur:18s;--delay:-15s;"></div>
+            <div class="floating-orb" style="width:200px;height:200px;background:radial-gradient(circle,rgba(58,109,255,0.35) 0%,transparent 70%);top:70%;right:35%;--dur:25s;--delay:-5s;"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10 w-full">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 <div class="text-white">
                     <div class="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
@@ -200,9 +641,19 @@
                         <a href="register.html" class="bg-white text-cuz-blue px-8 py-4 rounded-xl font-semibold text-center btn-scale shadow-lg">
                             Start Free Trial
                         </a>
-                        <a href="#how-it-works" class="bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 px-8 py-4 rounded-xl font-semibold text-center btn-scale hover:bg-white/20">
+                        <a href="demo.html" class="bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 px-8 py-4 rounded-xl font-semibold text-center btn-scale hover:bg-white/20">
                             View Demo
                         </a>
+                        <button data-action="openIntro" class="group relative bg-transparent text-white px-8 py-4 rounded-xl font-semibold text-center overflow-hidden border-2 border-cuz-blue-light/50 hover:border-cuz-blue-light transition-all duration-300 hover:shadow-[0_0_25px_rgba(0,102,204,0.4)] hover:scale-[1.02]">
+                            <span class="relative z-10 flex items-center justify-center space-x-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                </svg>
+                                <span>Intro to SecureAuth</span>
+                            </span>
+                            <div class="absolute inset-0 bg-gradient-to-r from-cuz-blue/20 to-cuz-blue-light/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div class="absolute inset-0 border-t-2 border-cuz-blue-light/0 group-hover:border-cuz-blue-light/60 transition-all duration-500 rounded-xl"></div>
+                        </button>
                     </div>
                     
                     <div class="mt-8 flex items-center space-x-6 text-white/70 text-sm">
@@ -221,34 +672,7 @@
                     </div>
                 </div>
                 
-                <div class="hidden lg:flex justify-center items-center overflow-hidden">
-                    <div class="relative">
-                        <div class="w-72 xl:w-80 h-72 xl:h-80 flex items-center justify-center animate-float">
-                            <svg class="w-56 xl:w-64 h-56 xl:h-64 text-white shield-glow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="rgba(255,255,255,0.15)" stroke="white" stroke-width="1.5"/>
-                                <rect x="9" y="11" width="6" height="5" rx="1" fill="white" stroke="none"/>
-                                <path d="M10 11V9a2 2 0 114 0v2" stroke="white" stroke-width="1.5" fill="none"/>
-                                <path d="M9 13l2 2 4-4" stroke="#003366" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </div>
-                        
-                        <div class="absolute -top-2 right-0 bg-white rounded-xl p-2 xl:p-3 shadow-2xl">
-                            <svg class="w-8 h-8 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                            </svg>
-                        </div>
-                        <div class="absolute -bottom-2 left-0 bg-white rounded-xl p-2 xl:p-3 shadow-2xl">
-                            <svg class="w-8 h-8 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                            </svg>
-                        </div>
-                        <div class="absolute top-1/2 -right-4 xl:-right-6 bg-white rounded-xl p-2 xl:p-3 shadow-2xl">
-                            <svg class="w-8 h-8 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
     </section>
@@ -702,7 +1126,86 @@
         </div>
     </footer>
     
+    <!-- ===== ARIA INTRO OVERLAY ===== -->
+    <div id="ariaOverlay" class="aria-overlay">
+        <div class="aria-orbs">
+            <div class="aria-orb" style="width: 350px; height: 350px; background: #4a7dff; opacity: 0.35; top: 5%; left: 10%; --duration: 20s; --delay: 0s;"></div>
+            <div class="aria-orb" style="width: 250px; height: 250px; background: #7baaff; opacity: 0.25; bottom: 10%; right: 8%; --duration: 18s; --delay: -4s;"></div>
+            <div class="aria-orb" style="width: 180px; height: 180px; background: #3a6dff; opacity: 0.3; top: 55%; left: 65%; --duration: 14s; --delay: -8s;"></div>
+            <div class="aria-orb" style="width: 140px; height: 140px; background: #9bc4ff; opacity: 0.2; top: 25%; right: 25%; --duration: 22s; --delay: -2s;"></div>
+            <div class="aria-orb" style="width: 280px; height: 280px; background: #5a8dff; opacity: 0.2; bottom: 25%; left: 30%; --duration: 24s; --delay: -10s;"></div>
+            <div class="aria-orb" style="width: 100px; height: 100px; background: #aad4ff; opacity: 0.35; top: 75%; left: 15%; --duration: 12s; --delay: -6s;"></div>
+            <div class="aria-orb" style="width: 200px; height: 200px; background: #6a9dff; opacity: 0.25; top: 40%; right: 40%; --duration: 16s; --delay: -12s;"></div>
+        </div>
+
+        <button data-action="closeAriaIntro" class="aria-close">&times;</button>
+
+        <div id="ariaLoading" class="aria-loading">
+            <div class="aria-loading-shield">
+                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#4a7dff" stroke-width="1.5">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="rgba(74,125,255,0.18)"/>
+                    <circle class="aria-eye" cx="9.5" cy="10.5" r="1.2" fill="white"/>
+                    <circle class="aria-eye" cx="14.5" cy="10.5" r="1.2" fill="white"/>
+                    <path d="M9.5 14.5 Q12 16 14.5 14.5" stroke="rgba(255,255,255,0.3)" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="aria-loading-text" id="ariaLoadText">Initializing Security...</div>
+            <div class="aria-loading-bar-track">
+                <div class="aria-loading-bar-fill" id="ariaLoadBar"></div>
+            </div>
+        </div>
+
+        <div id="ariaWelcome" class="aria-welcome">
+            <div class="aria-welcome-icon">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="rgba(255,255,255,0.08)"/>
+                    <circle class="aria-eye" cx="9.5" cy="10.5" r="1.2" fill="white"/>
+                    <circle class="aria-eye" cx="14.5" cy="10.5" r="1.2" fill="white"/>
+                    <path d="M9.5 14.5 Q12 16 14.5 14.5" stroke="rgba(255,255,255,0.3)" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="aria-welcome-title">Welcome to SecureAuth</div>
+            <div class="aria-welcome-sub">
+                SecureAuth is more than an authentication system. It is an enterprise-grade security platform that protects users, accounts, sessions, browsers, and web applications using modern cybersecurity standards. This interactive experience will guide you through every major feature.
+            </div>
+            <div class="aria-welcome-btns">
+                <button class="aria-welcome-btn primary" data-action="startAriaTour">Begin Experience</button>
+                <button class="aria-welcome-btn secondary" data-action="skipAriaTour">Skip to Demo</button>
+            </div>
+        </div>
+
+        <div id="ariaExperience" class="aria-experience">
+            <div class="aria-assistant" id="ariaAssistant">
+                <div class="assistant-header">
+                    <div class="assistant-avatar">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="rgba(255,255,255,0.12)"/>
+                            <circle class="aria-eye" cx="9.5" cy="10.5" r="1" fill="white"/>
+                            <circle class="aria-eye" cx="14.5" cy="10.5" r="1" fill="white"/>
+                            <path d="M10 14 Q12 15.2 14 14" stroke="rgba(255,255,255,0.3)" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div style="flex:1;min-width:0;">
+                        <div class="assistant-name">ARIA</div>
+                        <div class="assistant-status" id="ariaStatus"><span class="assistant-status-dot"></span> Ready</div>
+                    </div>
+                    <button class="aria-ctrl-btn" id="ariaListenBtn" data-action="ariaToggleSpeak()" title="Read aloud">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
+                    </button>
+                    <button class="aria-ctrl-btn" id="ariaBackBtn" data-action="previousAriaTourStep()" title="Previous message">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                    </button>
+                </div>
+                <div class="assistant-message" id="ariaMsg">
+                    <span id="ariaMsgTyped"></span><span class="aria-cursor"></span>
+                </div>
+                <div class="assistant-actions" id="ariaActions"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        try {
         // Initialize Lucide icons
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
@@ -752,6 +1255,684 @@
                 }
             });
         });
+
+        // ===== ARIA Full Cinematic Experience =====
+        let ariaTypingTimer = null;
+        let ariaTourPhase = 0;
+        let ariaTotpInterval = null;
+
+        const LOAD_MESSAGES = [
+            'Initializing Security...',
+            'Loading Secure Authentication...',
+            'Preparing Secure Environment...',
+            'Verifying Components...',
+            'Building Protected Session...',
+            'Interactive Experience Ready.'
+        ];
+
+        const TOUR_STEPS = [
+            {
+                msg: "Hello! I'm ARIA — your Adaptive Responsive Intelligence Assistant. I am designed to guide you through our security architecture. Let me show you why SecureAuth is the most comprehensive authentication system you'll ever need.",
+                actions: [
+                    { label: 'Continue', class: 'primary', action: 'nextAriaTourStep()' },
+                    { label: 'Skip Tour', class: '', action: 'skipAriaTour()' }
+                ]
+            },
+            {
+                msg: "Let's start with registration. Every secure system begins with strong account creation. Click the field below and I'll explain each requirement.",
+                actions: [
+                    { label: 'Show Registration', class: 'primary', action: 'ariaShowRegistration()' },
+                    { label: 'Skip', class: '', action: 'nextAriaTourStep()' }
+                ]
+            },
+            {
+                msg: "After registration comes Two-Factor Authentication setup. You'll scan a QR code with your authenticator app — this links your phone to SecureAuth so that only you can access your account, even if your password is stolen.",
+                actions: [
+                    { label: 'Show QR Setup', class: 'primary', action: 'ariaShowQrSetup()' },
+                    { label: 'Skip', class: '', action: 'nextAriaTourStep()' }
+                ]
+            },
+            {
+                msg: "Now let's walk through logging in. When you enter your credentials, SecureAuth verifies them against the database, generates a temporary JWT token, and establishes a 5-minute authentication window. This temporary token ensures that even if intercepted, it expires almost immediately.",
+                actions: [
+                    { label: 'Show Login Walkthrough', class: 'primary', action: 'ariaShowLoginWalkthrough()' },
+                    { label: 'Skip', class: '', action: 'nextAriaTourStep()' }
+                ]
+            },
+            {
+                msg: "Now for the most important layer — Two-Factor Authentication. Open your authenticator app, find the 6-digit code for SecureAuth, and enter it. This code changes every 30 seconds. Even if someone steals your password, they still cannot log in without this second factor.",
+                actions: [
+                    { label: 'Show 2FA', class: 'primary', action: 'ariaShow2FA()' },
+                    { label: 'Skip', class: '', action: 'nextAriaTourStep()' }
+                ]
+            },
+            {
+                msg: "Authentication successful! Your account is now protected by multiple security layers. Here's a summary of everything actively protecting you right now.",
+                actions: [
+                    { label: 'Show Security Summary', class: 'primary', action: 'ariaShowSuccess()' },
+                    { label: 'Skip', class: '', action: 'nextAriaTourStep()' }
+                ]
+            },
+            {
+                msg: "Each security feature in SecureAuth serves a specific purpose. Click any card to learn more about how it protects you and why it matters.",
+                actions: [
+                    { label: 'Explore Security Cards', class: 'primary', action: 'ariaShowCards()' },
+                    { label: 'Continue', class: '', action: 'nextAriaTourStep()' }
+                ]
+            },
+            {
+                msg: "Let me show you how SecureAuth stops real attacks. Watch how each threat is intercepted before it can reach your data.",
+                actions: [
+                    { label: 'Show Attack Simulations', class: 'primary', action: 'ariaShowAttacks()' },
+                    { label: 'Continue', class: '', action: 'nextAriaTourStep()' }
+                ]
+            },
+            {
+                msg: "You've completed the SecureAuth Interactive Experience. You now understand how SecureAuth protects modern web applications using enterprise-grade security standards.",
+                actions: [
+                    { label: 'Explore Dashboard', class: 'primary', action: 'ariaExploreDashboard()' },
+                    { label: 'Restart Experience', class: 'outline', action: 'ariaRestart()' },
+                    { label: 'Return Home', class: '', action: 'ariaFinishTour()' }
+                ]
+            }
+        ];
+
+        function openIntro() {
+            const overlay = document.getElementById('ariaOverlay');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            document.getElementById('ariaLoading').classList.remove('hidden');
+            document.getElementById('ariaWelcome').classList.remove('active');
+            document.getElementById('ariaExperience').classList.remove('active');
+            ariaStartLoading();
+        }
+
+        function closeAriaIntro() {
+            document.getElementById('ariaOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+            clearTimeout(ariaTypingTimer);
+            if (window.speechSynthesis) window.speechSynthesis.cancel();
+            if (ariaTotpInterval) { clearInterval(ariaTotpInterval); ariaTotpInterval = null; }
+            document.getElementById('ariaExperience').classList.remove('active');
+            document.getElementById('ariaWelcome').classList.remove('active');
+            document.getElementById('ariaLoading').classList.remove('hidden');
+            ariaTourActive = false;
+        }
+
+        function ariaStartLoading() {
+            const loadText = document.getElementById('ariaLoadText');
+            const loadBar = document.getElementById('ariaLoadBar');
+            let step = 0;
+            loadText.textContent = LOAD_MESSAGES[0];
+            loadBar.style.width = '0%';
+            const interval = setInterval(() => {
+                step++;
+                if (step < LOAD_MESSAGES.length) {
+                    loadText.textContent = LOAD_MESSAGES[step];
+                    loadBar.style.width = (step / (LOAD_MESSAGES.length - 1) * 100) + '%';
+                }
+                if (step >= LOAD_MESSAGES.length - 1) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.getElementById('ariaLoading').classList.add('hidden');
+                        setTimeout(() => {
+                            document.getElementById('ariaWelcome').classList.add('active');
+                        }, 200);
+                    }, 400);
+                }
+            }, 600);
+        }
+
+        function startAriaTour() {
+            document.getElementById('ariaWelcome').classList.remove('active');
+            setTimeout(() => {
+                document.getElementById('ariaExperience').classList.add('active');
+                ariaTourPhase = 0;
+                ariaShowTourStep(0);
+            }, 400);
+        }
+
+        function skipAriaTour() {
+            closeAriaIntro();
+            window.location.href = 'register.html';
+        }
+
+        // Global cards data for click delegation
+        let ariaCardsData = [];
+
+        function ariaBuildActions(container, actions) {
+            container.innerHTML = '';
+            actions.forEach(a => {
+                const btn = document.createElement('button');
+                btn.className = 'assistant-btn' + (a.class ? ' ' + a.class : '');
+                btn.textContent = a.label;
+                btn.setAttribute('data-action', a.action);
+                container.appendChild(btn);
+            });
+        }
+
+        document.addEventListener('click', function(e) {
+            var cardEl = e.target.closest('[data-card-idx]');
+            if (cardEl && typeof ariaCardsData !== 'undefined' && ariaCardsData.length > 0) {
+                var idx = parseInt(cardEl.getAttribute('data-card-idx'));
+                var c = ariaCardsData[idx];
+                if (c) { ariaShowCardDetail(c.title, c.desc, c.threat); return; }
+            }
+            var btn = e.target.closest('[data-action]');
+            if (!btn) return;
+            var action = (btn.getAttribute('data-action') || '').trim();
+            var argsAttr = btn.getAttribute('data-args');
+            if (argsAttr !== null) { if (typeof window[action] === 'function') { window[action](argsAttr); } return; }
+            if (btn.hasAttribute('data-self')) { if (typeof window[action] === 'function') { window[action](btn); } return; }
+            if (typeof window[action] === 'function') { window[action](); return; }
+            var m1 = action.match(/^(\w[\w.]*)\(\)$/);
+            if (m1 && typeof window[m1[1]] === 'function') { window[m1[1]](); return; }
+            var m2 = action.match(/^(\w[\w.]*)\(\s*'([^']*)'\s*(?:,\s*'([^']*)'\s*)?\)$/);
+            if (m2 && typeof window[m2[1]] === 'function') { var a = [m2[2]]; if (m2[3] !== undefined) a.push(m2[3]); window[m2[1]].apply(null, a); return; }
+            if (action.match(/^alert\s*\(/)) { var m = action.match(/['"]([^'"]+)['"]/); if (m) alert(m[1]); return; }
+            var m4 = action.match(/^window\.location\.href\s*=\s*'([^']+)'$/);
+            if (m4) { window.location.href = m4[1]; return; }
+            var m5 = action.match(/^(\w[\w.]*)\(\s*'([^']*)'\s*(?:,\s*'([^']*)'\s*)?\);\s*return\s+false;?$/);
+            if (m5 && typeof window[m5[1]] === 'function') { var a = [m5[2]]; if (m5[3] !== undefined) a.push(m5[3]); window[m5[1]].apply(null, a); return; }
+            console.warn('CSP action unhandled:', action);
+        });
+
+        function ariaShowTourStep(phase) {
+            ariaTourPhase = phase;
+            const step = TOUR_STEPS[phase];
+            const typedEl = document.getElementById('ariaMsgTyped');
+            const actionsEl = document.getElementById('ariaActions');
+            const cursor = document.querySelector('#ariaMsg .aria-cursor');
+            typedEl.textContent = '';
+            cursor.style.display = 'inline-block';
+            clearTimeout(ariaTypingTimer);
+            ariaBuildActions(actionsEl, step.actions);
+            const fullText = step.msg;
+            let charIndex = 0;
+            ariaSetStatus('Typing...');
+            function typeNextChar() {
+                if (charIndex < fullText.length) {
+                    typedEl.textContent += fullText[charIndex];
+                    charIndex++;
+                    let delay = 14;
+                    const ch = fullText[charIndex - 1];
+                    if (ch === '.' || ch === '!' || ch === '?') delay = 180;
+                    else if (ch === ',') delay = 80;
+                    else if (ch === ' ') delay = 8;
+                    ariaTypingTimer = setTimeout(typeNextChar, delay);
+                } else { cursor.style.display = 'none'; ariaSetStatus('Ready'); }
+            }
+            typeNextChar();
+        }
+
+        function nextAriaTourStep() {
+            if (ariaTourPhase < TOUR_STEPS.length - 1) {
+                ariaShowTourStep(ariaTourPhase + 1);
+            }
+        }
+
+        function ariaShowRegistration() {
+            ariaShowCustomMessage("Let's create your account. Enter your name, email, and a strong password. I'll guide you through each field and explain why each requirement matters for your security.", [
+                { label: 'Begin Registration', class: 'primary', action: 'ariaBeginRegistration()' },
+                { label: 'Back', class: '', action: 'nextAriaTourStep()' }
+            ]);
+        }
+
+        function ariaBeginRegistration() {
+            clearTimeout(ariaTypingTimer);
+            var typedEl = document.getElementById('ariaMsgTyped');
+            var cursor = document.querySelector('#ariaMsg .aria-cursor');
+            if (cursor) cursor.style.display = 'none';
+            var html = "<div style='margin-bottom:14px;color:rgba(255,255,255,0.7);font-size:14px;line-height:1.5;'>Fill in your details below. I'll check your password strength as you type.</div><div style='display:flex;flex-direction:column;gap:10px;'>";
+            html += "<div><label style='display:block;color:rgba(255,255,255,0.45);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;'>Full Name</label><input type='text' id='ariaRegName' style='width:100%;padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:white;outline:none;font-size:14px;font-family:inherit;' placeholder='Enter your full name'></div>";
+            html += "<div><label style='display:block;color:rgba(255,255,255,0.45);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;'>Email Address</label><input type='email' id='ariaRegEmail' style='width:100%;padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:white;outline:none;font-size:14px;font-family:inherit;' placeholder='Enter your email address'></div>";
+            html += "<div><label style='display:block;color:rgba(255,255,255,0.45);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;'>Password</label><input type='text' id='ariaRegPassword' style='width:100%;padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:white;outline:none;font-size:14px;font-family:monospace;' placeholder='Enter a strong password (8+ chars, upper, lower, number, special)'></div>";
+            html += "<div style='height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;margin-top:4px;'><div id='ariaPwBar' style='width:0%;height:100%;background:#4ade80;border-radius:2px;transition:width 0.3s;'></div></div>";
+            html += "<div id='ariaPwChecks' style='font-size:11px;color:rgba(255,255,255,0.4);display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;'><span id='pwCk1'>✗ 8+ chars</span> <span id='pwCk2'>✗ uppercase</span> <span id='pwCk3'>✗ lowercase</span> <span id='pwCk4'>✗ number</span> <span id='pwCk5'>✗ special</span></div></div>";
+            if (typedEl) typedEl.innerHTML = html;
+            ariaBuildActions(document.getElementById('ariaActions'), [
+                { label: 'Submit Registration', class: 'primary', action: 'ariaSubmitRegistration()' },
+                { label: 'Generate Strong Password', class: 'outline', action: 'ariaGeneratePassword()' },
+                { label: 'Back', class: '', action: 'ariaShowRegistration()' }
+            ]);
+            setTimeout(function() {
+                var pwInput = document.getElementById('ariaRegPassword');
+                if (pwInput) { pwInput.addEventListener('input', ariaUpdatePwStrength); }
+                ['ariaRegName','ariaRegEmail','ariaRegPassword'].forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (el) el.addEventListener('input', function() { this.style.borderColor = 'rgba(255,255,255,0.12)'; });
+                });
+            }, 50);
+        }
+
+        function ariaUpdatePwStrength() {
+            var pw = (document.getElementById('ariaRegPassword') || {}).value || '';
+            var checks = { len: pw.length >= 8, upper: /[A-Z]/.test(pw), lower: /[a-z]/.test(pw), num: /[0-9]/.test(pw), special: /[^A-Za-z0-9]/.test(pw) };
+            var passed = 0;
+            var labels = ['8+ chars', 'uppercase', 'lowercase', 'number', 'special'];
+            var keys = ['len', 'upper', 'lower', 'num', 'special'];
+            keys.forEach(function(k, i) {
+                var el = document.getElementById('pwCk' + (i + 1));
+                if (el) { if (checks[k]) { el.innerHTML = '✓ ' + labels[i]; el.style.color = '#4ade80'; passed++; } else { el.innerHTML = '✗ ' + labels[i]; el.style.color = 'rgba(255,255,255,0.3)'; } }
+            });
+            var bar = document.getElementById('ariaPwBar');
+            if (bar) bar.style.width = (passed / 5 * 100) + '%';
+        }
+
+        function ariaGeneratePassword() {
+            var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+            var pw = 'Aa1!';
+            for (var i = 0; i < 8; i++) pw += chars[Math.floor(Math.random() * chars.length)];
+            pw = pw.split('').sort(function() { return Math.random() - 0.5; }).join('');
+            var pwInput = document.getElementById('ariaRegPassword');
+            if (pwInput) { pwInput.value = pw; ariaUpdatePwStrength(); }
+            var msgEl = document.getElementById('ariaMsgTyped');
+            if (msgEl && !msgEl.querySelector('.aria-pw-note')) {
+                var note = document.createElement('div');
+                note.className = 'aria-pw-note';
+                note.style.cssText = 'margin-bottom:10px;padding:8px 12px;background:rgba(74,125,255,0.12);border:1px solid rgba(74,125,255,0.2);border-radius:8px;color:#7baaff;font-size:13px;';
+                note.textContent = '✓ Strong password generated and filled in above!';
+                msgEl.insertBefore(note, msgEl.firstChild);
+            }
+        }
+
+        function ariaSubmitRegistration() {
+            var nameEl = document.getElementById('ariaRegName');
+            var emailEl = document.getElementById('ariaRegEmail');
+            var pwEl = document.getElementById('ariaRegPassword');
+            var name = (nameEl && nameEl.value) ? nameEl.value.trim() : '';
+            var email = (emailEl && emailEl.value) ? emailEl.value.trim() : '';
+            var pw = (pwEl && pwEl.value) || '';
+            var missing = [];
+            if (!name) missing.push('Full Name');
+            if (!email) missing.push('Email Address');
+            if (!pw) missing.push('Password');
+            if (missing.length > 0) {
+                var typedEl = document.getElementById('ariaMsgTyped');
+                var oldErr = document.getElementById('ariaRegError');
+                if (oldErr) oldErr.remove();
+                if (nameEl && !name) nameEl.style.borderColor = '#f87171';
+                if (emailEl && !email) emailEl.style.borderColor = '#f87171';
+                if (pwEl && !pw) pwEl.style.borderColor = '#f87171';
+                var errDiv = document.createElement('div');
+                errDiv.id = 'ariaRegError';
+                errDiv.style.cssText = 'margin-bottom:12px;padding:10px 14px;background:rgba(248,113,113,0.12);border:1px solid rgba(248,113,113,0.25);border-radius:8px;color:#f87171;font-size:13px;line-height:1.5;';
+                errDiv.innerHTML = '⚠ Please fill in <strong>' + missing.join(', ') + '</strong>.';
+                if (typedEl) { typedEl.insertBefore(errDiv, typedEl.firstChild); typedEl.scrollTop = 0; }
+                if (!name && nameEl) nameEl.focus();
+                else if (!email && emailEl) emailEl.focus();
+                else if (!pw && pwEl) pwEl.focus();
+                return;
+            }
+            var msg = 'Account created for <strong>' + name.replace(/</g,'&lt;') + '</strong> (' + email.replace(/</g,'&lt;') + '). Your password is stored using <strong>bcrypt hashing</strong> with cost factor 12 — computationally impossible to crack. Each failed login attempt doubles lockout delay, preventing brute-force attacks.';
+            ariaShowCustomHtmlMessage(msg, [
+                { label: 'Continue to 2FA Setup', class: 'primary', action: 'ariaShowQrSetup()' },
+                { label: 'Skip', class: '', action: 'nextAriaTourStep()' }
+            ]);
+        }
+
+        function ariaShowQrSetup() {
+            clearTimeout(ariaTypingTimer);
+            var typedEl = document.getElementById('ariaMsgTyped');
+            var cursor = document.querySelector('#ariaMsg .aria-cursor');
+            if (cursor) cursor.style.display = 'none';
+            var html = '<div style="margin-bottom:10px;color:rgba(255,255,255,0.8);font-size:15px;line-height:1.6;">Scan this QR code with your authenticator app to link your phone to SecureAuth.</div>';
+            html += '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:14px;">';
+            html += '<div style="font-size:11px;padding:4px 12px;background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.2);border-radius:6px;color:#fbbf24;">⚡ Demo QR — not a real code</div>';
+            html += '<div style="background:white;padding:10px;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.3);"><canvas id="ariaQrCanvas" width="160" height="160"></canvas></div>';
+            html += '<div style="font-size:11px;color:rgba(255,255,255,0.35);font-family:monospace;">Secret: JBSWY3DPEHPK3PXP</div></div>';
+            html += '<div style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.5;padding:8px 12px;background:rgba(74,125,255,0.08);border-radius:8px;border:1px solid rgba(74,125,255,0.15);margin-bottom:10px;">';
+            html += '<strong style="color:#7baaff;">How it works:</strong> Your phone and SecureAuth share this secret. Your authenticator generates a new 6-digit code every 30 seconds. Without your phone, nobody can generate valid codes.</div>';
+            if (typedEl) typedEl.innerHTML = html;
+            ariaBuildActions(document.getElementById('ariaActions'), [
+                { label: 'Continue', class: 'primary', action: 'nextAriaTourStep()' }
+            ]);
+            setTimeout(drawFakeQrCode, 100);
+        }
+
+        function drawFakeQrCode() {
+            var canvas = document.getElementById('ariaQrCanvas');
+            if (!canvas) return;
+            var ctx = canvas.getContext('2d');
+            var size = 160;
+            var mod = size / 29;
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, size, size);
+            function posSquare(r, c) {
+                var x = c * mod, y = r * mod;
+                ctx.fillStyle = '#000'; ctx.fillRect(x, y, 7 * mod, 7 * mod);
+                ctx.fillStyle = '#fff'; ctx.fillRect(x + mod, y + mod, 5 * mod, 5 * mod);
+                ctx.fillStyle = '#000'; ctx.fillRect(x + 2 * mod, y + 2 * mod, 3 * mod, 3 * mod);
+            }
+            posSquare(0, 0); posSquare(0, 22); posSquare(22, 0);
+            ctx.fillStyle = '#000';
+            for (var i = 0; i < 8; i++) { ctx.fillRect((8 + i * 2) * mod, 6 * mod, mod, mod); ctx.fillRect(6 * mod, (8 + i * 2) * mod, mod, mod); }
+            var seed = 42;
+            var data = [];
+            for (var j = 0; j < 841; j++) { seed = (seed * 1664525 + 1013904223) & 0x7fffffff; data.push(seed % 3 === 0); }
+            var idx = 0;
+            for (var r = 0; r < 29; r++) {
+                for (var c = 0; c < 29; c++) {
+                    if (r < 8 && c < 8) continue; if (r < 8 && c > 20) continue; if (r > 20 && c < 8) continue;
+                    if (r === 6 || c === 6) continue; if (r >= 17 && r <= 21 && c >= 17 && c <= 21) continue;
+                    if (data[idx++]) { ctx.fillStyle = '#000'; ctx.fillRect(c * mod, r * mod, mod, mod); }
+                }
+            }
+            ctx.fillStyle = '#000'; ctx.fillRect(19 * mod, 19 * mod, 3 * mod, 3 * mod);
+            ctx.fillStyle = '#fff'; ctx.fillRect(20 * mod, 20 * mod, mod, mod);
+        }
+
+        function ariaShowLoginWalkthrough() {
+            ariaShowCustomMessage("When you log in, SecureAuth verifies your credentials against the database, then generates a temporary JWT access token. This token is short-lived — typically 5 minutes — so even if intercepted, it's useless almost immediately.", [
+                { label: 'Continue', class: 'primary', action: 'nextAriaTourStep()' }
+            ]);
+        }
+
+        function ariaShow2FA() {
+            clearTimeout(ariaTypingTimer);
+            if (ariaTotpInterval) { clearInterval(ariaTotpInterval); ariaTotpInterval = null; }
+            var typedEl = document.getElementById('ariaMsgTyped');
+            var cursor = document.querySelector('#ariaMsg .aria-cursor');
+            if (cursor) cursor.style.display = 'none';
+            var html = '<div style="margin-bottom:10px;color:rgba(255,255,255,0.8);font-size:15px;line-height:1.6;">Open your authenticator app — Google Authenticator, Authy, or any TOTP-compatible app. Enter the 6-digit code from your authenticator below.</div>';
+            html += '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:14px;">';
+            html += '<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:4px;">This is a <strong style="color:#fbbf24;">demonstration</strong> — <strong style="color:#7baaff;">enter any 6 digits of your choice</strong> to proceed</div>';
+            html += '<div style="display:flex;gap:6px;">';
+            for (var i = 0; i < 6; i++) {
+                html += '<input type="text" id="ariaTotp_' + i + '" maxlength="1" style="width:38px;height:46px;text-align:center;font-size:20px;font-family:monospace;font-weight:700;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:white;outline:none;" />';
+            }
+            html += '</div>';
+            html += '<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;">';
+            html += '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+            html += 'Code refreshes in <span id="ariaTotpTimer" style="color:#7baaff;font-weight:600;font-family:monospace;min-width:18px;display:inline-block;">30</span>s';
+            html += '</div></div>';
+            if (typedEl) typedEl.innerHTML = html;
+            ariaBuildActions(document.getElementById('ariaActions'), [
+                { label: '✓ Verify Code', class: 'primary', action: 'ariaVerify2FA()' },
+                { label: 'Continue', class: '', action: 'nextAriaTourStep()' }
+            ]);
+            setTimeout(function() {
+                var first = document.getElementById('ariaTotp_0');
+                if (first) first.focus();
+            }, 100);
+            setTimeout(function() {
+                for (var i = 0; i < 6; i++) (function(idx) {
+                    var inp = document.getElementById('ariaTotp_' + idx);
+                    if (!inp) return;
+                    inp.addEventListener('input', function() {
+                        this.style.borderColor = 'rgba(255,255,255,0.15)';
+                        if (this.value.length > 0) {
+                            var next = document.getElementById('ariaTotp_' + (idx + 1));
+                            if (next) next.focus();
+                        }
+                    });
+                    inp.addEventListener('keydown', function(e) {
+                        if (e.key === 'Backspace' && this.value.length === 0) {
+                            var prev = document.getElementById('ariaTotp_' + (idx - 1));
+                            if (prev) { prev.focus(); prev.value = ''; }
+                        }
+                    });
+                })(i);
+            }, 150);
+            ariaTotpInterval = setInterval(function() {
+                var el = document.getElementById('ariaTotpTimer');
+                if (!el) { clearInterval(ariaTotpInterval); ariaTotpInterval = null; return; }
+                var val = parseInt(el.textContent) || 30;
+                val--;
+                if (val <= 0) { val = 30; el.textContent = '30'; el.style.color = '#7baaff'; return; }
+                el.textContent = val;
+                if (val <= 5) el.style.color = '#f87171';
+            }, 1000);
+        }
+
+        function ariaVerify2FA() {
+            if (ariaTotpInterval) { clearInterval(ariaTotpInterval); ariaTotpInterval = null; }
+            var code = '';
+            var empty = false;
+            for (var i = 0; i < 6; i++) {
+                var inp = document.getElementById('ariaTotp_' + i);
+                var val = (inp && inp.value) || '';
+                if (!val) { empty = true; if (inp) inp.style.borderColor = '#f87171'; }
+                code += val;
+            }
+            if (empty) {
+                var typedEl = document.getElementById('ariaMsgTyped');
+                var oldErr = document.getElementById('ariaTotpError');
+                if (oldErr) oldErr.remove();
+                var errDiv = document.createElement('div');
+                errDiv.id = 'ariaTotpError';
+                errDiv.style.cssText = 'margin-bottom:12px;padding:10px 14px;background:rgba(248,113,113,0.12);border:1px solid rgba(248,113,113,0.25);border-radius:8px;color:#f87171;font-size:13px;';
+                errDiv.innerHTML = '⚠ Please enter all 6 digits of your authentication code.';
+                if (typedEl) { typedEl.insertBefore(errDiv, typedEl.firstChild); typedEl.scrollTop = 0; }
+                document.getElementById('ariaTotp_0') && document.getElementById('ariaTotp_0').focus();
+                return;
+            }
+            var msg = '✓ Code <strong>' + code + '</strong> verified! Two-Factor Authentication is now active on your account. Your phone is now cryptographically linked to SecureAuth. Without your phone — or the backup codes you saved during setup — nobody can access your account, even with your password.';
+            ariaShowCustomHtmlMessage(msg, [
+                { label: 'Continue', class: 'primary', action: 'nextAriaTourStep()' }
+            ]);
+        }
+
+        function ariaShowSuccess() {
+            const cards = [
+                { icon: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', label: 'Password Protected', color: '#4ade80' },
+                { icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', label: '2FA Active', color: '#4ade80' },
+                { icon: 'M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z', label: 'Session Protected', color: '#7baaff' },
+                { icon: 'M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2', label: 'Rate Limiting', color: '#fbbf24' },
+                { icon: 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z', label: 'Account Lockout', color: '#f97316' },
+                { icon: 'M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2', label: 'JWT Session', color: '#4a7dff' },
+                { icon: 'M13 10V3L4 14h7v7l9-11h-7z', label: 'Security Headers', color: '#a78bfa' },
+                { icon: 'M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z', label: 'Flood Protection', color: '#34d399' }
+            ];
+            let cardsHtml = '<div class="aria-cards">';
+            cards.forEach(c => {
+                cardsHtml += '<div class="aria-card"><div class="aria-card-icon" style="background:rgba(255,255,255,0.06)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="' + c.color + '" stroke-width="1.5"><path d="' + c.icon + '" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="aria-card-title">' + c.label + '</div></div>';
+            });
+            cardsHtml += '</div>';
+            ariaShowCustomHtmlMessage("Authentication Successful — Protected by SecureAuth. Here are the security layers actively defending your account:" + cardsHtml, [
+                { label: 'Continue', class: 'primary', action: 'nextAriaTourStep()' }
+            ]);
+        }
+
+        function ariaShowCards() {
+            ariaCardsData = [
+                { title: 'Two-Factor Auth', desc: 'Requires a code from your phone. Stops password theft and phishing.', threat: 'Stops: Stolen passwords, phishing.' },
+                { title: 'JWT Sessions', desc: 'Short-lived tokens. Intercepted tokens expire in minutes.', threat: 'Stops: Session hijacking.' },
+                { title: 'bcrypt Hashing', desc: 'Cost factor 12 makes brute-force computationally impractical.', threat: 'Stops: Brute force attacks.' },
+                { title: 'Helmet Headers', desc: 'HTTP headers prevent XSS, clickjacking, and injection.', threat: 'Stops: XSS, clickjacking.' },
+                { title: 'Rate Limiting', desc: 'Limits requests per IP. Prevents API abuse and brute force.', threat: 'Stops: Brute force, DDoS.' },
+                { title: 'Account Lockout', desc: 'Progressive delays after failed attempts. 1-hour lock after 10.', threat: 'Stops: Credential guessing.' },
+                { title: 'Flood Protection', desc: 'Detects abnormal traffic. Keeps your site online.', threat: 'Stops: DDoS attacks.' },
+                { title: 'Session Protection', desc: 'Device fingerprinting detects stolen session tokens.', threat: 'Stops: Token theft.' }
+            ];
+            let cardsHtml = '<div class="aria-cards">';
+            ariaCardsData.forEach((c, ci) => {
+                cardsHtml += '<div class="aria-card" data-card-idx="' + ci + '"><div class="aria-card-title">' + c.title + '</div><div class="aria-card-desc">' + c.desc.substring(0, 50) + '...</div></div>';
+            });
+            cardsHtml += '</div>';
+            ariaShowCustomHtmlMessage("Click any card to learn more:" + cardsHtml, [
+                { label: 'Continue', class: 'primary', action: 'nextAriaTourStep()' }
+            ]);
+        }
+
+        function ariaShowCardDetail(title, desc, threat) {
+            ariaShowCustomHtmlMessage("<strong style='color:white;font-size:16px;'>" + title + "</strong><br><br>" + desc + "<br><br><em style='color:#fbbf24;font-size:13px;'>" + threat + "</em>", [
+                { label: 'Back to Cards', class: 'primary', action: 'ariaShowCards()' },
+                { label: 'Continue', class: '', action: 'nextAriaTourStep()' }
+            ]);
+        }
+
+        function ariaShowAttacks() {
+            const attacks = [
+                { name: 'Weak Password Attack', desc: 'Common passwords blocked by strength requirements.' },
+                { name: 'Credential Stuffing', desc: 'Leaked passwords from other sites. SecureAuth detects batch attempts.' },
+                { name: 'Brute Force', desc: 'Progressive lockout doubles delay after each failure.' },
+                { name: 'Application Flood', desc: 'Rate limiting and IP banning filter malicious traffic.' },
+                { name: 'Session Hijacking', desc: 'Device fingerprinting blocks unauthorized sessions.' }
+            ];
+            let html = '';
+            attacks.forEach(a => {
+                html += '<div class="aria-attack"><div class="aria-attack-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>' + a.name + '</div><div class="aria-attack-visual"><span style="color:#ef4444;">Attack</span><span style="color:rgba(255,255,255,0.2);">→</span><span style="color:#4ade80;">SecureAuth</span><span style="color:rgba(255,255,255,0.2);">→</span><span style="color:#4ade80;">Blocked ✓</span></div><div class="aria-attack-text">' + a.desc + '</div></div>';
+            });
+            ariaShowCustomHtmlMessage("Watch how SecureAuth stops real attacks:" + html, [
+                { label: 'Continue', class: 'primary', action: 'nextAriaTourStep()' }
+            ]);
+        }
+
+        function ariaShowCustomMessage(msg, actions) {
+            const typedEl = document.getElementById('ariaMsgTyped');
+            const actionsEl = document.getElementById('ariaActions');
+            const cursor = document.querySelector('#ariaMsg .aria-cursor');
+            typedEl.textContent = '';
+            cursor.style.display = 'inline-block';
+            clearTimeout(ariaTypingTimer);
+            ariaBuildActions(actionsEl, actions);
+            let charIndex = 0;
+            ariaSetStatus('Typing...');
+            function typeNextChar() {
+                if (charIndex < msg.length) {
+                    typedEl.textContent += msg[charIndex];
+                    charIndex++;
+                    let delay = 12;
+                    const ch = msg[charIndex - 1];
+                    if (ch === '.' || ch === '!' || ch === '?') delay = 160;
+                    else if (ch === ',') delay = 70;
+                    else if (ch === ' ') delay = 6;
+                    ariaTypingTimer = setTimeout(typeNextChar, delay);
+                } else { cursor.style.display = 'none'; ariaSetStatus('Ready'); }
+            }
+            typeNextChar();
+        }
+
+        function ariaShowCustomHtmlMessage(html, actions) {
+            const typedEl = document.getElementById('ariaMsgTyped');
+            const actionsEl = document.getElementById('ariaActions');
+            const cursor = document.querySelector('#ariaMsg .aria-cursor');
+            typedEl.innerHTML = html;
+            cursor.style.display = 'none';
+            clearTimeout(ariaTypingTimer);
+            ariaBuildActions(actionsEl, actions);
+            ariaSetStatus('Ready');
+        }
+
+        function ariaCelebration() {
+            var colors = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#ff6fb7','#a66cff','#ff9f43','#00d2d3','#ff4757','#2ed573'];
+            var body = document.body;
+            for (var i = 0; i < 120; i++) {
+                var el = document.createElement('div');
+                var c = colors[Math.floor(Math.random() * colors.length)];
+                el.style.cssText = 'position:fixed;top:-20px;left:' + (Math.random() * 100) + '%;width:' + (6 + Math.random() * 10) + 'px;height:' + (4 + Math.random() * 6) + 'px;background:' + c + ';border-radius:2px;z-index:99999;pointer-events:none;opacity:0.9;transform:rotate(' + (Math.random() * 360) + 'deg);animation:ariaConfettiFall ' + (2 + Math.random() * 2) + 's ease-in ' + (Math.random() * 3) + 's forwards;';
+                body.appendChild(el);
+                setTimeout(function(e) { e.remove(); }, 6000, el);
+            }
+            for (var i = 0; i < 20; i++) {
+                var el = document.createElement('div');
+                var c = colors[Math.floor(Math.random() * colors.length)];
+                var s = 24 + Math.random() * 20;
+                el.innerHTML = '<div style="width:' + s + 'px;height:' + (s * 1.2) + 'px;background:' + c + ';border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;position:relative;box-shadow:inset -6px -3px 0 rgba(0,0,0,0.08);"><div style="position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:2px;height:14px;background:' + c + ';opacity:0.5;"></div><div style="position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);width:1px;height:28px;background:rgba(255,255,255,0.2);"></div></div>';
+                el.style.cssText = 'position:fixed;bottom:-80px;left:' + (5 + Math.random() * 90) + '%;z-index:99998;pointer-events:none;animation:ariaBalloonFloat ' + (4 + Math.random() * 3) + 's ease-in-out ' + (Math.random() * 4) + 's forwards;';
+                body.appendChild(el);
+                setTimeout(function(e) { e.remove(); }, 10000, el);
+            }
+            for (var i = 0; i < 6; i++) {
+                var cx = 15 + Math.random() * 70;
+                var cy = 15 + Math.random() * 50;
+                var bc = colors[Math.floor(Math.random() * colors.length)];
+                for (var j = 0; j < 24; j++) {
+                    var p = document.createElement('div');
+                    var a = (j / 24) * Math.PI * 2;
+                    var d = 40 + Math.random() * 80;
+                    p.style.cssText = 'position:fixed;top:' + cy + 'vh;left:' + cx + 'vw;width:' + (3 + Math.random() * 4) + 'px;height:' + (3 + Math.random() * 4) + 'px;background:' + bc + ';border-radius:50%;z-index:100000;pointer-events:none;animation:ariaFirework ' + (0.6 + Math.random() * 0.4) + 's ease-out ' + (i * 0.6 + Math.random() * 0.4) + 's forwards;--tx:' + (Math.cos(a) * d) + 'px;--ty:' + (Math.sin(a) * d) + 'px;';
+                    body.appendChild(p);
+                    setTimeout(function(e) { e.remove(); }, 4000, p);
+                }
+            }
+        }
+
+        function ariaSetStatus(text) {
+            var el = document.getElementById('ariaStatus');
+            if (el) el.innerHTML = '<span class="assistant-status-dot"></span> ' + text;
+        }
+
+        function ariaGetMessageText() {
+            var el = document.getElementById('ariaMsgTyped');
+            if (!el) return '';
+            var clone = el.cloneNode(true);
+            var inputs = clone.querySelectorAll('input');
+            for (var i = 0; i < inputs.length; i++) { inputs[i].remove(); }
+            return clone.textContent || clone.innerText || '';
+        }
+
+        function previousAriaTourStep() {
+            if (ariaTourPhase > 0) ariaShowTourStep(ariaTourPhase - 1);
+        }
+
+        if (window.speechSynthesis) {
+            window.speechSynthesis.getVoices();
+            window.speechSynthesis.onvoiceschanged = function() { window.speechSynthesis.getVoices(); };
+        }
+
+        function ariaDoSpeak(auto) {
+            if (window.speechSynthesis.speaking) return;
+            var btn = document.getElementById('ariaListenBtn');
+            if (!btn) return;
+            var text = ariaGetMessageText().trim();
+            if (!text) return;
+            var utter = new SpeechSynthesisUtterance(text);
+            utter.rate = 0.88;
+            utter.pitch = 1.1;
+            var voices = window.speechSynthesis.getVoices();
+            var fv = null;
+            for (var i = 0; i < voices.length; i++) {
+                var v = voices[i];
+                if (v.lang && v.lang.startsWith('en')) {
+                    var n = v.name.toLowerCase();
+                    if (n.indexOf('zira') !== -1 || n.indexOf('female') !== -1 || n.indexOf('hazel') !== -1) { fv = v; break; }
+                    if (!fv) fv = v;
+                }
+            }
+            if (fv) utter.voice = fv;
+            utter.onstart = function() { btn.classList.add('active'); ariaSetStatus('Speaking...'); };
+            utter.onend = function() { btn.classList.remove('active'); ariaSetStatus('Ready'); };
+            window.speechSynthesis.speak(utter);
+        }
+
+        function ariaToggleSpeak() {
+            var btn = document.getElementById('ariaListenBtn');
+            if (!btn) return;
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+                btn.classList.remove('active');
+                ariaSetStatus('Ready');
+                return;
+            }
+            ariaDoSpeak(false);
+        }
+
+        function ariaFinishTour(redirectUrl) {
+            ariaCelebration();
+            if (redirectUrl) {
+                setTimeout(function() { closeAriaIntro(); window.location.href = redirectUrl; }, 3500);
+            } else {
+                setTimeout(function() { closeAriaIntro(); }, 3500);
+            }
+        }
+
+        function ariaExploreDashboard() {
+            ariaFinishTour('register.html');
+        }
+
+        function ariaRestart() {
+            ariaTourPhase = 0;
+            document.getElementById('ariaExperience').classList.remove('active');
+            setTimeout(() => {
+                document.getElementById('ariaLoading').classList.remove('hidden');
+                document.getElementById('ariaLoadText').textContent = LOAD_MESSAGES[0];
+                document.getElementById('ariaLoadBar').style.width = '0%';
+                ariaStartLoading();
+            }, 300);
+        }
+    } catch(e) { console.warn('Init error:', e); }
     </script>
 </body>
 </html>
