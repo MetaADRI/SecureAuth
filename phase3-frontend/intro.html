@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Experience — SecureAuth</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Inter', sans-serif; background: #0a0f1e; color: #fff; }
+    .screen { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; overflow-y: auto; }
+    .screen.active { display: flex; }
+    .glass { background: rgba(255,255,255,0.04); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); }
+    .glass-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; transition: all 0.3s ease; }
+    .glass-card:hover { border-color: rgba(0,102,204,0.3); box-shadow: 0 8px 32px rgba(0,102,204,0.1); }
+    .glow-blue { box-shadow: 0 0 20px rgba(0,102,204,0.15), 0 0 60px rgba(0,102,204,0.05); }
+    .btn-primary { background: linear-gradient(135deg, #003366, #0066CC); color: #fff; border: none; padding: 14px 32px; border-radius: 12px; font-weight: 600; font-size: 15px; cursor: pointer; transition: all 0.3s ease; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,102,204,0.35); }
+    .btn-secondary { background: rgba(255,255,255,0.06); color: #fff; border: 1px solid rgba(255,255,255,0.12); padding: 14px 32px; border-radius: 12px; font-weight: 600; font-size: 15px; cursor: pointer; transition: all 0.3s ease; }
+    .btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25); transform: translateY(-2px); }
+    .fade-in { animation: fadeIn 0.6s ease forwards; }
+    .fade-up { animation: fadeUp 0.6s ease forwards; opacity: 0; }
+    .slide-up { animation: slideUp 0.5s ease forwards; opacity: 0; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    @keyframes scanLine { 0% { top: -10%; } 100% { top: 110%; } }
+    @keyframes glowPulse { 0%, 100% { box-shadow: 0 0 10px rgba(0,102,204,0.2); } 50% { box-shadow: 0 0 30px rgba(0,102,204,0.5); } }
+    @keyframes hexRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+    .animate-pulse-slow { animation: pulse 3s ease-in-out infinite; }
+    .animate-glow { animation: glowPulse 2s ease-in-out infinite; }
+    .animate-shimmer { background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%); background-size: 200% 100%; animation: shimmer 2s infinite; }
+    .highlight-field { box-shadow: 0 0 0 2px rgba(0,102,204,0.6), 0 0 20px rgba(0,102,204,0.2); transition: all 0.3s ease; }
+    .check-valid { color: #22c55e; } .check-invalid { color: #64748b; }
+    .assistant-panel { position: fixed; bottom: 24px; right: 24px; width: 340px; max-width: calc(100vw - 48px); max-height: 260px; z-index: 100; border-radius: 16px; padding: 20px; background: rgba(15,23,42,0.92); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 20px 60px rgba(0,0,0,0.5); transform: translateY(20px); opacity: 0; transition: all 0.4s ease; pointer-events: none; }
+    .assistant-panel.visible { transform: translateY(0); opacity: 1; pointer-events: auto; }
+    .assistant-panel .indicator { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; display: inline-block; margin-right: 8px; animation: pulse 2s infinite; }
+    .term-link { color: #f59e0b; text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 2px; cursor: pointer; transition: all 0.2s ease; font-weight: 600; }
+    .term-link:hover { color: #fbbf24; text-decoration-style: solid; text-shadow: 0 0 8px rgba(245,158,11,0.3); }
+    .security-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px; transition: all 0.3s ease; cursor: pointer; }
+    .security-card:hover { background: rgba(255,255,255,0.06); border-color: rgba(0,102,204,0.3); transform: translateY(-2px); }
+    .security-card.expanded { background: rgba(255,255,255,0.06); border-color: rgba(0,102,204,0.4); }
+    .security-card .card-detail { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+    .security-card.expanded .card-detail { max-height: 300px; }
+    .attack-demo { border: 1px solid rgba(239,68,68,0.2); border-radius: 12px; padding: 20px; background: rgba(239,68,68,0.03); transition: all 0.3s ease; }
+    .attack-demo.blocked { border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.03); }
+    .attack-bar { height: 8px; border-radius: 4px; background: rgba(239,68,68,0.15); overflow: hidden; position: relative; }
+    .attack-bar-fill { height: 100%; border-radius: 4px; transition: width 0.05s linear; }
+    .grid-bg { background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 30px 30px; }
+    .step-counter { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: rgba(0,102,204,0.15); color: #0066CC; font-weight: 700; font-size: 14px; }
+    .arrow-flow { display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .arrow-flow .arrow { color: rgba(0,102,204,0.5); font-size: 20px; }
+    .strength-bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.06); overflow: hidden; margin-top: 8px; }
+    .strength-bar-fill { height: 100%; border-radius: 2px; transition: all 0.3s ease; width: 0; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+    @media (max-width: 640px) {
+      .assistant-panel { bottom: 16px; right: 16px; width: calc(100vw - 32px); max-height: 200px; padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── SCREEN 0: Welcome ─── -->
+<div id="screen-welcome" class="screen active flex-col items-center justify-center grid-bg">
+  <div class="absolute inset-0 opacity-[0.03]">
+    <svg width="100%" height="100%"><defs><pattern id="hex" width="56" height="100" patternUnits="userSpaceOnUse"><path d="M28 0L56 16.67v33.33L28 66.67 0 50V16.67z" fill="none" stroke="white" stroke-width="0.5"/></pattern></defs><rect width="100%" height="100%" fill="url(#hex)"/></svg>
+  </div>
+  <div class="relative z-10 text-center px-6 max-w-2xl fade-up" style="animation-delay:0.2s;">
+    <div class="w-16 h-16 mx-auto mb-8 rounded-2xl flex items-center justify-center" style="background:linear-gradient(135deg,#003366,#0066CC);box-shadow:0 0 40px rgba(0,102,204,0.3);">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="rgba(255,255,255,0.15)"/><rect x="9" y="11" width="6" height="5" rx="1" fill="white" stroke="none"/>
+        <path d="M10 11V9a2 2 0 114 0v2" stroke="white" stroke-width="1.5" fill="none"/><path d="M9 13l2 2 4-4" stroke="#0066CC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h1 class="text-4xl sm:text-5xl font-black tracking-tight mb-4">Welcome to SecureAuth</h1>
+    <p class="text-slate-400 text-lg leading-relaxed mb-10 max-w-lg mx-auto">
+      SecureAuth is more than an authentication system. It is an enterprise-grade security platform that protects users, accounts, sessions, browsers, and web applications using modern cybersecurity standards.
+    </p>
+    <p class="text-slate-500 text-sm mb-8">This interactive experience will guide you through every major feature while explaining why each security layer exists — in plain language.</p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <button data-action="startTour" class="btn-primary text-base px-10 py-4">Begin Experience</button>
+      <button data-action="skipToDemo" class="btn-secondary text-base px-10 py-4">Skip to Demo</button>
+    </div>
+  </div>
+  <div class="absolute bottom-8 text-slate-600 text-xs font-mono tracking-widest animate-pulse-slow">SECUREAUTH INTERACTIVE EXPERIENCE</div>
+</div>
+
+<!-- ─── SCREEN 1: Registration Tour ─── -->
+<div id="screen-register" class="screen flex-col items-center justify-center grid-bg">
+  <div class="relative z-10 w-full max-w-lg mx-auto px-6">
+    <div class="flex items-center justify-between mb-8">
+      <div class="flex items-center space-x-3">
+        <div class="step-counter">1</div>
+        <span class="text-sm font-semibold text-slate-300">Registration</span>
+      </div>
+      <div class="flex space-x-2">
+        <button data-action="prevStep" class="p-2 rounded-lg hover:bg-white/5 text-slate-500 hover:text-white transition-all" id="regBackBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7l-7 7 7 7"/></svg></button>
+        <button data-action="nextStep" class="p-2 rounded-lg hover:bg-white/5 text-slate-500 hover:text-white transition-all" id="regNextBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-7-7l7 7-7 7"/></svg></button>
+      </div>
+    </div>
+
+    <!-- Step indicators -->
+    <div class="flex justify-center space-x-2 mb-10">
+      <div class="h-1 w-10 rounded-full bg-cuz-blue"></div>
+      <div class="h-1 w-10 rounded-full bg-slate-700" id="regDot1"></div>
+      <div class="h-1 w-10 rounded-full bg-slate-700" id="regDot2"></div>
+      <div class="h-1 w-10 rounded-full bg-slate-700" id="regDot3"></div>
+    </div>
+
+    <!-- Step 0: Intro -->
+    <div id="regStep0" class="fade-up">
+      <h2 class="text-2xl font-bold mb-3">Create Your Account</h2>
+      <p class="text-slate-400 mb-8">Let us walk through how SecureAuth protects you from the very first step. Each field we ask for has a security purpose.</p>
+      <div class="glass-card p-6 mb-6">
+        <div class="flex items-start space-x-4">
+          <div class="w-10 h-10 rounded-xl bg-cuz-blue/20 flex items-center justify-center flex-shrink-0"><svg class="w-5 h-5 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+          <div><p class="font-semibold mb-1">Why registration matters</p><p class="text-sm text-slate-400">Every account starts with identity verification. The information you provide helps us establish who you are, so we can protect your access from impersonators.</p></div>
+        </div>
+      </div>
+      <button data-action="nextStep" class="btn-primary w-full">Let us Begin</button>
+    </div>
+
+    <!-- Step 1: Name -->
+    <div id="regStep1" class="hidden fade-up">
+      <h2 class="text-2xl font-bold mb-2">What is Your Name?</h2>
+      <p class="text-slate-400 mb-6">Your full name personalizes your account and appears on your secure dashboard.</p>
+      <div class="glass-card p-6 mb-6">
+        <label class="block text-sm font-medium text-slate-300 mb-2">Full Name</label>
+        <input type="text" id="tourName" value="Alex Morgan" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-cuz-blue transition-colors" />
+        <p class="text-xs text-slate-500 mt-2">Used for account identification and personalized security alerts.</p>
+      </div>
+      <button data-action="nextStep" class="btn-primary w-full">Continue</button>
+    </div>
+
+    <!-- Step 2: Email -->
+    <div id="regStep2" class="hidden fade-up">
+      <h2 class="text-2xl font-bold mb-2">Your Email Address</h2>
+      <p class="text-slate-400 mb-6">Your email is your unique identifier. SecureAuth uses it for login and security notifications.</p>
+      <div class="glass-card p-6 mb-6">
+        <label class="block text-sm font-medium text-slate-300 mb-2">Email Address</label>
+        <input type="email" id="tourEmail" value="alex@example.com" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-cuz-blue transition-colors" />
+        <p class="text-xs text-slate-500 mt-3 flex items-start space-x-2"><svg class="w-4 h-4 text-cuz-blue flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span>Your email is never shared. It is hashed and stored securely using bcrypt encryption.</span></p>
+      </div>
+      <button data-action="nextStep" class="btn-primary w-full">Continue</button>
+    </div>
+
+    <!-- Step 3: Password -->
+    <div id="regStep3" class="hidden fade-up">
+      <h2 class="text-2xl font-bold mb-2">Create a Strong Password</h2>
+      <p class="text-slate-400 mb-6">Your password is the first line of defense. SecureAuth enforces strong password requirements to protect against common attacks.</p>
+      <div class="glass-card p-6 mb-4">
+        <label class="block text-sm font-medium text-slate-300 mb-2">Password</label>
+        <div class="relative">
+          <input type="text" id="tourPassword" value="Secure@2024!" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-cuz-blue transition-colors font-mono" data-action="checkPasswordStrength" />
+        </div>
+        <!-- Strength bar -->
+        <div class="strength-bar"><div id="strengthFill" class="strength-bar-fill" style="width:100%"></div></div>
+        <div class="flex justify-between text-xs text-slate-500 mt-1"><span>Weak</span><span>Strong</span></div>
+        <!-- Checklist -->
+        <div class="mt-4 space-y-1.5" id="passwordChecks">
+          <div class="check-valid text-xs flex items-center space-x-2"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>8+ characters</span></div>
+          <div class="check-valid text-xs flex items-center space-x-2"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Uppercase letter</span></div>
+          <div class="check-valid text-xs flex items-center space-x-2"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Lowercase letter</span></div>
+          <div class="check-valid text-xs flex items-center space-x-2"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Number</span></div>
+          <div class="check-valid text-xs flex items-center space-x-2"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Special character</span></div>
+        </div>
+      </div>
+      <div class="glass-card p-4 mb-6">
+        <div class="flex items-start space-x-3">
+          <svg class="w-5 h-5 text-cuz-blue flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          <p class="text-sm text-slate-400">SecureAuth hashes your password using <strong class="text-slate-200">bcrypt</strong> — the same standard used by banks. Even if our database were breached, your password would remain unreadable.</p>
+        </div>
+      </div>
+      <button data-action="nextStep" class="btn-primary w-full">Continue to 2FA Setup</button>
+    </div>
+  </div>
+  <div class="absolute bottom-4 text-slate-700 text-xs font-mono">STEP 1 OF 6 — REGISTRATION</div>
+</div>
+
+<!-- ─── SCREEN 2: 2FA Setup ─── -->
+<div id="screen-2fa" class="screen flex-col items-center justify-center grid-bg">
+  <div class="relative z-10 w-full max-w-lg mx-auto px-6">
+    <div class="flex items-center justify-between mb-8">
+      <div class="flex items-center space-x-3">
+        <div class="step-counter">2</div>
+        <span class="text-sm font-semibold text-slate-300">Two-Factor Authentication</span>
+      </div>
+      <button data-action="nextStep" class="text-sm text-cuz-blue hover:text-blue-300 transition-colors font-medium">Skip →</button>
+    </div>
+    <div class="fade-up">
+      <h2 class="text-2xl font-bold mb-3">Set Up Two-Factor Authentication</h2>
+      <p class="text-slate-400 mb-6">This is the most important security feature. Even if someone steals your password, they still cannot log in without your second factor.</p>
+
+      <div class="glass-card p-6 mb-6">
+        <div class="flex items-center justify-center mb-6">
+          <!-- Animated flow -->
+          <div class="flex flex-col items-center space-y-1">
+            <div class="w-12 h-12 rounded-xl bg-cuz-blue/20 flex items-center justify-center"><svg class="w-6 h-6 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div>
+            <span class="text-xs text-slate-500">SecureAuth</span>
+          </div>
+          <div class="flex flex-col items-center mx-4">
+            <svg class="w-6 h-6 text-slate-600 animate-float" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            <span class="text-[10px] text-slate-600 mt-1">Encrypted link</span>
+          </div>
+          <div class="flex flex-col items-center space-y-1">
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center"><svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg></div>
+            <span class="text-xs text-slate-500">Authenticator App</span>
+          </div>
+          <div class="flex flex-col items-center mx-4">
+            <svg class="w-6 h-6 text-slate-600 animate-float" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            <span class="text-[10px] text-slate-600 mt-1">6-digit code</span>
+          </div>
+          <div class="flex flex-col items-center space-y-1">
+            <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center"><svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+            <span class="text-xs text-slate-500">Access Granted</span>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3 p-3 rounded-xl bg-white/5">
+            <svg class="w-5 h-5 text-cuz-blue flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <div><p class="text-sm font-medium">What is a TOTP code?</p><p class="text-xs text-slate-400 mt-1">A time-based one-time password that changes every 30 seconds. Only your phone and SecureAuth know the secret key.</p></div>
+          </div>
+          <div class="flex items-start space-x-3 p-3 rounded-xl bg-white/5">
+            <svg class="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <div><p class="text-sm font-medium">Why authenticator apps?</p><p class="text-xs text-slate-400 mt-1">They generate codes offline on your device. No SIM swap, no SMS interception, no phishing can steal your 2FA code in real time.</p></div>
+          </div>
+          <div class="flex items-start space-x-3 p-3 rounded-xl bg-white/5">
+            <svg class="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+            <div><p class="text-sm font-medium">What if I lose my phone?</p><p class="text-xs text-slate-400 mt-1">SecureAuth provides recovery codes during setup. Store them safely — they are your backstage pass to regain access.</p></div>
+          </div>
+        </div>
+      </div>
+      <button data-action="nextStep" class="btn-primary w-full">Continue to Login</button>
+    </div>
+  </div>
+  <div class="absolute bottom-4 text-slate-700 text-xs font-mono">STEP 2 OF 6 — TWO-FACTOR AUTHENTICATION</div>
+</div>
+
+<!-- ─── SCREEN 3: Login Walkthrough ─── -->
+<div id="screen-login" class="screen flex-col items-center justify-center grid-bg">
+  <div class="relative z-10 w-full max-w-lg mx-auto px-6">
+    <div class="flex items-center justify-between mb-8">
+      <div class="flex items-center space-x-3">
+        <div class="step-counter">3</div>
+        <span class="text-sm font-semibold text-slate-300">Login Flow</span>
+      </div>
+      <button data-action="nextStep" class="text-sm text-cuz-blue hover:text-blue-300 transition-colors font-medium">Skip →</button>
+    </div>
+    <div class="fade-up">
+      <h2 class="text-2xl font-bold mb-3">Logging In Securely</h2>
+      <p class="text-slate-400 mb-6">Every login follows a security chain. Each step exists to stop a specific attack.</p>
+
+      <div class="space-y-3 mb-8">
+        <div class="glass-card p-4 flex items-start space-x-4">
+          <div class="step-counter flex-shrink-0">1</div>
+          <div><p class="font-semibold text-sm">Credentials Sent</p><p class="text-xs text-slate-400 mt-1">Your email and password are sent over an encrypted HTTPS connection. No one on the network can read them.</p></div>
+        </div>
+        <div class="glass-card p-4 flex items-start space-x-4">
+          <div class="step-counter flex-shrink-0">2</div>
+          <div><p class="font-semibold text-sm">Server Verification</p><p class="text-xs text-slate-400 mt-1">SecureAuth checks your credentials against the bcrypt hash. Even the server never sees your raw password.</p></div>
+        </div>
+        <div class="glass-card p-4 flex items-start space-x-4">
+          <div class="step-counter flex-shrink-0">3</div>
+          <div><p class="font-semibold text-sm">Temporary JWT Issued</p><p class="text-xs text-slate-400 mt-1">A temporary token is generated with a 5-minute expiry. It is a limited key — it can only be used for the next step.</p></div>
+        </div>
+        <div class="glass-card p-4 flex items-start space-x-4" style="border-color:rgba(0,102,204,0.3);">
+          <div class="step-counter flex-shrink-0" style="background:rgba(0,102,204,0.3);color:#60a5fa;">4</div>
+          <div><p class="font-semibold text-sm text-cuz-blue">Why a temporary token?</p><p class="text-xs text-slate-400 mt-1">If an attacker intercepts the temp token, it expires in 5 minutes and cannot access any protected data. It is a one-purpose key: complete 2FA.</p></div>
+        </div>
+      </div>
+      <button data-action="nextStep" class="btn-primary w-full">Continue to 2FA Verification</button>
+    </div>
+  </div>
+  <div class="absolute bottom-4 text-slate-700 text-xs font-mono">STEP 3 OF 6 — SECURE LOGIN FLOW</div>
+</div>
+
+<!-- ─── SCREEN 4: 2FA Verify ─── -->
+<div id="screen-verify" class="screen flex-col items-center justify-center grid-bg">
+  <div class="relative z-10 w-full max-w-lg mx-auto px-6">
+    <div class="flex items-center justify-between mb-8">
+      <div class="flex items-center space-x-3">
+        <div class="step-counter">4</div>
+        <span class="text-sm font-semibold text-slate-300">2FA Verification</span>
+      </div>
+      <button data-action="nextStep" class="text-sm text-cuz-blue hover:text-blue-300 transition-colors font-medium">Skip →</button>
+    </div>
+    <div class="fade-up">
+      <h2 class="text-2xl font-bold mb-3">Enter Your 2FA Code</h2>
+      <p class="text-slate-400 mb-6">Open your authenticator app and enter the current 6-digit code. It changes every 30 seconds for a reason.</p>
+
+      <!-- Simulated code display -->
+      <div class="glass-card p-8 mb-6 text-center">
+        <div class="text-xs text-slate-500 mb-4 font-mono tracking-widest">CURRENT CODE</div>
+        <div class="text-4xl sm:text-5xl font-mono font-bold tracking-[0.2em] text-white mb-4" id="fakeTotpCode">482 915</div>
+        <div class="flex items-center justify-center space-x-3 text-xs text-slate-500">
+          <span>Expires in</span>
+          <div class="w-32 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+            <div id="totpTimerBar" class="h-full bg-cuz-blue rounded-full transition-all duration-1000" style="width:100%"></div>
+          </div>
+          <span id="totpTimerText">30s</span>
+        </div>
+      </div>
+
+      <div class="glass-card p-4 mb-6">
+        <div class="flex items-start space-x-3">
+          <svg class="w-5 h-5 text-cuz-blue flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <div><p class="text-sm font-medium">Why 30 seconds?</p><p class="text-xs text-slate-400 mt-1">If a code is stolen mid-attack, it becomes useless within half a minute. This narrow window makes remote exploitation nearly impossible.</p></div>
+        </div>
+      </div>
+
+      <button data-action="nextStep" class="btn-primary w-full">Authenticate →</button>
+    </div>
+  </div>
+  <div class="absolute bottom-4 text-slate-700 text-xs font-mono">STEP 4 OF 6 — TWO-FACTOR VERIFICATION</div>
+</div>
+
+<!-- ─── SCREEN 5: Success ─── -->
+<div id="screen-success" class="screen flex-col items-center justify-center grid-bg">
+  <div class="relative z-10 text-center px-6 max-w-2xl fade-up">
+    <div class="w-16 h-16 mx-auto mb-8 rounded-2xl flex items-center justify-center animate-glow" style="background:rgba(34,197,94,0.15);">
+      <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    </div>
+    <h2 class="text-3xl font-black mb-3">Authentication Successful</h2>
+    <p class="text-slate-400 mb-2">Protected by SecureAuth</p>
+    <p class="text-sm text-slate-500 mb-8 max-w-md mx-auto">Your identity has been verified across multiple security layers. You are now protected by an enterprise-grade authentication stack.</p>
+
+    <!-- Security cards grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-w-lg mx-auto">
+      <div class="glass-card p-3 text-center"><svg class="w-5 h-5 text-cuz-blue mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg><span class="text-[10px] font-medium text-slate-400">Password Protected</span></div>
+      <div class="glass-card p-3 text-center"><svg class="w-5 h-5 text-cuz-blue mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg><span class="text-[10px] font-medium text-slate-400">2FA Active</span></div>
+      <div class="glass-card p-3 text-center"><svg class="w-5 h-5 text-cuz-blue mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 21H5v-6l1.757-1.757A6 6 0 0118 9V5a2 2 0 012-2h4v4z"/></svg><span class="text-[10px] font-medium text-slate-400">Session Protected</span></div>
+      <div class="glass-card p-3 text-center"><svg class="w-5 h-5 text-cuz-blue mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg><span class="text-[10px] font-medium text-slate-400">Rate Limiting</span></div>
+      <div class="glass-card p-3 text-center"><svg class="w-5 h-5 text-cuz-blue mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="text-[10px] font-medium text-slate-400">Browser Security</span></div>
+      <div class="glass-card p-3 text-center"><svg class="w-5 h-5 text-cuz-blue mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="text-[10px] font-medium text-slate-400">Lockout Enabled</span></div>
+    </div>
+    <button data-action="nextStep" class="btn-primary mt-8 px-10 py-4">Explore Security Features →</button>
+  </div>
+  <div class="absolute bottom-4 text-slate-700 text-xs font-mono">STEP 5 OF 6 — AUTHENTICATION SUCCESSFUL</div>
+</div>
+
+<!-- ─── SCREEN 6: Security Learning Cards ─── -->
+<div id="screen-learning" class="screen flex-col items-center justify-center grid-bg">
+  <div class="relative z-10 w-full max-w-2xl mx-auto px-6 py-12">
+    <div class="flex items-center justify-between mb-8">
+      <div class="flex items-center space-x-3">
+        <div class="step-counter">5</div>
+        <span class="text-sm font-semibold text-slate-300">Security Layers</span>
+      </div>
+      <button data-action="nextStep" class="text-sm text-cuz-blue hover:text-blue-300 transition-colors font-medium">Skip All →</button>
+    </div>
+    <h2 class="text-2xl font-bold mb-2">How SecureAuth Protects You</h2>
+    <p class="text-slate-400 mb-8">Each card explains a security feature — click to expand and learn more.</p>
+
+    <div class="space-y-3" id="learningCardsContainer">
+      <div class="security-card" data-action="toggleCard" data-self>
+        <div class="flex items-center justify-between"><div class="flex items-center space-x-3"><svg class="w-5 h-5 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg><span class="font-semibold text-sm">Two-Factor Authentication</span></div><svg class="w-4 h-4 text-slate-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div>
+        <div class="card-detail mt-3 space-y-2"><p class="text-sm text-slate-400">Requires a second verification factor (TOTP code) in addition to your password.</p><p class="text-xs text-slate-500"><span class="text-red-400">Threat prevented:</span> Credential theft, phishing, replay attacks</p><p class="text-xs text-slate-500"><span class="text-amber-400">Real world:</span> Google, GitHub, and banks all use TOTP 2FA</p></div>
+      </div>
+      <div class="security-card" data-action="toggleCard" data-self>
+        <div class="flex items-center justify-between"><div class="flex items-center space-x-3"><svg class="w-5 h-5 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 21H5v-6l1.757-1.757A6 6 0 0118 9V5a2 2 0 012-2h4v4z"/></svg><span class="font-semibold text-sm">JWT Sessions</span></div><svg class="w-4 h-4 text-slate-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div>
+        <div class="card-detail mt-3 space-y-2"><p class="text-sm text-slate-400">Stateless tokens with embedded user identity and expiry. No server-side session storage needed.</p><p class="text-xs text-slate-500"><span class="text-red-400">Threat prevented:</span> Session hijacking, CSRF, token forgery</p><p class="text-xs text-slate-500"><span class="text-amber-400">Enterprise usage:</span> Used by Auth0, Okta, and AWS IAM</p></div>
+      </div>
+      <div class="security-card" data-action="toggleCard" data-self>
+        <div class="flex items-center justify-between"><div class="flex items-center space-x-3"><svg class="w-5 h-5 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="font-semibold text-sm">Account Lockout</span></div><svg class="w-4 h-4 text-slate-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div>
+        <div class="card-detail mt-3 space-y-2"><p class="text-sm text-slate-400">After 5 failed login attempts, the account is locked for 30 minutes.</p><p class="text-xs text-slate-500"><span class="text-red-400">Threat prevented:</span> Brute force attacks, credential stuffing</p><p class="text-xs text-slate-500"><span class="text-amber-400">Real world:</span> Standard in Windows Active Directory, AWS IAM</p></div>
+      </div>
+      <div class="security-card" data-action="toggleCard" data-self>
+        <div class="flex items-center justify-between"><div class="flex items-center space-x-3"><svg class="w-5 h-5 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg><span class="font-semibold text-sm">Rate Limiting</span></div><svg class="w-4 h-4 text-slate-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div>
+        <div class="card-detail mt-3 space-y-2"><p class="text-sm text-slate-400">Limits requests to 5 per 15 minutes per IP on login endpoints.</p><p class="text-xs text-slate-500"><span class="text-red-400">Threat prevented:</span> Automated attacks, DDoS, API abuse</p><p class="text-xs text-slate-500"><span class="text-amber-400">Enterprise usage:</span> Stripe API, GitHub API, Cloudflare</p></div>
+      </div>
+      <div class="security-card" data-action="toggleCard" data-self>
+        <div class="flex items-center justify-between"><div class="flex items-center space-x-3"><svg class="w-5 h-5 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg><span class="font-semibold text-sm">Application Flood Protection</span></div><svg class="w-4 h-4 text-slate-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div>
+        <div class="card-detail mt-3 space-y-2"><p class="text-sm text-slate-400">6-layer protection: IP banning, connection limits, request size checks, malformed request detection, and progressive slowdown.</p><p class="text-xs text-slate-500"><span class="text-red-400">Threat prevented:</span> Layer 7 DDoS, slow loris, buffer overflow</p><p class="text-xs text-slate-500"><span class="text-amber-400">Enterprise usage:</span> Comparable to AWS Shield and Cloudflare</p></div>
+      </div>
+    </div>
+    <button data-action="nextStep" class="btn-primary w-full mt-8">See Attack Simulations →</button>
+  </div>
+  <div class="absolute bottom-4 text-slate-700 text-xs font-mono">SECURITY EDUCATION — INTERACTIVE CARDS</div>
+</div>
+
+<!-- ─── SCREEN 7: Attack Simulations ─── -->
+<div id="screen-attacks" class="screen flex-col items-center justify-center grid-bg">
+  <div class="relative z-10 w-full max-w-2xl mx-auto px-6 py-12">
+    <div class="flex items-center justify-between mb-8">
+      <div class="flex items-center space-x-3">
+        <div class="step-counter">6</div>
+        <span class="text-sm font-semibold text-slate-300">Attack Simulations</span>
+      </div>
+      <button data-action="nextStep" class="text-sm text-cuz-blue hover:text-blue-300 transition-colors font-medium">Skip All →</button>
+    </div>
+    <h2 class="text-2xl font-bold mb-2">See Attackers in Action</h2>
+    <p class="text-slate-400 mb-6">Watch how each attack works — and how SecureAuth stops it.</p>
+
+    <!-- Attack: Weak Password -->
+    <div class="attack-demo mb-4" id="attackWeakPw">
+      <div class="flex items-center justify-between mb-3"><div class="flex items-center space-x-2"><svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg><span class="font-semibold text-sm">Weak Password Attack</span></div><span class="text-xs font-mono px-2 py-1 rounded bg-slate-800 text-slate-400">RUNNING</span></div>
+      <div class="attack-bar"><div class="attack-bar-fill bg-red-500" id="attackBar1" style="width:0%"></div></div>
+      <div class="flex justify-between text-xs text-slate-500 mt-1"><span>Trying: password123</span><span id="attackStatus1">Attempting...</span></div>
+      <div id="attackResult1" class="hidden mt-2 text-sm"></div>
+    </div>
+
+    <!-- Attack: Brute Force -->
+    <div class="attack-demo mb-4" id="attackBrute">
+      <div class="flex items-center justify-between mb-3"><div class="flex items-center space-x-2"><svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg><span class="font-semibold text-sm">Brute Force Attack</span></div><span class="text-xs font-mono px-2 py-1 rounded bg-slate-800 text-slate-400">RUNNING</span></div>
+      <div class="attack-bar"><div class="attack-bar-fill bg-red-500" id="attackBar2" style="width:0%"></div></div>
+      <div class="flex justify-between text-xs text-slate-500 mt-1"><span>Trying: 1,724 combinations</span><span id="attackStatus2">Attempting...</span></div>
+      <div id="attackResult2" class="hidden mt-2 text-sm"></div>
+    </div>
+
+    <!-- Attack: Application Flood -->
+    <div class="attack-demo mb-4" id="attackFlood">
+      <div class="flex items-center justify-between mb-3"><div class="flex items-center space-x-2"><svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg><span class="font-semibold text-sm">Application Flood Attack</span></div><span class="text-xs font-mono px-2 py-1 rounded bg-slate-800 text-slate-400">RUNNING</span></div>
+      <div class="attack-bar"><div class="attack-bar-fill bg-red-500" id="attackBar3" style="width:0%"></div></div>
+      <div class="flex justify-between text-xs text-slate-500 mt-1"><span>Sending: 250 req/sec</span><span id="attackStatus3">Attempting...</span></div>
+      <div id="attackResult3" class="hidden mt-2 text-sm"></div>
+    </div>
+
+    <button data-action="runAllAttacks" class="btn-secondary w-full mb-8" id="startAttacksBtn">▶ Run Attack Simulations</button>
+    <button data-action="nextStep" class="btn-primary w-full" id="continueAfterAttacks" style="display:none;">Continue to Dashboard →</button>
+  </div>
+  <div class="absolute bottom-4 text-slate-700 text-xs font-mono">ATTACK SIMULATIONS — INTERACTIVE DEMO</div>
+</div>
+
+<!-- ─── SCREEN 8: Dashboard Walkthrough ─── -->
+<div id="screen-dashboard" class="screen flex-col items-center justify-center grid-bg">
+  <div class="relative z-10 w-full max-w-2xl mx-auto px-6 py-12">
+    <div class="flex items-center justify-between mb-8">
+      <div class="flex items-center space-x-3">
+        <div class="step-counter">6</div>
+        <span class="text-sm font-semibold text-slate-300">Dashboard</span>
+      </div>
+    </div>
+    <h2 class="text-2xl font-bold mb-2">Your Secure Dashboard</h2>
+    <p class="text-slate-400 mb-6">Every element on the dashboard is designed for security visibility.</p>
+
+    <div class="grid sm:grid-cols-2 gap-4 mb-8">
+      <div class="glass-card p-5">
+        <div class="flex items-center space-x-2 mb-3"><svg class="w-5 h-5 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg><span class="font-semibold">Profile Identity</span></div>
+        <p class="text-xs text-slate-400">Your account info — name, email, and creation date. This tells you exactly who is logged in and when the account was created.</p>
+      </div>
+      <div class="glass-card p-5">
+        <div class="flex items-center space-x-2 mb-3"><svg class="w-5 h-5 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg><span class="font-semibold">Security Status</span></div>
+        <p class="text-xs text-slate-400">Shows whether 2FA is active, session expiry time, and overall account protection level.</p>
+      </div>
+      <div class="glass-card p-5">
+        <div class="flex items-center space-x-2 mb-3"><svg class="w-5 h-5 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="font-semibold">Login Ledger</span></div>
+        <p class="text-xs text-slate-400">A complete log of every login attempt — IP address, device info, and timestamp. If someone else accesses your account, you will see it here.</p>
+      </div>
+      <div class="glass-card p-5">
+        <div class="flex items-center space-x-2 mb-3"><svg class="w-5 h-5 text-cuz-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg><span class="font-semibold">Account Controls</span></div>
+        <p class="text-xs text-slate-400">Manage logout, password changes, and account deletion. All sensitive actions require confirmation.</p>
+      </div>
+    </div>
+
+    <div class="glass-card p-5 mb-8">
+      <div class="flex items-start space-x-3">
+        <svg class="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <div><p class="font-semibold text-sm mb-1">The Admin Panel</p><p class="text-sm text-slate-400">Admins have access to a command center: view all registered users, monitor global audit logs, manage deletion requests, and track security events across the entire platform.</p></div>
+      </div>
+    </div>
+
+    <button data-action="nextStep" class="btn-primary w-full">Complete Experience →</button>
+  </div>
+  <div class="absolute bottom-4 text-slate-700 text-xs font-mono">DASHBOARD TOUR</div>
+</div>
+
+<!-- ─── SCREEN 9: Completion ─── -->
+<div id="screen-complete" class="screen flex-col items-center justify-center grid-bg">
+  <div class="relative z-10 text-center px-6 max-w-xl fade-up">
+    <div class="w-20 h-20 mx-auto mb-8 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,rgba(0,102,204,0.2),rgba(34,197,94,0.2));box-shadow:0 0 60px rgba(0,102,204,0.15);">
+      <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="#0066CC" stroke-width="1.5">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="rgba(0,102,204,0.2)"/><rect x="9" y="11" width="6" height="5" rx="1" fill="white" stroke="none"/>
+        <path d="M10 11V9a2 2 0 114 0v2" stroke="white" stroke-width="1.5" fill="none"/><path d="M9 13l2 2 4-4" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h2 class="text-3xl sm:text-4xl font-black mb-4">Experience Complete</h2>
+    <p class="text-slate-400 text-lg mb-3">You now understand how SecureAuth protects modern web applications.</p>
+    <p class="text-slate-500 text-sm mb-10 max-w-md mx-auto">From registration through 2FA, attack prevention, and real-time monitoring — every layer works together to keep accounts secure.</p>
+
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="dashboard.html" class="btn-primary text-base px-8 py-4 inline-flex items-center justify-center space-x-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-3a1 1 0 011-1h2a1 1 0 011 1v3a1 1 0 01-1 1"/></svg>
+        <span>Explore Dashboard</span>
+      </a>
+      <button data-action="restartExperience" class="btn-secondary text-base px-8 py-4">Restart Experience</button>
+      <a href="index.html" class="btn-secondary text-base px-8 py-4">Return Home</a>
+    </div>
+  </div>
+  <div class="absolute bottom-8 text-slate-600 text-xs font-mono tracking-widest animate-pulse-slow">SECUREAUTH — ENTERPRISE SECURITY PLATFORM</div>
+</div>
+
+<!-- ─── Floating Assistant ─── -->
+<div class="assistant-panel" id="assistantPanel">
+  <div class="flex items-center space-x-2 mb-2">
+    <span class="indicator"></span>
+    <span class="text-xs font-semibold text-slate-300">SecureAuth Guide</span>
+  </div>
+  <p id="assistantText" class="text-sm text-slate-400 leading-relaxed">Welcome! I will guide you through SecureAuth. Click "Begin Experience" to start.</p>
+</div>
+
+<script>
+// ─── State ───
+let currentScreen = 'welcome';
+const screens = ['welcome','register','2fa','login','verify','success','learning','attacks','dashboard','complete'];
+let currentRegStep = 0;
+let totpInterval;
+let totpCounter = 30;
+let attacksRunning = false;
+
+// ─── Screen Management ───
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('screen-' + id);
+  if (el) {
+    el.classList.add('active');
+    el.querySelectorAll('.fade-up').forEach(e => { e.style.animation = 'none'; setTimeout(() => e.style.animation = '', 10); });
+  }
+  currentScreen = id;
+  updateAssistant(id);
+  // Scroll to top for scrolling screens
+  el.scrollTop = 0;
+}
+
+function nextStep() {
+  const idx = screens.indexOf(currentScreen);
+  if (idx < screens.length - 1) showScreen(screens[idx + 1]);
+  if (currentScreen === 'verify') { clearInterval(totpInterval); }
+  if (currentScreen === 'attacks') { clearInterval(totpInterval); }
+  if (currentScreen === 'register') resetRegSteps();
+  if (currentScreen === 'learning') resetCards();
+}
+
+function prevStep() {
+  const idx = screens.indexOf(currentScreen);
+  if (idx > 0) showScreen(screens[idx - 1]);
+  if (currentScreen === 'register') resetRegSteps();
+  if (currentScreen === 'verify') { clearInterval(totpInterval); }
+}
+
+// ─── Registration Steps ───
+function startTour() { showScreen('register'); currentRegStep = 0; showRegStep(0); }
+
+function showRegStep(n) {
+  currentRegStep = n;
+  for (let i = 0; i < 4; i++) {
+    const el = document.getElementById('regStep' + i);
+    if (el) el.style.display = i === n ? 'block' : 'none';
+  }
+  for (let i = 0; i < 3; i++) {
+    const dot = document.getElementById('regDot' + i);
+    if (dot) dot.className = 'h-1 w-10 rounded-full ' + (i < n ? 'bg-cuz-blue' : 'bg-slate-700');
+  }
+  updateAssistant('register');
+}
+
+function resetRegSteps() { currentRegStep = 0; showRegStep(0); }
+
+// ─── Password Strength ───
+function checkPasswordStrength() {
+  const pw = document.getElementById('tourPassword').value;
+  const checks = [
+    { test: pw.length >= 8, id: 0 },
+    { test: /[A-Z]/.test(pw), id: 1 },
+    { test: /[a-z]/.test(pw), id: 2 },
+    { test: /[0-9]/.test(pw), id: 3 },
+    { test: /[^A-Za-z0-9]/.test(pw), id: 4 }
+  ];
+  const items = document.getElementById('passwordChecks').children;
+  let passed = 0;
+  checks.forEach((c, i) => {
+    if (items[i]) {
+      items[i].className = (c.test ? 'check-valid' : 'check-invalid') + ' text-xs flex items-center space-x-2';
+      items[i].querySelector('span').textContent = [
+        '8+ characters','Uppercase letter','Lowercase letter','Number','Special character'
+      ][i];
+      if (c.test) passed++;
+    }
+  });
+  const fill = document.getElementById('strengthFill');
+  const pct = (passed / 5) * 100;
+  fill.style.width = pct + '%';
+  fill.style.background = pct < 40 ? '#ef4444' : pct < 80 ? '#f59e0b' : '#22c55e';
+
+  // Update assistant with password feedback
+  const assistText = document.getElementById('assistantText');
+  const assistPanel = document.getElementById('assistantPanel');
+  assistPanel.classList.add('visible');
+  if (passed === 5) {
+    assistText.innerHTML = highlightTerms('Congrats! You have just created a strong password that protects against brute force attacks and credential stuffing. Your password is hashed with bcrypt and stored securely. To find out more, click the highlighted terms below.');
+  } else if (currentRegStep === 3) {
+    assistText.innerHTML = highlightTerms('A strong password is your first defense against brute force attacks. bcrypt hashing keeps it safe even in a data breach.');
+  }
+}
+
+// ─── TOTP Simulation ───
+function startTotpSim() {
+  totpCounter = 30;
+  updateTotp();
+  if (totpInterval) clearInterval(totpInterval);
+  totpInterval = setInterval(() => {
+    totpCounter--;
+    if (totpCounter <= 0) {
+      totpCounter = 30;
+      updateTotpCode();
+    }
+    document.getElementById('totpTimerBar').style.width = (totpCounter / 30 * 100) + '%';
+    document.getElementById('totpTimerText').textContent = totpCounter + 's';
+  }, 1000);
+}
+
+function updateTotpCode() {
+  const code = String(Math.floor(100000 + Math.random() * 900000));
+  document.getElementById('fakeTotpCode').textContent = code.slice(0,3) + ' ' + code.slice(3);
+}
+
+function updateTotp() {
+  updateTotpCode();
+  document.getElementById('totpTimerBar').style.width = '100%';
+  document.getElementById('totpTimerText').textContent = '30s';
+}
+
+// ─── Learning Cards ───
+function toggleCard(el) {
+  el.classList.toggle('expanded');
+}
+
+function resetCards() {
+  document.querySelectorAll('.security-card').forEach(c => c.classList.remove('expanded'));
+}
+
+// ─── Attack Simulations ───
+function runAllAttacks() {
+  if (attacksRunning) return;
+  attacksRunning = true;
+  document.getElementById('startAttacksBtn').disabled = true;
+  document.getElementById('startAttacksBtn').textContent = 'Simulating...';
+
+  setTimeout(() => runAttack(1, 'password123', 'Weak Password: Cracked in 0.3 seconds', 
+    '❌ Attack Blocked — SecureAuth enforces strong password requirements. bcrypt hashing makes cracking 300x slower.'), 500);
+  setTimeout(() => runAttack(2, '1,724 combinations', 'Brute Force: Would take 2.4 hours at 1 attempt/sec', 
+    '❌ Blocked — Account Lockout activates after 5 failed attempts. Rate limiting slows attackers to a halt.'), 2000);
+  setTimeout(() => runAttack(3, '250 req/sec', 'Flood: Server would crash under load', 
+    '❌ Blocked — IP Auto-Ban after 100 req/min. Connection limiting caps at 100 per IP. Progressive slow-down activates.'), 3500);
+}
+
+function runAttack(id, label, failMsg, blockMsg) {
+  const bar = document.getElementById('attackBar' + id);
+  const status = document.getElementById('attackStatus' + id);
+  const result = document.getElementById('attackResult' + id);
+  const demo = document.getElementById([,'attackWeakPw','attackBrute','attackFlood'][id]);
+
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += 2 + Math.random() * 4;
+    if (progress >= 100) {
+      progress = 100;
+      clearInterval(interval);
+      // Show block
+      setTimeout(() => {
+        demo.classList.add('blocked');
+        demo.querySelector('span:last-child').textContent = 'BLOCKED';
+        demo.querySelector('span:last-child').className = 'text-xs font-mono px-2 py-1 rounded bg-emerald-500/20 text-emerald-400';
+        bar.className = 'attack-bar-fill bg-emerald-500';
+        status.textContent = 'Attack intercepted';
+        result.className = 'block mt-2 text-sm';
+        result.innerHTML = '<span class="text-emerald-400">' + blockMsg + '</span>';
+        // Check if all done
+        checkAttacksDone();
+      }, 600);
+    }
+    bar.style.width = progress + '%';
+    status.textContent = progress < 50 ? 'Testing... ' + Math.floor(progress) + '%' : 'Critical — ' + Math.floor(progress) + '%';
+  }, 80);
+}
+
+function checkAttacksDone() {
+  const allDone = ['attackBar1','attackBar2','attackBar3'].every(id => {
+    return document.getElementById(id).classList.contains('bg-emerald-500');
+  });
+  if (allDone) {
+    document.getElementById('continueAfterAttacks').style.display = 'block';
+  }
+}
+
+// ─── Security Term Highlighting ───
+function highlightTerms(text) {
+  const termMap = {
+    'two-factor authentication': 'what+is+two-factor+authentication+2fa',
+    'application flood attack': 'what+is+an+application+flood+ddos+attack',
+    'application flood attacks': 'what+is+an+application+flood+ddos+attack',
+    'brute force attacks': 'what+is+a+brute+force+attack+in+cybersecurity',
+    'brute force attack': 'what+is+a+brute+force+attack+in+cybersecurity',
+    'authenticator app': 'what+is+an+authenticator+app+for+2fa',
+    'account lockout': 'what+is+account+lockout+in+cybersecurity',
+    'rate limiting': 'what+is+rate+limiting+in+cybersecurity',
+    'session hijacking': 'what+is+session+hijacking+attack',
+    'credential stuffing': 'what+is+credential+stuffing+attack',
+    'identity verification': 'what+is+identity+verification+in+security',
+    'recovery codes': 'what+are+recovery+codes+for+2fa',
+    'bcrypt hashing': 'what+is+bcrypt+hashing+algorithm',
+    'brute force': 'what+is+a+brute+force+attack+in+cybersecurity',
+    'ip banning': 'what+is+ip+banning+in+cybersecurity',
+    'jwt tokens': 'what+is+jwt+json+web+token',
+    'jwt token': 'what+is+jwt+json+web+token',
+    'ddos protection': 'what+is+ddos+protection',
+    'totp code': 'what+is+totp+time+based+one+time+password',
+    'totp codes': 'what+is+totp+time+based+one+time+password',
+    'https encryption': 'what+is+https+encryption',
+    'replay attacks': 'what+is+a+replay+attack+in+cybersecurity',
+    'attack vector': 'what+is+an+attack+vector+in+cybersecurity',
+    'attack vectors': 'what+is+an+attack+vector+in+cybersecurity',
+    'data breach': 'what+is+a+data+breach+in+cybersecurity',
+    'phishing attacks': 'what+is+a+phishing+attack',
+    'phishing attack': 'what+is+a+phishing+attack',
+    'malformed requests': 'what+is+malformed+request+detection',
+    'bcrypt': 'what+is+bcrypt+hashing+algorithm',
+    'ddos': 'what+is+a+ddos+attack',
+    'jwt': 'what+is+jwt+json+web+token',
+    'totp': 'what+is+totp+time+based+one+time+password',
+    '2fa': 'what+is+two-factor+authentication',
+    'https': 'what+is+https+protocol',
+    'csrf': 'what+is+csrf+cross+site+request+forgery'
+  };
+  const terms = Object.keys(termMap).filter(t => text.toLowerCase().includes(t)).sort((a, b) => b.length - a.length);
+  if (!terms.length) return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const escaped = terms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  const regex = new RegExp('\\b(' + escaped.join('|') + ')\\b', 'gi');
+  let html = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return html.replace(regex, (match) => {
+    const key = match.toLowerCase();
+    const search = termMap[key] || '';
+    if (search) {
+      return '<a href="https://www.google.com/search?q=' + search + '" target="_blank" rel="noopener" class="term-link" title="Click to search Google for ' + match + '">' + match + '</a>';
+    }
+    return match;
+  });
+}
+
+// ─── Assistant ───
+function updateAssistant(screen) {
+  const panel = document.getElementById('assistantPanel');
+  const text = document.getElementById('assistantText');
+  panel.classList.add('visible');
+
+  const messages = {
+    welcome: 'Welcome to SecureAuth! This interactive experience will teach you about enterprise security — including Two-factor authentication, rate limiting, account lockout, and DDoS protection. Each security layer exists to stop real-world attacks.',
+    register: 'Let us walk through registration. I will explain how identity verification, bcrypt hashing, and strong passwords protect you from the start.',
+    '2fa': 'Two-factor authentication is the single most effective security control. It combines something you know (password) with something you have (authenticator app). Even if your password is stolen, attackers cannot log in without your TOTP code.',
+    login: 'Every login follows a security chain. Credentials are sent over HTTPS, verified against bcrypt hashes, then a temporary JWT is issued for 2FA verification. Each step stops a specific attack vector.',
+    verify: 'Open your authenticator app and enter the current TOTP code. Codes change every 30 seconds to prevent replay attacks and session hijacking.',
+    success: 'You are now authenticated across multiple security layers. Your session is protected by JWT, 2FA, and HTTPS encryption. Well done!',
+    learning: 'Each card explains a security feature — click to expand. Learn about bcrypt hashing, JWT sessions, account lockout, rate limiting, application flood protection, and more.',
+    attacks: 'Watch real attack simulations: weak password cracking, brute force attacks, and application flood DDoS attacks. See how SecureAuth blocks each one.',
+    dashboard: 'The dashboard gives you full visibility into your security posture: profile identity, security status, login ledger, and account controls.',
+    complete: 'You did it! You now understand enterprise authentication security — from 2FA and bcrypt to DDoS protection and session management.'
+  };
+  text.innerHTML = highlightTerms(messages[screen] || 'Exploring SecureAuth...');
+
+  // Update registration sub-steps
+  if (screen === 'register') {
+    const subMessages = [
+      'Every account starts with identity verification. This establishes trust from the beginning and helps prevent phishing attacks and impersonation.',
+      'Your name personalizes your account and appears on your secure dashboard. It helps identify you in audit logs and security alerts.',
+      'Your email is hashed using bcrypt and stored securely. It is your unique identifier in the system for login and recovery.',
+      'A strong password is your first defense against brute force attacks. bcrypt hashing keeps it safe even in a data breach.'
+    ];
+    text.innerHTML = highlightTerms(subMessages[currentRegStep] || subMessages[0]);
+  }
+}
+
+function skipToDemo() {
+  window.location.href = 'demo.html';
+}
+
+function restartExperience() {
+  currentScreen = 'welcome';
+  currentRegStep = 0;
+  totpCounter = 30;
+  attacksRunning = false;
+  document.getElementById('startAttacksBtn').disabled = false;
+  document.getElementById('startAttacksBtn').textContent = '▶ Run Attack Simulations';
+  document.getElementById('continueAfterAttacks').style.display = 'none';
+  // Reset attack visuals
+  [1,2,3].forEach(i => {
+    const bar = document.getElementById('attackBar' + i);
+    const status = document.getElementById('attackStatus' + i);
+    const result = document.getElementById('attackResult' + i);
+    const demo = document.getElementById([,'attackWeakPw','attackBrute','attackFlood'][i]);
+    if (bar) { bar.style.width = '0%'; bar.className = 'attack-bar-fill bg-red-500'; }
+    if (status) status.textContent = 'Attempting...';
+    if (result) result.className = 'hidden mt-2 text-sm';
+    if (demo) { demo.classList.remove('blocked'); demo.querySelector('span:last-child').textContent = 'RUNNING'; demo.querySelector('span:last-child').className = 'text-xs font-mono px-2 py-1 rounded bg-slate-800 text-slate-400'; }
+  });
+  document.querySelectorAll('.security-card').forEach(c => c.classList.remove('expanded'));
+  if (totpInterval) clearInterval(totpInterval);
+  showScreen('welcome');
+}
+
+// ─── Init ───
+if (typeof lucide !== 'undefined') lucide.createIcons();
+
+// Show assistant after short delay
+setTimeout(() => {
+  const panel = document.getElementById('assistantPanel');
+  if (panel) panel.classList.add('visible');
+}, 1000);
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextStep(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); prevStep(); }
+  if (e.key === 'Escape') window.location.href = 'index.html';
+});
+
+        document.addEventListener('click', function(e) {
+          var btn = e.target.closest('[data-action]');
+          if (!btn) return;
+          var action = (btn.getAttribute('data-action') || '').trim();
+          var argsAttr = btn.getAttribute('data-args');
+          if (argsAttr !== null) { if (typeof window[action] === 'function') { window[action](argsAttr); } return; }
+          if (btn.hasAttribute('data-self')) { if (typeof window[action] === 'function') { window[action](btn); } return; }
+          if (typeof window[action] === 'function') { window[action](); return; }
+          var m1 = action.match(/^(\w[\w.]*)\(\)$/);
+          if (m1 && typeof window[m1[1]] === 'function') { window[m1[1]](); return; }
+          var m2 = action.match(/^(\w[\w.]*)\(\s*'([^']*)'\s*(?:,\s*'([^']*)'\s*)?\)$/);
+          if (m2 && typeof window[m2[1]] === 'function') { var a = [m2[2]]; if (m2[3] !== undefined) a.push(m2[3]); window[m2[1]].apply(null, a); return; }
+          if (action.match(/^alert\s*\(/)) { var m = action.match(/['"]([^'"]+)['"]/); if (m) alert(m[1]); return; }
+          var m4 = action.match(/^window\.location\.href\s*=\s*'([^']+)'$/);
+          if (m4) { window.location.href = m4[1]; return; }
+          var m5 = action.match(/^(\w[\w.]*)\(\s*'([^']*)'\s*(?:,\s*'([^']*)'\s*)?\);\s*return\s+false;?$/);
+          if (m5 && typeof window[m5[1]] === 'function') { var a = [m5[2]]; if (m5[3] !== undefined) a.push(m5[3]); window[m5[1]].apply(null, a); return; }
+          console.warn('CSP action unhandled:', action);
+        });
+
+        document.addEventListener('input', function(e) {
+          var el = e.target.closest('[data-action]');
+          if (!el) return;
+          var action = (el.getAttribute('data-action') || '').trim();
+          if (typeof window[action] === 'function') { window[action](); return; }
+          var m1 = action.match(/^(\w[\w.]*)\(\)$/);
+          if (m1 && typeof window[m1[1]] === 'function') { window[m1[1]](); return; }
+          console.warn('CSP input action unhandled:', action);
+        });
+
+// TOTP auto-start when reaching verify screen
+const origShowScreen = showScreen;
+showScreen = function(id) {
+  origShowScreen(id);
+  if (id === 'verify') startTotpSim();
+};
+</script>
+</body>
+</html>

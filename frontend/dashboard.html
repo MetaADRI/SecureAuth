@@ -107,7 +107,7 @@
                         </div>
                         <span id="userNameDisplay" class="font-medium text-sm"></span>
                     </div>
-                    <button onclick="logout()" class="flex items-center space-x-1 text-metallic hover:text-red-600 transition-colors px-3 py-2 rounded-lg hover:bg-red-50">
+                    <button data-action="logout()" class="flex items-center space-x-1 text-metallic hover:text-red-600 transition-colors px-3 py-2 rounded-lg hover:bg-red-50">
                         <i data-lucide="log-out" class="w-4 h-4"></i>
                         <span class="font-medium text-sm">Logout</span>
                     </button>
@@ -128,7 +128,7 @@
                         </div>
                         <span id="userNameDisplayMobile" class="font-medium text-sm"></span>
                     </div>
-                    <button onclick="logout()" class="w-full flex items-center space-x-2 text-red-600 hover:bg-red-50 px-2 py-2 rounded-lg transition-colors">
+                    <button data-action="logout()" class="w-full flex items-center space-x-2 text-red-600 hover:bg-red-50 px-2 py-2 rounded-lg transition-colors">
                         <i data-lucide="log-out" class="w-4 h-4"></i>
                         <span class="font-medium">Logout</span>
                     </button>
@@ -238,21 +238,21 @@
                         Security Settings
                     </h3>
                     <div class="space-y-3">
-                        <button onclick="alert('Feature coming soon: Change Password')" class="w-full flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:border-cuz-blue hover:bg-cuz-blue/5 transition-colors text-left">
+                        <button data-action="alert('Feature coming soon: Change Password')" class="w-full flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:border-cuz-blue hover:bg-cuz-blue/5 transition-colors text-left">
                             <div class="flex items-center space-x-3">
                                 <i data-lucide="lock" class="w-5 h-5 text-metallic"></i>
                                 <span class="font-medium text-dark-gray text-sm">Change Password</span>
                             </div>
                             <i data-lucide="chevron-right" class="w-4 h-4 text-metallic"></i>
                         </button>
-                        <button onclick="alert('Feature coming soon: Regenerate 2FA')" class="w-full flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:border-cuz-blue hover:bg-cuz-blue/5 transition-colors text-left">
+                        <button data-action="alert('Feature coming soon: Regenerate 2FA')" class="w-full flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:border-cuz-blue hover:bg-cuz-blue/5 transition-colors text-left">
                             <div class="flex items-center space-x-3">
                                 <i data-lucide="refresh-cw" class="w-5 h-5 text-metallic"></i>
                                 <span class="font-medium text-dark-gray text-sm">Regenerate 2FA Secret</span>
                             </div>
                             <i data-lucide="chevron-right" class="w-4 h-4 text-metallic"></i>
                         </button>
-                        <button onclick="alert('Feature coming soon: Backup Codes')" class="w-full flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:border-cuz-blue hover:bg-cuz-blue/5 transition-colors text-left">
+                        <button data-action="alert('Feature coming soon: Backup Codes')" class="w-full flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:border-cuz-blue hover:bg-cuz-blue/5 transition-colors text-left">
                             <div class="flex items-center space-x-3">
                                 <i data-lucide="download" class="w-5 h-5 text-metallic"></i>
                                 <span class="font-medium text-dark-gray text-sm">Download Backup Codes</span>
@@ -481,6 +481,33 @@
         // Load data
         loadUserData();
         loadDashboardData();
+
+        // CSP-safe click delegation
+        document.addEventListener('click', function(e) {
+            var cardEl = e.target.closest('[data-card-idx]');
+            if (cardEl && typeof ariaCardsData !== 'undefined' && ariaCardsData.length > 0) {
+                var idx = parseInt(cardEl.getAttribute('data-card-idx'));
+                var c = ariaCardsData[idx];
+                if (c) { ariaShowCardDetail(c.title, c.desc, c.threat); return; }
+            }
+            var btn = e.target.closest('[data-action]');
+            if (!btn) return;
+            var action = (btn.getAttribute('data-action') || '').trim();
+            var argsAttr = btn.getAttribute('data-args');
+            if (argsAttr !== null) { if (typeof window[action] === 'function') { window[action](argsAttr); } return; }
+            if (btn.hasAttribute('data-self')) { if (typeof window[action] === 'function') { window[action](btn); } return; }
+            if (typeof window[action] === 'function') { window[action](); return; }
+            var m1 = action.match(/^(\w[\w.]*)\(\)$/);
+            if (m1 && typeof window[m1[1]] === 'function') { window[m1[1]](); return; }
+            var m2 = action.match(/^(\w[\w.]*)\(\s*'([^']*)'\s*(?:,\s*'([^']*)'\s*)?\)$/);
+            if (m2 && typeof window[m2[1]] === 'function') { var a = [m2[2]]; if (m2[3] !== undefined) a.push(m2[3]); window[m2[1]].apply(null, a); return; }
+            if (action.match(/^alert\s*\(/)) { var m = action.match(/['"]([^'"]+)['"]/); if (m) alert(m[1]); return; }
+            var m4 = action.match(/^window\.location\.href\s*=\s*'([^']+)'$/);
+            if (m4) { window.location.href = m4[1]; return; }
+            var m5 = action.match(/^(\w[\w.]*)\(\s*'([^']*)'\s*(?:,\s*'([^']*)'\s*)?\);\s*return\s+false;?$/);
+            if (m5 && typeof window[m5[1]] === 'function') { var a = [m5[2]]; if (m5[3] !== undefined) a.push(m5[3]); window[m5[1]].apply(null, a); return; }
+            console.warn('CSP action unhandled:', action);
+        });
     </script>
 </body>
 </html>

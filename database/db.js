@@ -71,6 +71,34 @@ async function initDatabase() {
 }
 
 /**
+ * Seed demo sandbox user
+ */
+async function seedDemoUser() {
+  const demoEmail = 'demo@secureauth.com';
+  const query = 'SELECT * FROM users WHERE email = $1';
+
+  try {
+    const result = await pool.query(query, [demoEmail]);
+
+    if (result.rows.length === 0) {
+      const userId = uuidv4();
+      const passwordHash = await bcrypt.hash('Demo@123', 12);
+      const totpSecret = 'JBSWY3DPEHPK3PXP'; // Standard test secret
+      const createdAt = new Date().toISOString();
+
+      await pool.query(`
+        INSERT INTO users (id, full_name, email, password_hash, totp_secret, role, created_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `, [userId, 'Demo User', demoEmail, passwordHash, totpSecret, 'admin', createdAt]);
+
+      console.log('✓ Demo sandbox user created: demo@secureauth.com / Demo@123');
+    }
+  } catch (err) {
+    console.error('❌ Failed to seed demo user:', err);
+  }
+}
+
+/**
  * Seed default admin user
  */
 async function seedAdminUser() {
@@ -123,6 +151,7 @@ async function insertAuditLog(userId, action, ipAddress = 'unknown', userAgent =
 module.exports = {
   initDatabase,
   seedAdminUser,
+  seedDemoUser,
   insertAuditLog,
   pool,
   db: {

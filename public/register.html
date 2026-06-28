@@ -102,7 +102,7 @@
                 />
                 <button
                   type="button"
-                  onclick="togglePassword('password')"
+                  data-action="togglePassword('password')"
                   class="password-toggle absolute right-3 top-3 text-gray-500 hover:text-gray-700"
                 >
                   👁️
@@ -126,7 +126,7 @@
                 />
                 <button
                   type="button"
-                  onclick="togglePassword('confirmPassword')"
+                  data-action="togglePassword('confirmPassword')"
                   class="password-toggle absolute right-3 top-3 text-gray-500 hover:text-gray-700"
                 >
                   👁️
@@ -277,6 +277,32 @@
         loadingSpinner.classList.add('hidden');
         btnText.classList.remove('hidden');
       }
+    });
+    
+    document.addEventListener('click', function(e) {
+      var cardEl = e.target.closest('[data-card-idx]');
+      if (cardEl && typeof ariaCardsData !== 'undefined' && ariaCardsData.length > 0) {
+        var idx = parseInt(cardEl.getAttribute('data-card-idx'));
+        var c = ariaCardsData[idx];
+        if (c) { ariaShowCardDetail(c.title, c.desc, c.threat); return; }
+      }
+      var btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      var action = (btn.getAttribute('data-action') || '').trim();
+      var argsAttr = btn.getAttribute('data-args');
+      if (argsAttr !== null) { if (typeof window[action] === 'function') { window[action](argsAttr); } return; }
+      if (btn.hasAttribute('data-self')) { if (typeof window[action] === 'function') { window[action](btn); } return; }
+      if (typeof window[action] === 'function') { window[action](); return; }
+      var m1 = action.match(/^(\w[\w.]*)\(\)$/);
+      if (m1 && typeof window[m1[1]] === 'function') { window[m1[1]](); return; }
+      var m2 = action.match(/^(\w[\w.]*)\(\s*'([^']*)'\s*(?:,\s*'([^']*)'\s*)?\)$/);
+      if (m2 && typeof window[m2[1]] === 'function') { var a = [m2[2]]; if (m2[3] !== undefined) a.push(m2[3]); window[m2[1]].apply(null, a); return; }
+      if (action.match(/^alert\s*\(/)) { var m = action.match(/['"]([^'"]+)['"]/); if (m) alert(m[1]); return; }
+      var m4 = action.match(/^window\.location\.href\s*=\s*'([^']+)'$/);
+      if (m4) { window.location.href = m4[1]; return; }
+      var m5 = action.match(/^(\w[\w.]*)\(\s*'([^']*)'\s*(?:,\s*'([^']*)'\s*)?\);\s*return\s+false;?$/);
+      if (m5 && typeof window[m5[1]] === 'function') { var a = [m5[2]]; if (m5[3] !== undefined) a.push(m5[3]); window[m5[1]].apply(null, a); return; }
+      console.warn('CSP action unhandled:', action);
     });
   </script>
 </body>

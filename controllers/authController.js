@@ -202,6 +202,76 @@ async function loginStep1_admin(req, res) {
   }
 }
 
+async function demoLogin(req, res) {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        error: 'Missing fields',
+        message: 'Please provide email and password'
+      });
+    }
+
+    let user = await userModel.findByEmail(email);
+
+    if (!user) {
+      return res.status(401).json({
+        error: 'Invalid credentials',
+        message: 'Demo account not found. Contact the administrator.'
+      });
+    }
+
+    if (user.role !== 'admin') {
+      return res.status(403).json({
+        error: 'Forbidden',
+        message: 'Access denied: Administrator privileges required'
+      });
+    }
+
+    const isValid = await bcrypt.compare(password, user.password_hash);
+
+    if (!isValid) {
+      return res.status(401).json({
+        error: 'Invalid credentials',
+        message: 'Email or password is incorrect. Try Demo@123'
+      });
+    }
+
+    await userModel.resetFailedAttempts(user.id);
+
+    const fullToken = jwtUtils.generateFullJWT(user.id, user.email, user.full_name, user.role);
+    const accessToken = jwtUtils.generateTempJWT(user.id, user.email);
+
+    const ipAddress = req.ip || 'unknown';
+    const userAgent = req.get('User-Agent') || 'unknown';
+    await insertAuditLog(user.id, 'demo_login', ipAddress, userAgent);
+
+    console.log(`✓ Demo sandbox login: ${email}`);
+
+    return res.status(200).json({
+      message: 'Demo sandbox activated. Welcome!',
+      tempToken: accessToken,
+      accessToken: fullToken,
+      user: {
+        id: user.id,
+        email: user.email,
+        fullName: user.full_name,
+        role: user.role
+      },
+      '2fa_required': false,
+      'demo_mode': true
+    });
+
+  } catch (error) {
+    console.error('Demo login error:', error);
+    return res.status(500).json({
+      error: 'Internal server error',
+      message: 'An unexpected error occurred during demo login'
+    });
+  }
+}
+
 async function loginStep1(req, res) {
   try {
     const { email, password } = req.body;
@@ -516,6 +586,7 @@ module.exports = {
   register,
   loginStep1,
   loginStep1_admin,
+  demoLogin,
   verifyTOTP,
   getDashboard,
   getLoginHistory,

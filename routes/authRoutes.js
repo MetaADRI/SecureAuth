@@ -35,6 +35,12 @@ router.post('/login', loginLimiter, authController.loginStep1);
 router.post('/admin/login', loginLimiter, authController.loginStep1_admin);
 
 /**
+ * POST /api/demo/login - Demo Sandbox Login
+ * Bypasses 2FA for instant exploration. Admin credentials only.
+ */
+router.post('/demo/login', authController.demoLogin);
+
+/**
  * POST /api/verify-2fa - Login Step 2 (TOTP Verification)
  * PHASE 2
  */

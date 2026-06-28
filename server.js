@@ -17,7 +17,7 @@ const helmet = require('helmet');
 const authRoutes = require('./routes/authRoutes');
 
 // Import database initialization
-const { initDatabase, seedAdminUser } = require('./database/db');
+const { initDatabase, seedAdminUser, seedDemoUser } = require('./database/db');
 
 // Import DDoS protection middleware
 const ddos = require('./middleware/ddosMiddleware');
@@ -39,7 +39,7 @@ app.use(helmet({
       scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://cdn.tailwindcss.com", "https://unpkg.com"],
       fontSrc: ["'self'", "data:", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:", "https:"],
-      connectSrc: ["'self'", "http://localhost:*", "https://localhost:*"],
+      connectSrc: ["'self'", "http://localhost:*", "https://localhost:*", "https://unpkg.com"],
     }
   },
   hsts: {
@@ -106,6 +106,7 @@ app.get('/', (req, res) => {
 async function startServer() {
   await initDatabase();
   await seedAdminUser();
+  await seedDemoUser();
 
   app.listen(PORT, () => {
     console.log('\n' + '='.repeat(70));
@@ -114,6 +115,7 @@ async function startServer() {
     console.log(`\n✓ Server:        http://localhost:${PORT}`);
     console.log('✓ Framework:     Express + Node.js');
     console.log('✓ Version:       2.1.0 (With DDoS Protection)');
+    console.log('✓ Demo:          http://localhost:${PORT}/demo.html');
     console.log('\n📋 Available Endpoints:');
     console.log('   POST /api/register       - Register new user with 2FA');
     console.log('   POST /api/login          - Login Step 1 (Password)');
@@ -123,6 +125,7 @@ async function startServer() {
     console.log('   POST /api/refresh        - Refresh JWT token');
     console.log('   GET  /api/health         - System health check');
     console.log('   GET  /api/flood-stats     - Protection stats');
+    console.log('   POST /api/demo/login     - Instant demo login (no 2FA)');
     console.log('\n🔐 Security Features:');
     console.log('   ✓ TOTP Two-Factor Authentication');
     console.log('   ✓ JWT Session Management');

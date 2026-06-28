@@ -124,6 +124,8 @@ module.exports = {
   findByEmail,
   findById,
   createUser,
+  getAllUsers,
+  deleteUser,
   countUsers,
   incrementFailedAttempts,
   resetFailedAttempts,

@@ -149,6 +149,21 @@
         </div>
     </nav>
     
+    <!-- Demo Mode Banner -->
+    <div id="demoBanner" class="hidden bg-amber-50 border-b border-amber-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <i data-lucide="flask" class="w-4 h-4 text-amber-600"></i>
+                <span class="text-sm font-semibold text-amber-800">Demo Mode — Exploring SecureAuth Sandbox</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="demo.html" class="text-xs font-bold text-amber-700 hover:text-amber-900 uppercase tracking-wider">Sandbox Home</a>
+                <a href="admin-dashboard.html" class="text-xs font-bold text-amber-700 hover:text-amber-900 uppercase tracking-wider bg-amber-100 px-3 py-1.5 rounded-lg">Admin Panel</a>
+                <button data-action="exitDemo()" class="text-xs font-bold text-red-600 hover:text-red-800 uppercase tracking-wider">Exit</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow">
         <!-- Welcome Section -->
@@ -264,7 +279,7 @@
                         Core Controls
                     </h3>
                     <div class="space-y-4">
-                        <button onclick="alert('Feature coming soon: Change Password')" class="w-full flex items-center justify-between p-4 rounded-2xl border border-slate-100 hover:border-cuz-blue hover:bg-cuz-blue/5 transition-all group text-left">
+                        <button data-action="alert('Feature coming soon: Change Password')" class="w-full flex items-center justify-between p-4 rounded-2xl border border-slate-100 hover:border-cuz-blue hover:bg-cuz-blue/5 transition-all group text-left">
                             <div class="flex items-center space-x-4">
                                 <div class="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center group-hover:bg-cuz-blue group-hover:text-white transition-colors">
                                     <i data-lucide="key" class="w-5 h-5"></i>
@@ -273,7 +288,7 @@
                             </div>
                             <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-cuz-blue transition-colors"></i>
                         </button>
-                        <button onclick="alert('Feature coming soon: Regenerate 2FA')" class="w-full flex items-center justify-between p-4 rounded-2xl border border-slate-100 hover:border-cuz-blue hover:bg-cuz-blue/5 transition-all group text-left">
+                        <button data-action="alert('Feature coming soon: Regenerate 2FA')" class="w-full flex items-center justify-between p-4 rounded-2xl border border-slate-100 hover:border-cuz-blue hover:bg-cuz-blue/5 transition-all group text-left">
                             <div class="flex items-center space-x-4">
                                 <div class="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center group-hover:bg-cuz-blue group-hover:text-white transition-colors">
                                     <i data-lucide="refresh-cw" class="w-5 h-5"></i>
@@ -307,7 +322,7 @@
                             </h3>
                             <p class="text-sm text-slate-400 mt-1 font-medium">Real-time audit of account access</p>
                         </div>
-                        <button onclick="loadDashboardData()" class="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400 hover:text-cuz-blue" title="Refresh Log">
+                        <button data-action="loadDashboardData()" class="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400 hover:text-cuz-blue" title="Refresh Log">
                             <i data-lucide="refresh-ccw" class="w-5 h-5"></i>
                         </button>
                     </div>
@@ -472,6 +487,21 @@
             window.location.href = 'login.html';
         }
         
+        // Demo mode banner
+        const demoMode = localStorage.getItem('demoMode');
+        const demoBanner = document.getElementById('demoBanner');
+        if (demoMode === 'true' && demoBanner) {
+            demoBanner.classList.remove('hidden');
+        }
+
+        function exitDemo() {
+            localStorage.removeItem('demoMode');
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('user');
+            localStorage.removeItem('tempToken');
+            window.location.href = 'demo.html';
+        }
+        
         // Mobile menu toggle
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
@@ -503,19 +533,20 @@
         // Fetch dashboard data
         async function loadDashboardData() {
             try {
-                const response = await fetch('/api/dashboard', {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                });
+                const [dashRes, historyRes] = await Promise.all([
+                    fetch('/api/dashboard', {
+                        headers: { 'Authorization': `Bearer ${accessToken}` }
+                    }),
+                    fetch('/api/login-history', {
+                        headers: { 'Authorization': `Bearer ${accessToken}` }
+                    })
+                ]);
                 
-                if (response.ok) {
-                    const data = await response.json();
+                if (dashRes.ok) {
+                    const data = await dashRes.json();
                     
-                    // Update stats
                     document.getElementById('totalUsers').textContent = (data.stats?.totalUsers || 0).toLocaleString();
                     
-                    // Format last login
                     if (data.stats?.loginTime) {
                         const loginDate = new Date(data.stats.loginTime);
                         document.getElementById('lastLogin').textContent = loginDate.toLocaleTimeString('en-US', {
@@ -523,11 +554,14 @@
                             minute: '2-digit'
                         });
                     }
-                    
-                    // Update login history
-                    updateLoginHistory(data.user?.loginHistory || []);
-                } else if (response.status === 401) {
-                    logout();
+                } else if (dashRes.status === 401) {
+                    performLogout();
+                    return;
+                }
+                
+                if (historyRes.ok) {
+                    const historyData = await historyRes.json();
+                    updateLoginHistory(historyData.loginHistory || []);
                 }
             } catch (error) {
                 console.error('Error loading dashboard:', error);
@@ -660,6 +694,33 @@
         // Load data
         loadUserData();
         loadDashboardData();
+
+        // CSP-safe click delegation
+        document.addEventListener('click', function(e) {
+            var cardEl = e.target.closest('[data-card-idx]');
+            if (cardEl && typeof ariaCardsData !== 'undefined' && ariaCardsData.length > 0) {
+                var idx = parseInt(cardEl.getAttribute('data-card-idx'));
+                var c = ariaCardsData[idx];
+                if (c) { ariaShowCardDetail(c.title, c.desc, c.threat); return; }
+            }
+            var btn = e.target.closest('[data-action]');
+            if (!btn) return;
+            var action = (btn.getAttribute('data-action') || '').trim();
+            var argsAttr = btn.getAttribute('data-args');
+            if (argsAttr !== null) { if (typeof window[action] === 'function') { window[action](argsAttr); } return; }
+            if (btn.hasAttribute('data-self')) { if (typeof window[action] === 'function') { window[action](btn); } return; }
+            if (typeof window[action] === 'function') { window[action](); return; }
+            var m1 = action.match(/^(\w[\w.]*)\(\)$/);
+            if (m1 && typeof window[m1[1]] === 'function') { window[m1[1]](); return; }
+            var m2 = action.match(/^(\w[\w.]*)\(\s*'([^']*)'\s*(?:,\s*'([^']*)'\s*)?\)$/);
+            if (m2 && typeof window[m2[1]] === 'function') { var a = [m2[2]]; if (m2[3] !== undefined) a.push(m2[3]); window[m2[1]].apply(null, a); return; }
+            if (action.match(/^alert\s*\(/)) { var m = action.match(/['"]([^'"]+)['"]/); if (m) alert(m[1]); return; }
+            var m4 = action.match(/^window\.location\.href\s*=\s*'([^']+)'$/);
+            if (m4) { window.location.href = m4[1]; return; }
+            var m5 = action.match(/^(\w[\w.]*)\(\s*'([^']*)'\s*(?:,\s*'([^']*)'\s*)?\);\s*return\s+false;?$/);
+            if (m5 && typeof window[m5[1]] === 'function') { var a = [m5[2]]; if (m5[3] !== undefined) a.push(m5[3]); window[m5[1]].apply(null, a); return; }
+            console.warn('CSP action unhandled:', action);
+        });
     </script>
 </body>
 </html>
