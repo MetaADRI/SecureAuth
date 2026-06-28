@@ -80,7 +80,7 @@
 </head>
     <body class="bg-[#0f172a] text-slate-200 min-h-screen flex flex-col antialiased">
     <!-- Sidebar / Top Nav -->
-    <nav class="glass-panel border-b border-slate-800 sticky top-0 z-50">
+    <nav class="glass-panel border-b border-slate-800 fixed top-0 left-0 right-0 z-50 transition-transform duration-300">
         <div class="max-w-[1600px] mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3 sm:space-x-4">
                 <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-2xl flex items-center justify-center shadow-2xl rotate-3 group hover:rotate-0 transition-transform duration-300">
@@ -129,7 +129,7 @@
         </div>
     </div>
 
-    <main class="max-w-[1600px] mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full flex-grow grid grid-cols-12 gap-4 sm:gap-8">
+    <main class="max-w-[1600px] mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full flex-grow grid grid-cols-12 gap-4 sm:gap-8 pt-24">
         <!-- Sidebar Navigation -->
         <div id="sidebarNav" class="col-span-12 sm:col-span-3 lg:col-span-2 space-y-2 sm:block">
             <button data-action="switchTab('overview')" class="nav-btn w-full flex items-center space-x-3 px-4 sm:px-6 py-3 sm:py-4 rounded-2xl bg-cuz-blue-light text-white font-bold transition-all" id="btn-overview">
@@ -561,6 +561,18 @@
           var m5 = action.match(/^(\w[\w.]*)\(\s*'([^']*)'\s*(?:,\s*'([^']*)'\s*)?\);\s*return\s+false;?$/);
           if (m5 && typeof window[m5[1]] === 'function') { var a = [m5[2]]; if (m5[3] !== undefined) a.push(m5[3]); window[m5[1]].apply(null, a); return; }
           console.warn('CSP action unhandled:', action);
+        });
+
+        let lastScrollY = window.scrollY;
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (!nav) return;
+            if (window.scrollY > lastScrollY && window.scrollY > 80) {
+                nav.style.transform = 'translateY(-100%)';
+            } else {
+                nav.style.transform = 'translateY(0)';
+            }
+            lastScrollY = window.scrollY;
         });
     </script>
 </body>
