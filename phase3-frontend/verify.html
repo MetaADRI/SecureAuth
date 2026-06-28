@@ -494,7 +494,7 @@
                     localStorage.setItem('accessToken', data.accessToken);
                     localStorage.setItem('user', JSON.stringify(data.user));
                     
-                    const isAdmin = data.user.role === 'admin' || localStorage.getItem('adminMode') === 'true';
+                    const isAdmin = data.user.role === 'admin';
                     localStorage.removeItem('tempToken');
                     localStorage.removeItem('userEmail');
                     localStorage.removeItem('adminMode');

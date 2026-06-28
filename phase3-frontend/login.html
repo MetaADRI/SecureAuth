@@ -331,6 +331,9 @@
             lucide.createIcons();
         });
         
+        // Clean up any stale admin mode flag from previous sessions
+        localStorage.removeItem('adminMode');
+        
         // Login attempts tracking for UI
         let loginAttempts = 0;
         const MAX_ATTEMPTS = 5;
