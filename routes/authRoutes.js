@@ -29,6 +29,12 @@ router.post('/register', authController.register);
 router.post('/login', loginLimiter, authController.loginStep1);
 
 /**
+ * POST /api/admin/login - Admin Login Step 1 (Password Verification + Role Check)
+ * Only allows users with role 'admin' to proceed
+ */
+router.post('/admin/login', loginLimiter, authController.loginStep1_admin);
+
+/**
  * POST /api/verify-2fa - Login Step 2 (TOTP Verification)
  * PHASE 2
  */

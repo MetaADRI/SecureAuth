@@ -114,6 +114,94 @@ async function register(req, res) {
 /**
  * PHASE 2 & 4 - Login Step 1 (Password Verification) with Account Lockout
  */
+async function loginStep1_admin(req, res) {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        error: 'Missing required fields',
+        message: 'Please provide email and password'
+      });
+    }
+
+    const user = await userModel.findByEmail(email);
+
+    if (!user) {
+      return res.status(401).json({
+        error: 'Invalid credentials',
+        message: 'Email or password is incorrect'
+      });
+    }
+
+    if (user.role !== 'admin') {
+      return res.status(403).json({
+        error: 'Forbidden',
+        message: 'Access denied: Administrator privileges required'
+      });
+    }
+
+    if (user.locked_until) {
+      const lockedUntil = new Date(user.locked_until);
+      if (new Date() < lockedUntil) {
+        const minutesLeft = Math.ceil((lockedUntil - new Date()) / 60000);
+        return res.status(403).json({
+          error: 'Account locked',
+          message: `Too many failed login attempts. Account is locked for ${minutesLeft} more minutes.`,
+          locked_until: user.locked_until,
+          minutes_remaining: minutesLeft
+        });
+      } else {
+        await userModel.resetFailedAttempts(user.id);
+      }
+    }
+
+    const isValid = await bcrypt.compare(password, user.password_hash);
+
+    if (!isValid) {
+      const failedAttempts = await userModel.incrementFailedAttempts(user.id);
+      if (failedAttempts >= MAX_FAILED_ATTEMPTS) {
+        await userModel.lockAccount(user.id, LOCKOUT_DURATION_MINUTES);
+        return res.status(403).json({
+          error: 'Account locked',
+          message: `Too many failed login attempts. Your account has been locked for ${LOCKOUT_DURATION_MINUTES} minutes.`,
+          attempts_remaining: 0
+        });
+      }
+      const attemptsLeft = MAX_FAILED_ATTEMPTS - failedAttempts;
+      return res.status(401).json({
+        error: 'Invalid credentials',
+        message: `Email or password is incorrect. ${attemptsLeft} attempts remaining before account lockout.`,
+        attempts_remaining: attemptsLeft
+      });
+    }
+
+    await userModel.resetFailedAttempts(user.id);
+
+    const tempToken = jwtUtils.generateTempJWT(user.id, user.email);
+
+    const ipAddress = req.ip || 'unknown';
+    const userAgent = req.get('User-Agent') || 'unknown';
+    await insertAuditLog(user.id, 'login_step1_success', ipAddress, userAgent);
+
+    console.log(`✓ Admin password verified for: ${email}`);
+
+    return res.status(200).json({
+      message: 'Password verified. Please enter your 6-digit 2FA code.',
+      tempToken: tempToken,
+      '2fa_required': true,
+      next_step: 'POST /api/verify-2fa with the tempToken in Authorization header'
+    });
+
+  } catch (error) {
+    console.error('Admin login error:', error);
+    return res.status(500).json({
+      error: 'Internal server error',
+      message: 'An unexpected error occurred during admin authentication'
+    });
+  }
+}
+
 async function loginStep1(req, res) {
   try {
     const { email, password } = req.body;
@@ -427,6 +515,7 @@ async function requestDeletion(req, res) {
 module.exports = {
   register,
   loginStep1,
+  loginStep1_admin,
   verifyTOTP,
   getDashboard,
   getLoginHistory,
