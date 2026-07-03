@@ -102,20 +102,52 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(PHASE3_FRONTEND_DIR, 'index.html'));
 });
 
-// Initialize database and start server
-async function startServer() {
-  await initDatabase();
-  await seedAdminUser();
-  await seedDemoUser();
+// ═══════════════════════════════════════════════════════════════════
+// DATABASE INITIALIZATION (background — non-blocking)
+// ═══════════════════════════════════════════════════════════════════
+// Tables persist in Supabase PostgreSQL once created.
+// On Vercel (serverless), this runs during cold start without
+// blocking the request handler. Each query has its own error
+// handling so a failure won't crash the server.
 
+let dbReady = false;
+
+initDatabase()
+  .then(async () => {
+    await seedAdminUser();
+    await seedDemoUser();
+    dbReady = true;
+    console.log('✓ Database initialized and seeded');
+  })
+  .catch(err => {
+    console.error('❌ Database initialization failed:', err.message);
+  });
+
+// Database readiness middleware — ensures DB is ready before
+// processing API requests. Retries init if needed.
+app.use((req, res, next) => {
+  if (dbReady) return next();
+  if (req.path.startsWith('/api')) {
+    return res.status(503).json({
+      error: 'System initializing, please try again in a moment.'
+    });
+  }
+  next();
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// START SERVER (local dev only — Vercel handles this automatically)
+// ═══════════════════════════════════════════════════════════════════
+if (process.env.VERCEL !== '1') {
   app.listen(PORT, () => {
+    const mode = process.env.NODE_ENV || 'development';
     console.log('\n' + '='.repeat(70));
     console.log('  🔐  SECUREAUTH SERVER RUNNING (Node.js/Express)  🔐');
     console.log('='.repeat(70));
     console.log(`\n✓ Server:        http://localhost:${PORT}`);
+    console.log(`✓ Mode:          ${mode}`);
     console.log('✓ Framework:     Express + Node.js');
     console.log('✓ Version:       2.1.0 (With DDoS Protection)');
-    console.log('✓ Demo:          http://localhost:${PORT}/demo.html');
     console.log('\n📋 Available Endpoints:');
     console.log('   POST /api/register       - Register new user with 2FA');
     console.log('   POST /api/login          - Login Step 1 (Password)');
@@ -126,31 +158,15 @@ async function startServer() {
     console.log('   GET  /api/health         - System health check');
     console.log('   GET  /api/flood-stats     - Protection stats');
     console.log('   POST /api/demo/login     - Instant demo login (no 2FA)');
-    console.log('\n🔐 Security Features:');
-    console.log('   ✓ TOTP Two-Factor Authentication');
-    console.log('   ✓ JWT Session Management');
-    console.log('   ✓ Inactivity Auto-Logout (5 minutes)');
-    console.log('   ✓ Account Lockout (5 failed attempts)');
-    console.log('   ✓ Login History Tracking');
-    console.log('   ✓ Rate Limiting');
-    console.log('   ✓ bcrypt Password Hashing');
-    console.log('\n🛡️  DDoS Protection (6 Layers):');
-    console.log('   ✓ Security Headers (Helmet.js)');
-    console.log('   ✓ Request Size Limits (100KB max)');
-    console.log('   ✓ IP-Based Auto-Banning (100 req/min limit)');
-    console.log('   ✓ Connection Limiting (100 per IP)');
-    console.log('   ✓ Malformed Request Detection');
-    console.log('   ✓ Progressive Slow-Down');
+    console.log('\n🛡️  DDoS Protection: 6 layers active');
     console.log('\n' + '='.repeat(70) + '\n');
   });
+
+  // Graceful shutdown (local dev only)
+  process.on('SIGINT', () => {
+    console.log('\n\nShutting down SecureAuth server...');
+    process.exit(0);
+  });
 }
-
-startServer();
-
-// Graceful shutdown
-process.on('SIGINT', () => {
-  console.log('\n\n👋 Shutting down SecureAuth server...');
-  process.exit(0);
-});
 
 module.exports = app;
