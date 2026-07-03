@@ -237,8 +237,10 @@ function cleanupExpiredBans() {
   }
 }
 
-// Run cleanup every 5 minutes
-setInterval(cleanupExpiredBans, 5 * 60 * 1000);
+// Run cleanup every 5 minutes (local only — Vercel serverless can't use setInterval)
+if (process.env.VERCEL !== '1') {
+  setInterval(cleanupExpiredBans, 5 * 60 * 1000);
+}
 
 module.exports = {
   trackAndBlockIP,

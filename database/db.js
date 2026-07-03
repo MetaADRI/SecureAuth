@@ -8,7 +8,7 @@
 
 const { Pool } = require('pg');
 const { v4: uuidv4 } = require('uuid');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 // Use DATABASE_URL for Supabase connection
 const connectionString = process.env.DATABASE_URL;
@@ -17,7 +17,10 @@ const pool = new Pool({
   connectionString,
   ssl: {
     rejectUnauthorized: false // Required for Supabase/Render
-  }
+  },
+  connectionTimeoutMillis: 5000, // 5s timeout — Vercel cold starts can't wait long
+  idleTimeoutMillis: 10000,
+  max: 3 // Minimal connections for serverless
 });
 
 /**
@@ -66,7 +69,12 @@ async function initDatabase() {
     client.release();
     console.log('✓ Database initialized successfully (Postgres)');
   } catch (err) {
-    console.error('❌ Database initialization failed:', err);
+    console.error('❌ Database initialization failed:', err.message || err);
+
+    // On Vercel, log the exact issue so it shows up in function logs
+    if (process.env.VERCEL === '1') {
+      console.error('[VERCEL COLD START] DB init failed — check DATABASE_URL env var in Vercel dashboard');
+    }
   }
 }
 
@@ -147,6 +155,11 @@ async function insertAuditLog(userId, action, ipAddress = 'unknown', userAgent =
     return null;
   }
 }
+
+// Prevent silent pool crashes on Vercel serverless
+pool.on('error', (err) => {
+  console.error('❌ Unexpected Postgres pool error:', err.message);
+});
 
 module.exports = {
   initDatabase,
