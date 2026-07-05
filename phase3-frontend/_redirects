@@ -1,0 +1,2 @@
+# Netlify API proxy — forward /api/* to Render backend
+/api/*  https://secureauth-aimz.onrender.com/api/:splat  200
