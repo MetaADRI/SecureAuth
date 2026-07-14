@@ -212,12 +212,6 @@ SQLite files (`secureauth.db` and related `-shm`/`-wal`) are created at runtime.
 
 ---
 
-## License
-
-MIT — see repository license file if included.
-
----
-
 ## Author
 
 **Bwalya Adrian Mange** — Student ID: 106-293 — Cavendish University Zambia — BSc Computing (Cybersecurity).
