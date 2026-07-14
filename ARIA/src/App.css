@@ -8,6 +8,54 @@
 .app__main {
   position: relative;
   z-index: 1;
+  padding-top: 56px;
+}
+
+/* Fixed top bar — Back Home + Powered by SecureAuth */
+.academy-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  padding: 0 1.5rem;
+  background: rgba(10, 14, 26, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(79, 209, 255, 0.08);
+}
+
+.academy-header__home {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #0066CC;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+
+.academy-header__home:hover {
+  opacity: 0.75;
+}
+
+.academy-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+}
+
+.academy-header__brand strong {
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 600;
 }
 
 .celebrate-banner {

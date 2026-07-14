@@ -117,8 +117,8 @@ export default function OrbField({
         let x = orb.baseX + s1 * 6 * intensity + s2 * 3 * intensity;
         let y = orb.baseY + s3 * 5 * intensity + s1 * 2 * intensity;
 
-        // Depth-based parallax — cursor moves orbs independently
-        const parallax = orb.depth * 30 * intensity;
+        // Depth-based parallax — cursor moves orbs independently (2x slower for smooth feel)
+        const parallax = orb.depth * 6.7 * intensity;
         x += mx * parallax;
         y += my * parallax;
 

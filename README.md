@@ -1,11 +1,10 @@
 # SecureAuth
 
-**Enterprise two-factor authentication (2FA) for Node.js — TOTP, JWT, DDoS-hardened API, and a commercial-grade web UI.**
+**Enterprise two-factor authentication (2FA) — TOTP, JWT, DDoS-hardened API, and commercial-grade web UI.**
 
 | | |
 |---|---|
-| **Version** | 2.1.0 |
-| **Stack** | Node.js, Express, SQLite |
+| **Stack** | Node.js, Express, PostgreSQL |
 | **Author** | Bwalya Adrian Mange (106-293) |
 | **Institution** | Cavendish University Zambia |
 | **Program** | BSc Computing (Final Year) — Cybersecurity |
@@ -16,77 +15,72 @@
 
 SecureAuth is a full-stack authentication system: users register with email and password, enroll **TOTP** (Google Authenticator–compatible), and sign in with a **two-step** flow (password, then 6-digit code). Sessions use **JWTs** with refresh and **inactivity** checks. The API is wrapped with **Helmet** security headers and a **multi-layer flood-protection** stack (rate limiting, IP tracking, connection limits, request validation, and progressive slow-down).
 
-The **default web app** served at `http://localhost:3000` lives in **`phase3-frontend/`** (five HTML pages, shared CSS/JS). A **`public/`** folder may still exist in the repo for reference or alternate layouts; the running server is configured to serve **`phase3-frontend`** so you always see the intended commercial UI.
-
 ---
 
 ## Features
 
-### Authentication and 2FA
+### Authentication & 2FA
 
 - User registration with validation; **bcrypt** password hashing (configurable cost)
 - **TOTP** secret generation (RFC 6238), QR code for authenticator apps
 - **Two-step login**: temporary JWT after password → full JWT after TOTP
-- **JWT** access and refresh; **inactivity** auto-logout (configurable)
-- **Account lockout** after repeated failed attempts (configurable)
-- **Login history** (audit trail with IP / user agent where applicable)
-- Per-endpoint **rate limiting** (e.g. login / verify)
+- **JWT** access and refresh with **inactivity** auto-logout
+- **Account lockout** after repeated failed attempts
+- **Login history** with IP / user agent audit trail
+- Per-endpoint **rate limiting** (login / verify)
 
-### API and infrastructure security
+### API & Infrastructure Security
 
-- **Helmet** — security headers including Content Security Policy (CSP) tuned for the frontend (CDNs, fonts, inline scripts where required)
+- **Helmet** — security headers including CSP tuned for the frontend
 - **Flood-oriented middleware** — IP tracking, connection limiting, malformed-request detection, request size limits, slow-down behavior
-- **`GET /api/ddos-stats`** — JSON snapshot of protection statistics (for monitoring or demos)
+- **`GET /api/ddos-stats`** — JSON protection statistics snapshot
 - CORS enabled for API consumers
 
-### Frontend (Phase 3 — commercial UI)
+### ARIA Academy
 
-- **`index.html`** — Landing / marketing: hero, features, how-it-works, stats, footer (Cavendish blue palette **#003366** / **#0066CC**)
-- **`register.html`** — Registration, QR setup after success
-- **`login.html`** — Password step (step 1 of 2FA)
-- **`verify.html`** — TOTP entry (step 2)
-- **`dashboard.html`** — Protected dashboard (profile, stats, login history when wired to API)
-- Shared **`css/style.css`** and **`js/auth.js`** (client helpers, token handling patterns)
-- Responsive layout; scroll/fade-style enhancements where implemented in markup
+- **AI-powered learning platform** for students and developers
+- Role-based paths (Student, Developer, Lecturer)
+- Interactive lessons, skill trees, and progress tracking
+- Dynamic **orb field** background with 3D cursor parallax
+- Built with React + Vite
 
 ---
 
-## Tech stack
+## Tech Stack
 
 | Area | Technology |
 |------|------------|
 | Runtime | Node.js 18+ |
 | HTTP | Express 4.x |
 | Database | PostgreSQL (Supabase) |
-| Crypto / auth | bcrypt, jsonwebtoken, speakeasy (TOTP), qrcode |
-| Limits / safety | express-rate-limit, express-slow-down |
+| Crypto / Auth | bcrypt, jsonwebtoken, speakeasy (TOTP), qrcode |
+| Limits / Safety | express-rate-limit, express-slow-down |
 | Headers | helmet |
-| Frontend | Static HTML/CSS/JS (`phase3-frontend`) |
+| Frontend | Static HTML/CSS/JS + React (ARIA Academy) |
 
 ---
 
-## Prerequisites
-
-- **Node.js** ≥ 18 and **npm**
-- No separate database server (SQLite file is created locally)
-
----
-
-## Quick start
+## Quick Start
 
 ```bash
 git clone <your-repo-url>
-cd <project-folder>
+cd secureauth
 npm install
 ```
 
-Create a **`.env`** in the project root (see below). Defaults are often enough for local development.
+Create a **`.env`** in the project root:
+
+```env
+DATABASE_URL=postgresql://user:pass@host:5432/db
+JWT_SECRET=<strong-random-secret>
+PORT=3000
+```
 
 ```bash
 npm start
 ```
 
-Open **http://localhost:3000** — you should get the landing page from **`phase3-frontend/index.html`**.
+Open **http://localhost:3000** — landing page.
 
 Development with auto-restart:
 
@@ -94,38 +88,32 @@ Development with auto-restart:
 npm run dev
 ```
 
-End-to-end API flow (optional):
+---
 
-```bash
-npm test
-```
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `DATABASE_URL` | PostgreSQL connection string |
+| `JWT_SECRET` | JWT signing key (required in production) |
+| `PORT` | HTTP port (default 3000) |
+| `NODE_ENV` | `production` or `development` |
+| `BCRYPT_ROUNDS` | Hashing cost (default 12) |
+| `MAX_FAILED_ATTEMPTS` | Lockout threshold (default 5) |
+| `LOCKOUT_DURATION_MINUTES` | Lockout duration (default 30) |
+| `MAX_REQUESTS_PER_MINUTE` | Rate limit (default 60) |
+| `TOTP_ISSUER` | Authenticator app issuer name |
 
 ---
 
-## Environment variables
-
-Copy from `.env.example` if you add one, or set at least:
-
-| Variable | Purpose |
-|----------|---------|
-| `PORT` | HTTP port (default `3000`) |
-| `JWT_SECRET` | **Required in production** — signing key for JWTs |
-| `INACTIVITY_TIMEOUT_MINUTES` | Session inactivity window |
-| `MAX_FAILED_ATTEMPTS` / `LOCKOUT_DURATION_MINUTES` | Lockout policy |
-| `MAX_REQUEST_SIZE` | Body size cap (e.g. `100kb`) |
-
-**Never commit real secrets.** This repo’s `.gitignore` excludes `.env` and `*.db` files.
-
----
-
-## API reference
+## API Reference
 
 ### Public
 
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/api/register` | Register user; returns QR data as designed by controller |
-| POST | `/api/login` | Step 1 — password; returns temp token for 2FA |
+| POST | `/api/register` | Register user; returns QR data |
+| POST | `/api/login` | Step 1 — password; returns temp token |
 | POST | `/api/verify-2fa` | Step 2 — TOTP; returns access token |
 | GET | `/api/health` | Liveness / version info |
 
@@ -135,87 +123,55 @@ Copy from `.env.example` if you add one, or set at least:
 |--------|------|-------------|
 | GET | `/api/dashboard` | Dashboard payload |
 | GET | `/api/login-history` | Recent login events |
-| POST | `/api/refresh` | Refresh JWT (respects inactivity rules) |
+| POST | `/api/refresh` | Refresh JWT |
 
-### Operations / monitoring
+### Operations
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/api/ddos-stats` | flood-protection statistics JSON |
+| GET | `/api/ddos-stats` | Flood-protection statistics |
 
 ---
 
-## Project structure
+## Project Structure
 
 ```
-├── server.js                 # Express app: static UI, API, Helmet, DDoS middleware
+├── server.js
 ├── package.json
-├── .env                      # Local secrets (gitignored)
-├── .gitignore
-│
+├── .env
 ├── database/
-│   └── db.js                 # SQLite init & helpers
-├── models/
+│   └── db.js
 ├── controllers/
 │   └── authController.js
 ├── routes/
 │   └── authRoutes.js
 ├── middleware/
-│   ├── authMiddleware.js     # JWT, rate limits, refresh
-│   └── ddosMiddleware.js     # flood-protection layers
+│   ├── authMiddleware.js
+│   └── ddosMiddleware.js
 ├── utils/
 │   ├── totpUtils.js
 │   └── jwtUtils.js
-│
-├── phase3-frontend/          # Default UI served at /
-│   ├── index.html
-│   ├── register.html
-│   ├── login.html
-│   ├── verify.html
-│   ├── dashboard.html
-│   ├── css/style.css
-│   └── js/auth.js
-│
-├── public/                   # Optional / legacy static assets (not served by default)
+├── phase3-frontend/          # Static web UI
+├── ARIA/                     # Academy learning platform (React)
+├── public/                   # Legacy static assets
 ├── test/
 │   └── testFullFlow.js
-└── secureauth-ddos-protection/  # Related DDoS package / docs (if present)
+└── secureauth-ddos-protection/
 ```
 
 ---
 
-## Database
+## Security Notes
 
-SQLite files (`secureauth.db` and related `-shm`/`-wal`) are created at runtime. They are **gitignored** by default. Schema includes users (credentials, TOTP, lockout fields) and audit/login history as implemented in `database/db.js` and models.
-
----
-
-## Security notes (for defense or production)
-
-- TOTP follows **RFC 6238**; compatible with common authenticator apps.
-- Passwords stored as **bcrypt** hashes — not plaintext.
-- Use a **strong, unique `JWT_SECRET`** in any shared or production environment.
-- Tune **rate limits** and flood protection settings in middleware for your traffic profile.
-- Serve behind **HTTPS** in production; configure CSP and CORS for your real origin.
-
----
-
-## Troubleshooting
-
-| Issue | What to try |
-|-------|-------------|
-| **Port 3000 in use** | Set `PORT` in `.env` or stop the other process |
-| **UI looks like an old/simple page** | Confirm you are hitting the same server that serves `phase3-frontend`; hard-refresh the browser; avoid opening HTML via `file://` |
-| **Styles/scripts blocked** | Check browser devtools console; CSP is set in Helmet — CDNs and inline scripts must match policy |
-| **`better-sqlite3` install errors** | Use a supported Node version; run `npm install` again; on Windows, ensure build tools if native compile is required |
-| **QR code missing** | Verify `/api/register` response and network tab; ensure server logs show no errors |
+- TOTP follows **RFC 6238**; compatible with all authenticator apps.
+- Passwords stored as **bcrypt** hashes.
+- Use a **strong, unique `JWT_SECRET`** in production.
+- Tune rate limits and flood protection for your traffic profile.
+- Serve behind **HTTPS** in production.
 
 ---
 
 ## Author
 
-**Bwalya Adrian Mange** — Student ID: 106-293 — Cavendish University Zambia — BSc Computing (Cybersecurity).
-
----
-Ensure `.env` and `*.db` are **not** committed (already in `.gitignore`). Consider adding a **`.env.example`** with dummy values for collaborators.
-tors.
+**Bwalya Adrian Mange** — Student ID: 106-293
+Cavendish University Zambia — BSc Computing (Cybersecurity).

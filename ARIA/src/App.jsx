@@ -17,6 +17,28 @@ import { TRANSITION } from './visuals/transitions.js';
 import './visuals/Glass.css';
 import './App.css';
 
+function AcademyHeader() {
+  return (
+    <header className="academy-header">
+      <a href="/" className="academy-header__home">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0066CC" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <polyline points="9 22 9 12 15 12 15 22" />
+        </svg>
+        <span>Back Home</span>
+      </a>
+      <div className="academy-header__brand">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#0066CC">
+          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
+          <path d="M12 3.5L6 6.5v4.5c0 4.2 2.6 8 6 9 3.4-1 6-4.8 6-9V6.5l-6-3z" fill="#0a0e1a" />
+          <text x="8.5" y="15" fontSize="9" fontWeight="700" fill="#0066CC" fontFamily="Inter, sans-serif">S</text>
+        </svg>
+        <span>Powered by <strong>SecureAuth</strong></span>
+      </div>
+    </header>
+  );
+}
+
 function useProgress() {
   return useSyncExternalStore(
     ProgressStore.subscribe,
@@ -216,6 +238,7 @@ export default function App() {
   if (authLoading) {
     return (
       <div className="app">
+        <AcademyHeader />
         <OrbField intensity={0.95} speed={1.05} celebrate={false} />
         <main className="app__main" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className="glass glass--strong" style={{ padding: '2rem', textAlign: 'center' }}>
@@ -230,6 +253,7 @@ export default function App() {
   if (!authUser && ui.screen === SCREENS.ROLE_SELECT) {
     return (
       <div className="app">
+        <AcademyHeader />
         <OrbField intensity={0.95} speed={1.05} celebrate={false} />
         <RoleSelectPreLogin />
       </div>
@@ -240,6 +264,7 @@ export default function App() {
   if (!progress.role) {
     return (
       <div className="app">
+        <AcademyHeader />
         <OrbField intensity={0.95} speed={1.05} celebrate={false} />
         <main className="app__main">
           <div className="glass glass--strong" style={{ padding: '2rem', textAlign: 'center', maxWidth: 400, margin: '4rem auto' }}>
@@ -252,6 +277,7 @@ export default function App() {
 
   return (
     <div className="app">
+      <AcademyHeader />
       <OrbField
         intensity={orbIntensity}
         speed={orbSpeed}
