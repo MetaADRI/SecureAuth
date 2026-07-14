@@ -555,6 +555,7 @@
                     localStorage.setItem('user', JSON.stringify(data.user));
                     
                     const isAdmin = data.user.role === 'admin';
+                    const isLecturer = data.user.role === 'lecturer';
                     localStorage.removeItem('tempToken');
                     localStorage.removeItem('userEmail');
                     localStorage.removeItem('adminMode');
@@ -563,7 +564,17 @@
                     document.getElementById('successSection').classList.remove('hidden');
                     
                     setTimeout(() => {
-                        window.location.href = isAdmin ? 'admin-dashboard.html' : 'dashboard.html';
+                        const savedRedirect = sessionStorage.getItem('postLoginRedirect');
+                        sessionStorage.removeItem('postLoginRedirect');
+                        if (savedRedirect) {
+                            window.location.href = savedRedirect;
+                        } else if (isAdmin) {
+                            window.location.href = 'admin-dashboard.html';
+                        } else if (isLecturer) {
+                            window.location.href = '/academy';
+                        } else {
+                            window.location.href = 'dashboard.html';
+                        }
                     }, 1500);
                 } else {
                     errorMessage.textContent = data.message || 'Invalid verification code';

@@ -51,7 +51,7 @@ async function createUser(userData) {
  * Get all users
  */
 async function getAllUsers() {
-  const result = await db.query('SELECT id, full_name, email, role, created_at FROM users ORDER BY created_at DESC');
+  const result = await db.query('SELECT id, full_name, email, role, created_at, enrolled_path, rank, xp, lessons_completed, streak FROM users ORDER BY created_at DESC');
   return result.rows;
 }
 
@@ -120,6 +120,17 @@ async function lockAccount(userId, lockoutDurationMinutes) {
   await db.query(query, [lockedUntil.toISOString(), userId]);
 }
 
+/**
+ * Update enrolled path for a user
+ */
+async function updateEnrolledPath(userId, path) {
+  const query = `
+    UPDATE users SET enrolled_path = $1 WHERE id = $2 RETURNING *
+  `;
+  const result = await db.query(query, [path, userId]);
+  return result.rows[0];
+}
+
 module.exports = {
   findByEmail,
   findById,
@@ -129,5 +140,6 @@ module.exports = {
   countUsers,
   incrementFailedAttempts,
   resetFailedAttempts,
-  lockAccount
+  lockAccount,
+  updateEnrolledPath
 };

@@ -369,6 +369,15 @@
     
     <script src="js/auth.js"></script>
     <script>
+        // Preserve post-login redirect from query parameter (Scenario B)
+        (function() {
+            var params = new URLSearchParams(window.location.search);
+            var redirect = params.get('redirect');
+            if (redirect) {
+                sessionStorage.setItem('postLoginRedirect', redirect);
+            }
+        })();
+
         // Initialize Lucide icons
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();

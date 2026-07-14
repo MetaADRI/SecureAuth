@@ -1,0 +1,233 @@
+[
+  {
+    "id": "intro_cybersecurity",
+    "order": 1,
+    "title": "Introduction to Cybersecurity",
+    "subtitle": "What cybersecurity means and why it matters to you",
+    "duration": "12 min",
+    "concepts": [
+      {
+        "title": "Cybersecurity is everyone's responsibility",
+        "body": "Hackers don't just target big companies — they target individuals. Your email, bank account, social media, and even your device's camera are all potential entry points. Security isn't just an IT problem; it's a personal one."
+      },
+      {
+        "title": "The three pillars: CIA",
+        "body": "Confidentiality — only the right people see the data. Integrity — the data hasn't been tampered with. Availability — the data is accessible when needed. Every security control you'll learn maps to one of these three."
+      },
+      {
+        "title": "Most attacks exploit human behavior",
+        "body": "Technology is hard to break directly. So attackers trick people instead — they send convincing emails, create fake websites, or impersonate trusted contacts. The strongest defense is knowing how these tricks work."
+      }
+    ],
+    "quiz": {
+      "prompt": "Check your understanding of Cybersecurity basics.",
+      "passThreshold": 0.6,
+      "xpAward": 30,
+      "questions": [
+        {
+          "id": "intro_q1",
+          "question": "What does the 'C' in the CIA triad stand for?",
+          "options": [
+            "Confidentiality",
+            "Complexity",
+            "Compliance",
+            "Cryptography"
+          ],
+          "correct": 0,
+          "explanation": "The CIA triad stands for Confidentiality, Integrity, and Availability — the three core goals of cybersecurity."
+        },
+        {
+          "id": "intro_q2",
+          "question": "Why do attackers often target people instead of technology?",
+          "options": [
+            "Technology is too fast to hack",
+            "People can be tricked more easily than systems can be broken",
+            "People have more money than computers",
+            "Attackers don't understand technology"
+          ],
+          "correct": 1,
+          "explanation": "Social engineering exploits human psychology. It's usually easier to trick a person than to find a technical vulnerability."
+        },
+        {
+          "id": "intro_q3",
+          "question": "Which scenario is an example of a confidentiality breach?",
+          "options": [
+            "A website goes offline during a storm",
+            "An attacker reads your private emails without permission",
+            "A file gets accidentally deleted",
+            "A password is changed by the account owner"
+          ],
+          "correct": 1,
+          "explanation": "Confidentiality means keeping data private. Someone reading your emails without authorization is a direct violation of confidentiality."
+        }
+      ]
+    },
+    "takeaways": [
+      "Cybersecurity protects your data, money, and identity",
+      "The CIA triad — Confidentiality, Integrity, Availability — is the foundation",
+      "Attackers target people because human behavior is the weakest link"
+    ]
+  },
+  {
+    "id": "password_security",
+    "order": 2,
+    "title": "Password Security",
+    "subtitle": "Creating and managing strong passwords",
+    "duration": "Coming soon",
+    "stub": true,
+    "concepts": [
+      {
+        "title": "Lesson in development",
+        "body": "This topic covers password strength, passphrases, credential stuffing, and password managers. Check back soon for the full lesson."
+      }
+    ],
+    "takeaways": [
+      "Full lesson content is in development"
+    ]
+  },
+  {
+    "id": "two_factor_auth",
+    "order": 3,
+    "title": "Two-Factor Authentication",
+    "subtitle": "Adding a second layer of protection",
+    "duration": "Coming soon",
+    "stub": true,
+    "concepts": [
+      {
+        "title": "Lesson in development",
+        "body": "This topic covers how 2FA works, authenticator apps, hardware tokens, and why SMS codes are better than nothing but not the strongest option."
+      }
+    ],
+    "takeaways": [
+      "Full lesson content is in development"
+    ]
+  },
+  {
+    "id": "safe_browsing",
+    "order": 4,
+    "title": "Safe Browsing Practices",
+    "subtitle": "Protecting your privacy while online",
+    "duration": "Coming soon",
+    "stub": true,
+    "concepts": [
+      {
+        "title": "Lesson in development",
+        "body": "This topic covers HTTPS, browser security, tracking protection, ad blockers, and how to verify websites before entering sensitive information."
+      }
+    ],
+    "takeaways": [
+      "Full lesson content is in development"
+    ]
+  },
+  {
+    "id": "phishing_social_engineering",
+    "order": 5,
+    "title": "Phishing & Social Engineering",
+    "subtitle": "Spotting deceptive messages and manipulation",
+    "duration": "Coming soon",
+    "stub": true,
+    "concepts": [
+      {
+        "title": "Lesson in development",
+        "body": "This topic covers how to recognize phishing emails, spear-phishing tactics, vishing (voice phishing), and social engineering red flags."
+      }
+    ],
+    "takeaways": [
+      "Full lesson content is in development"
+    ]
+  },
+  {
+    "id": "web_app_security",
+    "order": 6,
+    "title": "Web Application Security",
+    "subtitle": "How websites get hacked and defended",
+    "duration": "Coming soon",
+    "stub": true,
+    "concepts": [
+      {
+        "title": "Lesson in development",
+        "body": "This topic covers common web vulnerabilities including SQL injection, cross-site scripting (XSS), and how developers defend against them."
+      }
+    ],
+    "takeaways": [
+      "Full lesson content is in development"
+    ]
+  },
+  {
+    "id": "cryptography_basics",
+    "order": 7,
+    "title": "Cryptography Basics",
+    "subtitle": "How encryption protects your data",
+    "duration": "Coming soon",
+    "stub": true,
+    "concepts": [
+      {
+        "title": "Lesson in development",
+        "body": "This topic covers symmetric vs asymmetric encryption, hashing, digital signatures, and how encryption protects data at rest and in transit."
+      }
+    ],
+    "takeaways": [
+      "Full lesson content is in development"
+    ]
+  },
+  {
+    "id": "network_security",
+    "order": 8,
+    "title": "Network Security",
+    "subtitle": "Securing the connections between devices",
+    "duration": "Coming soon",
+    "stub": true,
+    "concepts": [
+      {
+        "title": "Lesson in development",
+        "body": "This topic covers firewalls, VPNs, Wi-Fi security, network segmentation, and how data travels securely across the internet."
+      }
+    ],
+    "takeaways": [
+      "Full lesson content is in development"
+    ]
+  },
+  {
+    "id": "cybersecurity_best_practices",
+    "order": 9,
+    "title": "Cybersecurity Best Practices",
+    "subtitle": "Daily habits for staying safe online",
+    "duration": "Coming soon",
+    "stub": true,
+    "concepts": [
+      {
+        "title": "Lesson in development",
+        "body": "This topic covers practical daily habits: software updates, backup strategies, recognizing social engineering, and building a security-conscious mindset."
+      }
+    ],
+    "takeaways": [
+      "Full lesson content is in development"
+    ]
+  },
+  {
+    "id": "case_studies",
+    "order": 10,
+    "title": "Real-World Case Studies",
+    "subtitle": "Lessons from actual cybersecurity incidents",
+    "duration": "14 min",
+    "concepts": [
+      {
+        "title": "Ransomware targets financial infrastructure",
+        "body": "The Bank of Zambia and Zanaco (Zambia National Commercial Bank) were hit by a Clop ransomware attack in November 2025. Operations were disrupted for days as systems were taken offline to contain the spread. Clop is known for exploiting file-transfer vulnerabilities."
+      },
+      {
+        "title": "Crypto exchanges are high-value targets",
+        "body": "Coinbase suffered a security breach in early 2025 where attackers exploited a flaw in the email authentication workflow. Employees received convincing phishing calls that led to credential compromise, showing that even well-resourced platforms are vulnerable to social engineering."
+      },
+      {
+        "title": "Retail breaches expose millions",
+        "body": "Marks & Spencer experienced a cybersecurity incident in April 2025 that disrupted online and in-store operations. The incident involved unauthorised access to customer accounts, potentially exposing personal data and loyalty information."
+      }
+    ],
+    "takeaways": [
+      "Social engineering bypasses even strong technical controls",
+      "Ransomware can cripple critical national infrastructure",
+      "Security awareness is everyone's responsibility, not just IT"
+    ]
+  }
+]

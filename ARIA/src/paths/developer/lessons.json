@@ -1,0 +1,197 @@
+[
+  {
+    "id": "auth_fundamentals",
+    "order": 1,
+    "title": "Authentication Fundamentals",
+    "subtitle": "Passwords, hashing, bcrypt",
+    "duration": "12 min",
+    "concepts": [
+      {
+        "title": "Never store passwords",
+        "body": "If your database leaks, plaintext passwords become an identity market overnight. Store only a one-way hash."
+      },
+      {
+        "title": "Salts defeat rainbow tables",
+        "body": "A unique salt per password means precomputed hash tables fail. Two identical passwords produce different hashes."
+      },
+      {
+        "title": "bcrypt work factor",
+        "body": "The cost parameter forces attackers to spend real CPU per guess. Tune it so legitimate logins stay fast and attacks stay expensive."
+      }
+    ],
+    "practical": {
+      "type": "command",
+      "prompt": "Enter the SecureAuth init command:",
+      "answer": "npx @metaadri/secureauth init",
+      "accepts": [
+        "npx @metaadri/secureauth init",
+        "npx @metaadri/secureauth init ",
+        "npx @metaadri/secureauth init --"
+      ],
+      "placeholder": "npx @metaadri/secureauth …",
+      "successNote": "Scaffolding SecureAuth into the project root."
+    },
+    "takeaways": [
+      "Hash + salt, never encrypt passwords for storage",
+      "Work factors buy you time against brute force",
+      "SecureAuth init sets sane defaults so teams don't freestyle crypto"
+    ]
+  },
+  {
+    "id": "jwt_sessions",
+    "order": 2,
+    "title": "JWT & Sessions",
+    "subtitle": "Tokens, expiry, refresh",
+    "duration": "14 min",
+    "concepts": [
+      {
+        "title": "Header · Payload · Signature",
+        "body": "A JWT is three Base64URL segments. Anyone can read the payload — only the signature proves it wasn't tampered with."
+      },
+      {
+        "title": "exp is not optional",
+        "body": "Long-lived tokens are stolen credentials with a delayed fuse. Short access tokens + refresh rotation limit blast radius."
+      },
+      {
+        "title": "Sessions vs JWT",
+        "body": "Server sessions let you revoke instantly. JWTs scale horizontally but need careful expiry, denylist, or short TTL design."
+      }
+    ],
+    "practical": {
+      "type": "jwt_inspect",
+      "prompt": "Decode this demo JWT. What is the subject (sub) claim?",
+      "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzQyIiwibmFtZSI6IkFsZXgiLCJleHAiOjE3MzU2ODkwMDB9.demo_signature_not_real",
+      "answer": "user_42",
+      "accepts": ["user_42", "user_42 ", "\"user_42\""],
+      "placeholder": "sub claim value…",
+      "successNote": "Payload is public — never put secrets in JWT claims."
+    },
+    "takeaways": [
+      "Payload is readable; signature is the trust boundary",
+      "Prefer short-lived access tokens",
+      "Inspect tokens before you defend them"
+    ]
+  },
+  {
+    "id": "rate_limiting",
+    "order": 3,
+    "title": "Rate Limiting & Account Lockout",
+    "subtitle": "Brute-force defense",
+    "duration": "12 min",
+    "concepts": [
+      {
+        "title": "Volume is the attack",
+        "body": "Credential stuffing doesn't need sophistication — it needs attempts. Cap attempts per identity and per IP."
+      },
+      {
+        "title": "Progressive slowdown",
+        "body": "After each failure, increase delay. Attackers feel friction long before a hard lockout triggers support tickets."
+      },
+      {
+        "title": "Lockout with recovery",
+        "body": "Hard lockouts stop floods. Pair them with safe unlock paths (time, email, admin) so real users aren't stranded."
+      }
+    ],
+    "practical": {
+      "type": "lockout_sim",
+      "prompt": "Simulate failed logins until lockout. How many failures trigger the lock?",
+      "threshold": 5,
+      "answer": "5",
+      "accepts": ["5", "five", "5 failures"],
+      "placeholder": "Number of failures…",
+      "successNote": "Progressive delay + hard lock = expensive guessing."
+    },
+    "takeaways": [
+      "Rate limit identity and network surfaces",
+      "Slowdown is a feature, not lag",
+      "Always design the unlock path with the lockout"
+    ]
+  },
+  {
+    "id": "owasp_injection",
+    "order": 4,
+    "title": "OWASP Top 10: Injection & XSS",
+    "subtitle": "Vulnerable vs fixed patterns",
+    "duration": "15 min",
+    "concepts": [
+      {
+        "title": "Injection = data becomes code",
+        "body": "When user input is concatenated into a query, the attacker writes part of your program."
+      },
+      {
+        "title": "XSS = the browser trusts the page",
+        "body": "Unencoded output in HTML/JS contexts lets attackers run script as your origin — cookies, tokens, and all."
+      },
+      {
+        "title": "Fix the boundary",
+        "body": "Parameterized queries and context-aware encoding stop the class of bug. Frameworks help only if you don't bypass them."
+      }
+    ],
+    "practical": {
+      "type": "code_compare",
+      "prompt": "Which line number in the vulnerable snippet concatenates user input into SQL?",
+      "vulnerable": [
+        "app.get('/user', (req, res) => {",
+        "  const id = req.query.id;",
+        "  const q = \"SELECT * FROM users WHERE id = '\" + id + \"'\";",
+        "  db.query(q, (err, rows) => res.json(rows));",
+        "});"
+      ],
+      "fixed": [
+        "app.get('/user', (req, res) => {",
+        "  const id = req.query.id;",
+        "  const q = 'SELECT * FROM users WHERE id = ?';",
+        "  db.query(q, [id], (err, rows) => res.json(rows));",
+        "});"
+      ],
+      "answer": "3",
+      "accepts": ["3", "line 3", "Line 3"],
+      "placeholder": "Line number…",
+      "successNote": "Parameter binding keeps data out of the SQL grammar."
+    },
+    "takeaways": [
+      "Never string-build queries with user input",
+      "Encode for the output context (HTML, attr, JS)",
+      "Spot the trust boundary first"
+    ]
+  },
+  {
+    "id": "secure_deployment",
+    "order": 5,
+    "title": "Secure Deployment Basics",
+    "subtitle": "Env vars, HTTPS, secure cookies",
+    "duration": "10 min",
+    "concepts": [
+      {
+        "title": "Secrets leave the repo",
+        "body": "API keys and signing secrets belong in environment variables or a secrets manager — never in committed config."
+      },
+      {
+        "title": "HTTPS is table stakes",
+        "body": "Without TLS, session cookies and tokens ride in cleartext. HSTS closes downgrade tricks."
+      },
+      {
+        "title": "Cookie flags",
+        "body": "Secure + HttpOnly + SameSite reduce theft via network sniffing, XSS script access, and CSRF-style cross-site sends."
+      }
+    ],
+    "practical": {
+      "type": "checklist",
+      "prompt": "Verify each go-live control. Check all items to complete.",
+      "items": [
+        "Secrets loaded from environment (not source control)",
+        "HTTPS enforced in production",
+        "Session cookies set Secure flag",
+        "Session cookies set HttpOnly flag",
+        "SameSite attribute set (Lax or Strict)"
+      ],
+      "answer": "all",
+      "successNote": "Boring checklists prevent exciting incidents."
+    },
+    "takeaways": [
+      "Config security is app security",
+      "Cookie flags are free mitigations",
+      "Ship with a review, not hope"
+    ]
+  }
+]

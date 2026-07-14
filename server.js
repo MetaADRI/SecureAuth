@@ -31,6 +31,11 @@ const PORT = process.env.PORT || 3000;
 // ═══════════════════════════════════════════════════════════════════
 
 // 1. Security headers (helmet.js)
+// NOTE: Helmet's default CSP includes upgrade-insecure-requests. On local
+// http://localhost that upgrades self-hosted Academy JS/CSS to https → they
+// fail to load → blank /academy page. Main site still "worked" because it
+// loads Tailwind/Lucide from HTTPS CDNs. Disable the upgrade directive for
+// local HTTP; keep HSTS for real HTTPS deployments.
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -40,6 +45,8 @@ app.use(helmet({
       fontSrc: ["'self'", "data:", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:", "https:"],
       connectSrc: ["'self'", "http://localhost:*", "https://localhost:*", "https://unpkg.com"],
+      // Explicit null disables Helmet's default upgrade-insecure-requests
+      upgradeInsecureRequests: null,
     }
   },
   hsts: {
@@ -77,6 +84,15 @@ app.use((req, res, next) => {
 // Serve static frontend files (Phase 3 UI)
 const PHASE3_FRONTEND_DIR = path.join(__dirname, 'phase3-frontend');
 app.use(express.static(PHASE3_FRONTEND_DIR));
+
+// Serve ARIA Cybersecurity Academy SPA (built React app)
+const ARIA_DIST_DIR = path.join(__dirname, 'ARIA', 'dist');
+app.use('/academy', express.static(ARIA_DIST_DIR));
+
+// SPA fallback — any /academy/* path not matching a static file serves index.html
+app.get('/academy/*', (req, res) => {
+  res.sendFile(path.join(ARIA_DIST_DIR, 'index.html'));
+});
 
 // Note: we intentionally do NOT serve the legacy `public/` UI to avoid
 // accidentally showing a different frontend than `phase3-frontend`.

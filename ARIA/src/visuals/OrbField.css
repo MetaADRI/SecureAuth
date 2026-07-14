@@ -1,0 +1,74 @@
+.orb-field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(160deg, #0a0e1a 0%, #0d1526 45%, #0a1020 100%);
+}
+
+.orb-field__base {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(157, 111, 255, 0.08), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 80% 70%, rgba(79, 209, 255, 0.07), transparent 50%);
+}
+
+.orb-field__stage {
+  position: absolute;
+  inset: -50%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.orb-field__orbs {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.orb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  transform-style: preserve-3d;
+  will-change: transform, opacity, filter;
+  /* volume: rim + glow sold via inline styles in JS */
+  mix-blend-mode: screen;
+}
+
+.orb--layer-0 {
+  z-index: 3;
+}
+
+.orb--layer-1 {
+  z-index: 2;
+}
+
+.orb--layer-2 {
+  z-index: 1;
+}
+
+.orb-field__vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* Pull-toward-card flash during role select transition */
+.orb-field.orb-pull-focus .orb-field__stage {
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: perspective(900px) scale(1.08) !important;
+}
+
+.orb-field.orb-pull-focus .orb-field__base {
+  animation: pull-flash 0.5s ease-out;
+}
+
+@keyframes pull-flash {
+  0% { filter: brightness(1); }
+  40% { filter: brightness(1.45); }
+  100% { filter: brightness(1); }
+}

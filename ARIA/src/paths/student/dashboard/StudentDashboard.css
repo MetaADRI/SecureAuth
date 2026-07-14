@@ -1,0 +1,456 @@
+.sd-dashboard {
+  position: relative;
+  z-index: 1;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1.75rem 1.25rem 3rem;
+  animation: sd-screen-in 0.4s ease both;
+}
+
+.sd-dashboard__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.sd-dashboard__brand {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.sd-dashboard__logo {
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  font-size: 0.95rem;
+  color: var(--aria-cyan);
+}
+
+.sd-dashboard__header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.sd-dashboard__grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.sd-dashboard__sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (max-width: 860px) {
+  .sd-dashboard__grid-2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Panel base ──────────────────────────────────────────── */
+
+.sd-panel {
+  padding: 1.15rem;
+}
+
+.sd-panel__title {
+  margin: 0 0 0.85rem;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--aria-text-muted);
+  font-weight: 650;
+}
+
+/* ── Welcome Banner ────────────────────────────────────────── */
+
+.sd-welcome {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.35rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.sd-welcome__title {
+  margin: 0 0 0.3rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.sd-welcome__sub {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.sd-welcome__streak {
+  text-align: center;
+}
+
+.sd-welcome__streak-num {
+  display: block;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--aria-gold);
+  line-height: 1.1;
+}
+
+.sd-welcome__streak-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.sd-welcome__placeholder {
+  font-size: 0.8rem;
+}
+
+/* ── Learning Progress ────────────────────────────────────── */
+
+.sd-progress-stats {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 0.5rem;
+}
+
+.sd-stat-ring-wrap {
+  flex-shrink: 0;
+}
+
+.sd-stat-ring {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+
+.sd-stat-ring__inner {
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  background: var(--aria-navy-1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+}
+
+.sd-stat-ring__inner strong {
+  font-size: 1.1rem;
+  color: var(--aria-text);
+}
+
+.sd-stat-blocks {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.sd-stat-block__label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.15rem;
+}
+
+.sd-stat-block__value {
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.sd-stat-block__unit {
+  font-size: 0.85rem;
+  margin-left: 0.15rem;
+}
+
+/* ── Learning Path Roadmap ──────────────────────────────────── */
+
+.sd-roadmap__path {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.sd-roadmap__node-wrap {
+  position: relative;
+}
+
+.sd-roadmap__node {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--aria-glass-border);
+  background: rgba(0, 0, 0, 0.18);
+  color: var(--aria-text);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.sd-roadmap__node:hover:not(:disabled) {
+  background: rgba(79, 209, 255, 0.08);
+  border-color: var(--aria-cyan);
+  transform: translateX(4px);
+}
+
+.sd-roadmap__node:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.sd-roadmap__node--available {
+  border-color: rgba(79, 209, 255, 0.35);
+}
+
+.sd-roadmap__node--completed {
+  border-color: rgba(79, 209, 255, 0.15);
+}
+
+.sd-roadmap__node--stub {
+  opacity: 0.7;
+}
+
+.sd-roadmap__node-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  border-radius: 50%;
+  background: var(--aria-navy-1);
+  border: 1.5px solid var(--aria-glass-border);
+}
+
+.sd-roadmap__node--available .sd-roadmap__node-icon {
+  border-color: var(--aria-cyan);
+  background: rgba(79, 209, 255, 0.12);
+}
+
+.sd-roadmap__node--completed .sd-roadmap__node-icon {
+  border-color: var(--aria-gold);
+  color: var(--aria-gold);
+}
+
+.sd-roadmap__node-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sd-roadmap__node-order {
+  font-size: 0.72rem;
+  margin-bottom: 0.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.sd-roadmap__node-tag {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.08rem 0.45rem;
+  border-radius: 99px;
+  background: var(--aria-navy-2);
+}
+
+.sd-roadmap__node-tag--done {
+  background: rgba(240, 199, 94, 0.15);
+  color: var(--aria-gold);
+}
+
+.sd-roadmap__node-tag--avail {
+  background: rgba(79, 209, 255, 0.15);
+  color: var(--aria-cyan);
+}
+
+.sd-roadmap__node-tag--locked {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.sd-roadmap__node-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.05rem;
+}
+
+.sd-roadmap__node-sub {
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sd-roadmap__connector {
+  width: 2px;
+  height: 16px;
+  background: var(--aria-glass-border);
+  margin-left: 19px;
+}
+
+/* ── Continue Learning ────────────────────────────────────── */
+
+.sd-continue-hint {
+  margin-top: 0.65rem;
+  font-size: 0.8rem;
+}
+
+/* ── Empty state ──────────────────────────────────────────── */
+
+.sd-empty-state {
+  text-align: center;
+  padding: 1.5rem 0.5rem;
+}
+
+.sd-empty-state__icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.sd-empty-state__text {
+  margin: 0;
+  font-size: 0.88rem;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+/* ── Achievements ─────────────────────────────────────────── */
+
+.sd-achievements__count {
+  font-size: 0.7rem;
+  margin-left: 0.35rem;
+  font-weight: 400;
+}
+
+/* ── Career Paths ─────────────────────────────────────────── */
+
+.sd-careers__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.85rem;
+}
+
+@media (max-width: 700px) {
+  .sd-careers__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sd-career-card {
+  padding: 1rem;
+  border-left: 3px solid var(--career-accent, var(--aria-glass-border));
+  transition: transform 0.2s ease;
+}
+
+.sd-career-card:hover {
+  transform: translateY(-2px);
+}
+
+.sd-career-card__level {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.3rem;
+}
+
+.sd-career-card__title {
+  margin: 0 0 0.4rem;
+  font-size: 1rem;
+}
+
+.sd-career-card__desc {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+/* ── Daily Challenge ──────────────────────────────────────── */
+
+.sd-challenge__card {
+  padding: 0.5rem 0;
+}
+
+.sd-challenge__tag {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.3rem;
+}
+
+.sd-challenge__title {
+  margin: 0.3rem 0 0.4rem;
+  font-size: 1rem;
+}
+
+.sd-challenge__desc {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+/* ── Coming Soon ──────────────────────────────────────────── */
+
+.sd-coming-soon__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.85rem;
+}
+
+@media (max-width: 700px) {
+  .sd-coming-soon__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sd-coming-item {
+  padding: 1rem;
+  text-align: center;
+}
+
+.sd-coming-item__icon {
+  font-size: 1.6rem;
+  margin-bottom: 0.4rem;
+}
+
+.sd-coming-item__title {
+  margin: 0 0 0.3rem;
+  font-size: 0.9rem;
+}
+
+.sd-coming-item__desc {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+/* ── ARIA Panel ────────────────────────────────────────────── */
+
+.sd-aria-panel {
+  padding: 1rem 1.15rem;
+  margin-bottom: 1rem;
+}
+
+/* ── Animations ────────────────────────────────────────────── */
+
+@keyframes sd-screen-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

@@ -1,0 +1,36 @@
+<!DOCTYPE html><html><body>
+<h1>Available Voices</h1>
+<ul id="list"></ul>
+<pre id="result"></pre>
+<script>
+const u = new SpeechSynthesisUtterance('test');
+u.rate = 0.88; u.pitch = 1.3;
+const check = () => {
+  const voices = speechSynthesis.getVoices();
+  const list = document.getElementById('list');
+  list.innerHTML = voices.map(v => 
+    '<li>' + v.name + ' (' + v.lang + ') ' + (v.localService ? 'local' : 'remote') + '</li>'
+  ).join('');
+  const female = voices.filter(v => {
+    const n = v.name.toLowerCase();
+    return n.includes('zira') || n.includes('hazel') || n.includes('helena') || 
+           n.includes('catherine') || n.includes('samantha') || n.includes('karen') ||
+           n.includes('moira') || n.includes('fiona') || n.includes('tessa') ||
+           n.includes('veena') || n.includes('amalee') || n.includes('alice') ||
+           n.includes('anna') || n.includes('female') || n.includes('jenny') ||
+           n.includes('libby') || n.includes('aria') || n.includes('susan') ||
+           n.includes('linda') || n.includes('julie') || n.includes('emma') ||
+           n.includes('olivia') || n.includes('ava') || n.includes('sophia') ||
+           n.includes('isabella') || n.includes('megan') || n.includes('heather');
+  }).filter(v => v.lang && v.lang.startsWith('en'));
+  document.getElementById('result').textContent = 'Female candidates: ' + female.length + ' — names: ' + female.map(v => v.name).join(', ');
+  
+  if (female.length > 0) {
+    u.voice = female[0];
+    speechSynthesis.speak(u);
+  }
+};
+if (speechSynthesis.getVoices().length) check();
+speechSynthesis.onvoiceschanged = check;
+</script>
+</body></html>

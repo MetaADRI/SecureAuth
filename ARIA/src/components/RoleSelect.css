@@ -1,0 +1,146 @@
+.role-select {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  padding: 2.5rem 1.5rem 3rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  animation: screen-in 0.45s ease both;
+}
+
+.role-select--pulling {
+  animation: screen-out 0.45s ease both;
+}
+
+.role-select__header {
+  text-align: center;
+}
+
+.role-select__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.role-select__logo {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 0.28em;
+  color: var(--aria-text);
+  text-shadow: 0 0 30px rgba(79, 209, 255, 0.35);
+}
+
+.role-select__product {
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.role-select__tagline {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.role-select__aria {
+  padding: 1.15rem 1.25rem;
+  max-width: 720px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.role-select__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 720px) {
+  .role-select__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.role-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  padding: 1.35rem 1.25rem;
+  color: inherit;
+  font-family: inherit;
+  min-height: 180px;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.role-card--live {
+  cursor: pointer;
+}
+
+.role-card--live:hover:not(:disabled) {
+  transform: translateY(-6px);
+  border-color: var(--aria-cyan);
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.45),
+    0 0 32px var(--aria-cyan-dim);
+}
+
+.role-card--soon {
+  cursor: default;
+  /* greyed ~15% while staying glassmorphic */
+  opacity: 0.85;
+  filter: grayscale(0.15) brightness(0.92);
+}
+
+.role-card__eyebrow {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--aria-text-muted);
+  margin-bottom: 0.55rem;
+}
+
+.role-card--live .role-card__eyebrow {
+  color: var(--aria-cyan);
+}
+
+.role-card__title {
+  margin: 0 0 0.45rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.role-card__blurb {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  flex: 1;
+}
+
+.role-card__cta {
+  margin-top: 1rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+@keyframes screen-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes screen-out {
+  to {
+    opacity: 0;
+    transform: scale(0.98) translateY(-8px);
+  }
+}

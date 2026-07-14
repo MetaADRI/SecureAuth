@@ -1,0 +1,335 @@
+.student-path {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+  animation: screen-in 0.4s ease both;
+}
+
+.student-path__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.student-path__meta h1 {
+  margin: 0.15rem 0 0.2rem;
+  font-size: 1.55rem;
+}
+
+.student-path__meta p {
+  margin: 0;
+}
+
+.student-path__aria {
+  padding: 1rem 1.15rem;
+  margin-bottom: 1rem;
+}
+
+.student-path__stage {
+  padding: 1.35rem 1.25rem;
+}
+
+/* QuizCard */
+
+.quiz-card {
+  margin: 1rem 0;
+}
+
+.quiz-question {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-left: 3px solid var(--aria-glass-border);
+  transition: border-color 0.2s ease;
+}
+
+.quiz-question--ok {
+  border-left-color: var(--aria-cyan);
+}
+
+.quiz-question--wrong {
+  border-left-color: #ff8f8f;
+}
+
+.quiz-question__text {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  line-height: 1.45;
+}
+
+.quiz-question__options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.quiz-option {
+  text-align: left;
+  padding: 0.7rem 0.85rem;
+  border-radius: var(--aria-radius-sm);
+  border: 1px solid var(--aria-glass-border);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--aria-text);
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.quiz-option:hover:not(:disabled) {
+  background: rgba(79, 209, 255, 0.1);
+  border-color: var(--aria-cyan);
+}
+
+.quiz-option--selected {
+  border-color: var(--aria-cyan);
+  background: rgba(79, 209, 255, 0.15);
+}
+
+.quiz-option--correct {
+  border-color: var(--aria-cyan);
+  background: rgba(79, 209, 255, 0.12);
+  color: var(--aria-cyan);
+}
+
+.quiz-option--wrong {
+  border-color: #ff8f8f;
+  background: rgba(255, 100, 100, 0.12);
+  color: #ff8f8f;
+}
+
+.quiz-option--dim {
+  opacity: 0.5;
+}
+
+.quiz-question__explanation {
+  margin-top: 0.65rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+/* Phishing Simulator */
+
+.phish-sim {
+  margin: 1rem 0;
+}
+
+.phish-email {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-left: 3px solid var(--aria-glass-border);
+  transition: border-color 0.2s ease;
+}
+
+.phish-email--correct {
+  border-left-color: var(--aria-cyan);
+}
+
+.phish-email--wrong {
+  border-left-color: #ff8f8f;
+}
+
+.phish-email__header {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  margin-bottom: 0.3rem;
+  word-break: break-all;
+}
+
+.phish-email__label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  min-width: 3.5rem;
+  flex-shrink: 0;
+}
+
+.phish-email__body {
+  margin: 0.65rem 0;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--aria-radius-sm);
+  font-family: var(--aria-mono);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow: auto;
+}
+
+.phish-email__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.phish-email__result {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.phish-email__flags {
+  margin: 0.5rem 0 0;
+  padding-left: 1.2rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #ff8f8f;
+}
+
+.phish-email__flags li {
+  margin-bottom: 0.25rem;
+}
+
+/* Case Study */
+
+.case-study-select {
+  margin: 1rem 0;
+}
+
+.case-study-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.case-study-card {
+  text-align: left;
+  padding: 1.15rem;
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.case-study-card:hover {
+  transform: translateY(-3px);
+}
+
+.case-study__date {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 2.5rem;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--aria-glass-border);
+}
+
+.timeline__stage {
+  position: relative;
+  margin-bottom: 1.25rem;
+}
+
+.timeline__marker {
+  position: absolute;
+  left: -2.5rem;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timeline__num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--aria-navy-2);
+  border: 2px solid var(--aria-cyan);
+  color: var(--aria-cyan);
+  font-family: var(--aria-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.timeline__content {
+  padding-left: 0.5rem;
+}
+
+.timeline__label {
+  margin: 0 0 0.3rem;
+  color: var(--aria-cyan);
+  font-size: 0.95rem;
+}
+
+.timeline__content p {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.case-study__lesson p {
+  font-size: 0.9rem;
+}
+
+/* Certificate Modal */
+
+.certificate-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  animation: fade-in 0.3s ease;
+}
+
+.certificate-modal {
+  max-width: 620px;
+  width: 90%;
+  padding: 1.5rem;
+  text-align: center;
+  animation: modal-in 0.35s ease;
+}
+
+.certificate-burst {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 18px rgba(240, 199, 94, 0.55);
+}
+
+.certificate-modal h2 {
+  margin: 0 0 1rem;
+  font-size: 1.3rem;
+}
+
+.certificate-canvas {
+  display: block;
+  margin: 0 auto 1rem;
+}
+
+.certificate__actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: none; }
+}

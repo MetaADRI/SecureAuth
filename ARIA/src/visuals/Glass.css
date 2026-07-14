@@ -1,0 +1,120 @@
+/* Glassmorphism tokens & utilities — ARIA Academy */
+
+:root {
+  --aria-navy-0: #0a0e1a;
+  --aria-navy-1: #0d1526;
+  --aria-navy-2: #121c32;
+  --aria-cyan: #4fd1ff;
+  --aria-cyan-dim: rgba(79, 209, 255, 0.35);
+  --aria-violet: #9d6fff;
+  --aria-violet-dim: rgba(157, 111, 255, 0.35);
+  --aria-gold: #f0c75e;
+  --aria-gold-dim: rgba(240, 199, 94, 0.45);
+  --aria-text: #e8eef8;
+  --aria-text-muted: #8b9bb8;
+  --aria-glass-bg: rgba(13, 21, 38, 0.55);
+  --aria-glass-bg-strong: rgba(13, 21, 38, 0.72);
+  --aria-glass-border: rgba(79, 209, 255, 0.18);
+  --aria-glass-border-hot: rgba(79, 209, 255, 0.45);
+  --aria-radius: 16px;
+  --aria-radius-sm: 10px;
+  --aria-font: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --aria-mono: "Cascadia Code", "Fira Code", "Consolas", monospace;
+}
+
+.glass {
+  background: var(--aria-glass-bg);
+  border: 1px solid var(--aria-glass-border);
+  border-radius: var(--aria-radius);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.glass--strong {
+  background: var(--aria-glass-bg-strong);
+}
+
+.glass--hot {
+  border-color: var(--aria-glass-border-hot);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    0 0 24px var(--aria-cyan-dim),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.glass--muted {
+  opacity: 0.85;
+  filter: grayscale(0.15) brightness(0.9);
+  border-color: rgba(139, 155, 184, 0.2);
+}
+
+.glass--gold {
+  border-color: rgba(240, 199, 94, 0.5);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    0 0 28px var(--aria-gold-dim),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.btn {
+  font-family: var(--aria-font);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.7rem 1.25rem;
+  border-radius: var(--aria-radius-sm);
+  border: 1px solid var(--aria-glass-border);
+  background: rgba(79, 209, 255, 0.12);
+  color: var(--aria-text);
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+.btn:hover:not(:disabled) {
+  background: rgba(79, 209, 255, 0.22);
+  border-color: var(--aria-cyan);
+  box-shadow: 0 0 20px var(--aria-cyan-dim);
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  background: linear-gradient(135deg, rgba(79, 209, 255, 0.28), rgba(157, 111, 255, 0.22));
+  border-color: var(--aria-cyan);
+}
+
+.btn--ghost {
+  background: transparent;
+}
+
+.btn--gold {
+  background: rgba(240, 199, 94, 0.15);
+  border-color: var(--aria-gold);
+  color: var(--aria-gold);
+}
+
+.text-muted {
+  color: var(--aria-text-muted);
+}
+
+.text-cyan {
+  color: var(--aria-cyan);
+}
+
+.text-violet {
+  color: var(--aria-violet);
+}
+
+.text-gold {
+  color: var(--aria-gold);
+}
+
+.mono {
+  font-family: var(--aria-mono);
+}

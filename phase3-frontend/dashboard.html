@@ -156,14 +156,14 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
-                <div class="flex items-center space-x-2">
+                <a href="/" class="flex items-center space-x-2">
                     <div class="w-10 h-10 bg-cuz-blue rounded-xl flex items-center justify-center shadow-md">
                         <i data-lucide="shield-check" class="w-6 h-6 text-white"></i>
                     </div>
                     <span class="text-xl font-bold text-cuz-blue tracking-tight">SecureAuth</span>
                     <span class="hidden sm:inline text-slate-300 mx-2">/</span>
                     <span class="hidden sm:inline text-slate-500 text-sm font-medium">Dashboard</span>
-                </div>
+                </a>
                 
                 <!-- Desktop Navigation -->
                 <div class="hidden md:flex items-center space-x-8">
@@ -233,7 +233,31 @@
                 <i data-lucide="shield-check" class="w-4 h-4 mr-2"></i>
                 Account Protected with Enterprise 2FA
             </div>
+            <div class="flex items-center space-x-3 mt-2">
+                <a href="/academy" class="inline-flex items-center px-4 py-2 bg-cuz-blue/5 text-cuz-blue rounded-xl text-xs font-bold hover:bg-cuz-blue/10 transition-all">
+                    <i data-lucide="graduation-cap" class="w-3.5 h-3.5 mr-1.5"></i>
+                    Explore the Full Cybersecurity Bootcamp
+                </a>
+            </div>
         </div>
+        
+        <!-- Tab Navigation -->
+        <div class="mb-8 border-b border-slate-200">
+            <div class="flex space-x-1 -mb-px">
+                <button data-action="switchTab('overview')" class="tab-btn active px-5 py-3 text-sm font-bold text-cuz-blue border-b-2 border-cuz-blue transition-all" id="tab-btn-overview">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4 inline mr-1.5"></i>Overview
+                </button>
+                <button data-action="switchTab('learning')" class="tab-btn px-5 py-3 text-sm font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-600 transition-all" id="tab-btn-learning">
+                    <i data-lucide="graduation-cap" class="w-4 h-4 inline mr-1.5"></i>Learning
+                </button>
+                <button data-action="switchTab('account')" class="tab-btn px-5 py-3 text-sm font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-600 transition-all" id="tab-btn-account">
+                    <i data-lucide="user-check" class="w-4 h-4 inline mr-1.5"></i>Account & Security
+                </button>
+            </div>
+        </div>
+        
+        <!-- Tab: Overview -->
+        <div id="tab-overview" class="tab-panel">
         
         <!-- Stats Grid -->
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
@@ -302,9 +326,246 @@
             </div>
         </div>
         
-        <div class="grid lg:grid-cols-3 gap-8">
-            <!-- Left Column: Profile & Security -->
-            <div class="lg:col-span-1 space-y-8">
+        <!-- Login Ledger -->
+        <div class="bg-white rounded-3xl shadow-sm overflow-hidden border border-slate-100">
+            <div class="p-8 border-b border-slate-50 flex items-center justify-between">
+                <div>
+                    <h3 class="text-xl sm:text-2xl font-black text-slate-900 flex items-center tracking-tight">
+                        <i data-lucide="history" class="w-6 h-6 sm:w-7 sm:h-7 mr-3 text-cuz-blue"></i>
+                        Login Ledger
+                    </h3>
+                    <p class="text-sm text-slate-400 mt-1 font-medium">Real-time audit of account access</p>
+                </div>
+                <button data-action="loadDashboardData()" class="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400 hover:text-cuz-blue" title="Refresh Log">
+                    <i data-lucide="refresh-ccw" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <div class="hidden md:block overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-slate-50/50">
+                        <tr>
+                            <th class="text-left text-[10px] font-black text-slate-400 uppercase tracking-widest px-8 py-4">Security Action</th>
+                            <th class="text-left text-[10px] font-black text-slate-400 uppercase tracking-widest px-8 py-4">Origin IP</th>
+                            <th class="text-left text-[10px] font-black text-slate-400 uppercase tracking-widest px-8 py-4">Terminal</th>
+                            <th class="text-left text-[10px] font-black text-slate-400 uppercase tracking-widest px-8 py-4">Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody id="loginHistoryTable" class="divide-y divide-slate-50">
+                        <tr>
+                            <td colspan="4" class="px-8 py-20 text-center">
+                                <div class="flex flex-col items-center">
+                                    <div class="animate-spin rounded-full h-10 w-10 border-4 border-slate-100 border-t-cuz-blue mb-4"></div>
+                                    <p class="text-slate-400 font-bold text-sm tracking-wide">Syncing Security Logs...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="md:hidden divide-y divide-slate-50" id="loginHistoryMobile">
+                <div class="p-8 text-center">
+                    <div class="animate-spin rounded-full h-8 w-8 border-4 border-slate-100 border-t-cuz-blue mx-auto mb-4"></div>
+                    <p class="text-slate-400 font-bold text-sm">Syncing...</p>
+                </div>
+            </div>
+        </div>
+        </div>
+        <!-- END Tab: Overview -->
+        
+        <!-- Tab: Learning -->
+        <div id="tab-learning" class="tab-panel hidden">
+            
+            <!-- State: Not Enrolled — Path Chooser -->
+            <div id="learning-state-chooser" class="space-y-8">
+                <div class="bg-white rounded-3xl shadow-sm p-6 sm:p-8 border border-slate-100">
+                    <div class="max-w-3xl">
+                        <h3 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mb-2">
+                            <i data-lucide="compass" class="w-6 h-6 sm:w-7 sm:h-7 inline mr-2 text-cuz-blue"></i>
+                            Choose Your Path
+                        </h3>
+                        <p class="text-slate-500 font-medium mb-8">Select a learning track. This choice is permanent — contact support to switch.</p>
+                    </div>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Card: Student Path -->
+                        <div class="relative group cursor-pointer" data-action="enrollInPath('student')">
+                            <div class="absolute inset-0 bg-gradient-to-br from-cuz-blue/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            <div class="relative bg-white rounded-3xl p-6 border-2 border-slate-100 group-hover:border-cuz-blue/30 transition-all h-full flex flex-col">
+                                <div class="w-14 h-14 bg-cuz-blue/10 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-cuz-blue group-hover:text-white transition-all">
+                                    <i data-lucide="graduation-cap" class="w-7 h-7 text-cuz-blue group-hover:text-white transition-colors"></i>
+                                </div>
+                                <h4 class="text-lg font-black text-slate-900 mb-2">Student Path</h4>
+                                <p class="text-sm text-slate-500 font-medium mb-6 flex-grow">Structured cybersecurity curriculum with modules, quizzes, and hands-on labs. Track your progress through the course.</p>
+                                <div class="space-y-3 mb-6">
+                                    <div class="flex items-center text-sm text-slate-600"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500 mr-2"></i>10+ learning modules</div>
+                                    <div class="flex items-center text-sm text-slate-600"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500 mr-2"></i>Hands-on labs & quizzes</div>
+                                    <div class="flex items-center text-sm text-slate-600"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500 mr-2"></i>Progress tracking & XP</div>
+                                </div>
+                                <button class="w-full py-3 bg-cuz-blue text-white font-bold rounded-2xl hover:bg-cuz-blue-light transition-colors btn-scale">
+                                    <i data-lucide="arrow-right" class="w-4 h-4 inline mr-1.5"></i>
+                                    Enroll in Student Path
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Card: Developer Path -->
+                        <div class="relative group cursor-pointer" data-action="enrollInPath('developer')">
+                            <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            <div class="relative bg-white rounded-3xl p-6 border-2 border-slate-100 group-hover:border-indigo-500/30 transition-all h-full flex flex-col">
+                                <div class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-indigo-500 group-hover:text-white transition-all">
+                                    <i data-lucide="code-2" class="w-7 h-7 text-indigo-600 group-hover:text-white transition-colors"></i>
+                                </div>
+                                <h4 class="text-lg font-black text-slate-900 mb-2">Developer Path</h4>
+                                <p class="text-sm text-slate-500 font-medium mb-6 flex-grow">Advanced security engineering with API development, integration patterns, and infrastructure automation projects.</p>
+                                <div class="space-y-3 mb-6">
+                                    <div class="flex items-center text-sm text-slate-600"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500 mr-2"></i>API & integration modules</div>
+                                    <div class="flex items-center text-sm text-slate-600"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500 mr-2"></i>Infrastructure automation</div>
+                                    <div class="flex items-center text-sm text-slate-600"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500 mr-2"></i>Advanced security projects</div>
+                                </div>
+                                <button class="w-full py-3 bg-indigo-500 text-white font-bold rounded-2xl hover:bg-indigo-600 transition-colors btn-scale">
+                                    <i data-lucide="arrow-right" class="w-4 h-4 inline mr-1.5"></i>
+                                    Enroll in Developer Path
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Card: Lecturer (info only) -->
+                        <div class="bg-slate-50 rounded-3xl p-6 border-2 border-dashed border-slate-200 flex flex-col">
+                            <div class="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center mb-5">
+                                <i data-lucide="chalkboard-teacher" class="w-7 h-7 text-amber-600"></i>
+                            </div>
+                            <h4 class="text-lg font-black text-slate-900 mb-2">Lecturer?</h4>
+                            <p class="text-sm text-slate-500 font-medium mb-6 flex-grow">Lecturer accounts are created by administrators. Contact support for lecturer access or visit the Academy directly.</p>
+                            <div class="space-y-3 mb-6">
+                                <div class="flex items-center text-sm text-slate-600"><i data-lucide="mail" class="w-4 h-4 text-amber-500 mr-2"></i>adrianmange00@gmail.com</div>
+                                <div class="flex items-center text-sm text-slate-600"><i data-lucide="external-link" class="w-4 h-4 text-amber-500 mr-2"></i>Visit the Academy</div>
+                            </div>
+                            <a href="/academy" class="w-full py-3 bg-amber-500 text-white font-bold rounded-2xl hover:bg-amber-600 transition-colors btn-scale text-center inline-block">
+                                <i data-lucide="arrow-right" class="w-4 h-4 inline mr-1.5"></i>
+                                Go to Academy
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- State: Enrolled — Student Progress -->
+            <div id="learning-state-student" class="space-y-8 hidden">
+                <div class="bg-white rounded-3xl shadow-sm p-6 sm:p-8 border border-slate-100">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8">
+                        <div>
+                            <h3 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center">
+                                <i data-lucide="graduation-cap" class="w-6 h-6 sm:w-7 sm:h-7 mr-3 text-cuz-blue"></i>
+                                Student Path
+                            </h3>
+                            <p class="text-sm text-slate-400 font-medium mt-1">Cybersecurity Curriculum Progress</p>
+                        </div>
+                        <div class="mt-4 sm:mt-0 flex items-center space-x-2">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100" id="studentRank">Rank: -</span>
+                            <a href="/academy?role=student" class="text-xs font-bold text-cuz-blue hover:underline">Go to Academy</a>
+                        </div>
+                    </div>
+                    
+                    <div class="grid sm:grid-cols-3 gap-4 mb-8">
+                        <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Experience</p>
+                            <p class="text-2xl font-black text-slate-900" id="studentXp">-</p>
+                            <div class="mt-2 h-2 bg-slate-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-cuz-blue rounded-full transition-all duration-500" id="studentXpBar" style="width:0%"></div>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Lessons Done</p>
+                            <p class="text-2xl font-black text-slate-900" id="studentLessons">-</p>
+                            <p class="text-xs text-slate-400 font-medium mt-1">of <span id="studentTotalLessons">-</span> total</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Current Streak</p>
+                            <p class="text-2xl font-black text-slate-900" id="studentStreak">-</p>
+                            <p class="text-xs text-slate-400 font-medium mt-1">consecutive days</p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-black text-slate-700 text-sm uppercase tracking-widest mb-4">Upcoming Modules</h4>
+                        <div id="studentModules" class="space-y-3">
+                            <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100 text-center hidden" id="studentModulesEmpty">
+                                <p class="text-sm font-bold text-slate-400">Not yet started</p>
+                                <p class="text-xs text-slate-400 mt-1">Begin your learning journey in the Academy</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="/academy?role=student" class="mt-6 inline-flex items-center px-6 py-3 bg-cuz-blue text-white font-bold rounded-2xl hover:bg-cuz-blue-light transition-colors btn-scale">
+                        <i data-lucide="arrow-right" class="w-5 h-5 mr-2"></i>
+                        Start Learning in Academy
+                    </a>
+                </div>
+                <a href="mailto:adrianmange00@gmail.com" class="inline-flex items-center text-sm font-bold text-slate-400 hover:text-cuz-blue transition-colors">
+                    <i data-lucide="message-circle" class="w-4 h-4 mr-2"></i>
+                    Need help? Contact Support
+                </a>
+            </div>
+            
+            <!-- State: Enrolled — Developer Progress -->
+            <div id="learning-state-developer" class="space-y-8 hidden">
+                <div class="bg-white rounded-3xl shadow-sm p-6 sm:p-8 border border-slate-100">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8">
+                        <div>
+                            <h3 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center">
+                                <i data-lucide="code-2" class="w-6 h-6 sm:w-7 sm:h-7 mr-3 text-indigo-500"></i>
+                                Developer Path
+                            </h3>
+                            <p class="text-sm text-slate-400 font-medium mt-1">Security Engineering Track</p>
+                        </div>
+                        <div class="mt-4 sm:mt-0 flex items-center space-x-2">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-full border border-indigo-100" id="devRank">Rank: -</span>
+                            <a href="/academy?role=developer" class="text-xs font-bold text-indigo-500 hover:underline">Go to Academy</a>
+                        </div>
+                    </div>
+                    
+                    <div class="grid sm:grid-cols-3 gap-4 mb-8">
+                        <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Experience</p>
+                            <p class="text-2xl font-black text-slate-900" id="devXp">-</p>
+                            <div class="mt-2 h-2 bg-slate-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-indigo-500 rounded-full transition-all duration-500" id="devXpBar" style="width:0%"></div>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Lessons Done</p>
+                            <p class="text-2xl font-black text-slate-900" id="devLessons">-</p>
+                            <p class="text-xs text-slate-400 font-medium mt-1">of <span id="devTotalLessons">-</span> total</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Current Streak</p>
+                            <p class="text-2xl font-black text-slate-900" id="devStreak">-</p>
+                            <p class="text-xs text-slate-400 font-medium mt-1">consecutive days</p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-black text-slate-700 text-sm uppercase tracking-widest mb-4">Upcoming Modules</h4>
+                        <div id="devModules" class="space-y-3">
+                            <div class="animate-pulse h-12 bg-slate-100 rounded-2xl"></div>
+                            <div class="animate-pulse h-12 bg-slate-100 rounded-2xl"></div>
+                        </div>
+                    </div>
+                    <a href="/academy?role=developer" class="mt-6 inline-flex items-center px-6 py-3 bg-indigo-500 text-white font-bold rounded-2xl hover:bg-indigo-600 transition-colors btn-scale">
+                        <i data-lucide="arrow-right" class="w-5 h-5 mr-2"></i>
+                        Start Learning in Academy
+                    </a>
+                </div>
+                <a href="mailto:adrianmange00@gmail.com" class="inline-flex items-center text-sm font-bold text-slate-400 hover:text-cuz-blue transition-colors">
+                    <i data-lucide="message-circle" class="w-4 h-4 mr-2"></i>
+                    Need help? Contact Support
+                </a>
+            </div>
+        </div>
+        
+        <!-- Tab: Account & Security -->
+        <div id="tab-account" class="tab-panel hidden">
+            <div class="space-y-8">
                 <!-- Profile Card -->
                 <div class="bg-white rounded-3xl shadow-sm p-6 sm:p-8 border border-slate-100">
                     <h3 class="text-lg sm:text-xl font-black text-slate-900 mb-6 flex items-center">
@@ -323,6 +584,10 @@
                         <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
                             <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">System UUID</p>
                             <p class="font-mono text-[11px] text-slate-500" id="userId">-</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100" id="enrolledPathRow">
+                            <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">Enrolled Path</p>
+                            <p class="font-bold text-slate-900" id="enrolledPathDisplay">Not enrolled</p>
                         </div>
                     </div>
                 </div>
@@ -365,58 +630,9 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Right Column: Login History -->
-            <div class="lg:col-span-2">
-                <div class="bg-white rounded-3xl shadow-sm overflow-hidden border border-slate-100 h-full">
-                    <div class="p-8 border-b border-slate-50 flex items-center justify-between">
-                        <div>
-                            <h3 class="text-xl sm:text-2xl font-black text-slate-900 flex items-center tracking-tight">
-                                <i data-lucide="history" class="w-6 h-6 sm:w-7 sm:h-7 mr-3 text-cuz-blue"></i>
-                                Login Ledger
-                            </h3>
-                            <p class="text-sm text-slate-400 mt-1 font-medium">Real-time audit of account access</p>
-                        </div>
-                        <button data-action="loadDashboardData()" class="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400 hover:text-cuz-blue" title="Refresh Log">
-                            <i data-lucide="refresh-ccw" class="w-5 h-5"></i>
-                        </button>
-                    </div>
-                    
-                    <!-- Desktop Table -->
-                    <div class="hidden md:block overflow-x-auto">
-                        <table class="w-full">
-                            <thead class="bg-slate-50/50">
-                                <tr>
-                                    <th class="text-left text-[10px] font-black text-slate-400 uppercase tracking-widest px-8 py-4">Security Action</th>
-                                    <th class="text-left text-[10px] font-black text-slate-400 uppercase tracking-widest px-8 py-4">Origin IP</th>
-                                    <th class="text-left text-[10px] font-black text-slate-400 uppercase tracking-widest px-8 py-4">Terminal</th>
-                                    <th class="text-left text-[10px] font-black text-slate-400 uppercase tracking-widest px-8 py-4">Timestamp</th>
-                                </tr>
-                            </thead>
-                            <tbody id="loginHistoryTable" class="divide-y divide-slate-50">
-                                <!-- Populated by JavaScript -->
-                                <tr>
-                                    <td colspan="4" class="px-8 py-20 text-center">
-                                        <div class="flex flex-col items-center">
-                                            <div class="animate-spin rounded-full h-10 w-10 border-4 border-slate-100 border-t-cuz-blue mb-4"></div>
-                                            <p class="text-slate-400 font-bold text-sm tracking-wide">Syncing Security Logs...</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <!-- Mobile Cards -->
-                    <div class="md:hidden divide-y divide-slate-50" id="loginHistoryMobile">
-                        <div class="p-8 text-center">
-                            <div class="animate-spin rounded-full h-8 w-8 border-4 border-slate-100 border-t-cuz-blue mx-auto mb-4"></div>
-                            <p class="text-slate-400 font-bold text-sm">Syncing...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
+        <!-- END Tab: Account & Security -->
+        
     </main>
 
 
@@ -573,12 +789,19 @@
         
         // Load user data
         function loadUserData() {
-            document.getElementById('userNameDisplay').textContent = user.fullName || user.email;
-            document.getElementById('userNameDisplayMobile').textContent = user.fullName || user.email;
-            document.getElementById('welcomeName').textContent = user.fullName?.split(' ')[0] || 'Security User';
-            document.getElementById('fullName').textContent = user.fullName || '-';
-            document.getElementById('email').textContent = user.email || '-';
-            document.getElementById('userId').textContent = user.id || '-';
+            var u = JSON.parse(localStorage.getItem('user') || '{}');
+            document.getElementById('userNameDisplay').textContent = u.fullName || u.email;
+            document.getElementById('userNameDisplayMobile').textContent = u.fullName || u.email;
+            document.getElementById('welcomeName').textContent = (u.fullName || 'Security User').split(' ')[0];
+            document.getElementById('fullName').textContent = u.fullName || '-';
+            document.getElementById('email').textContent = u.email || '-';
+            document.getElementById('userId').textContent = u.id || '-';
+            var epDisplay = document.getElementById('enrolledPathDisplay');
+            if (u.enrolledPath) {
+                epDisplay.textContent = u.enrolledPath.charAt(0).toUpperCase() + u.enrolledPath.slice(1) + ' Path';
+            } else {
+                epDisplay.textContent = 'Not enrolled';
+            }
             
             // Format created date
             if (user.createdAt) {
@@ -591,6 +814,92 @@
             }
         }
         
+        // Tab switching
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-panel').forEach(function(p) {
+                p.classList.add('hidden');
+            });
+            document.querySelectorAll('.tab-btn').forEach(function(b) {
+                b.classList.remove('text-cuz-blue', 'border-cuz-blue');
+                b.classList.add('text-slate-400', 'border-transparent');
+            });
+            var panel = document.getElementById('tab-' + tabId);
+            if (panel) panel.classList.remove('hidden');
+            var btn = document.getElementById('tab-btn-' + tabId);
+            if (btn) {
+                btn.classList.remove('text-slate-400', 'border-transparent');
+                btn.classList.add('text-cuz-blue', 'border-cuz-blue');
+            }
+        }
+
+        // Enroll in a learning path
+        async function enrollInPath(path) {
+            if (path !== 'student' && path !== 'developer') return;
+            if (!confirm('Enroll in the ' + path.charAt(0).toUpperCase() + path.slice(1) + ' Path? This choice is permanent.')) return;
+            try {
+                var res = await fetch('/api/student/enroll', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ path: path })
+                });
+                var text = await res.text();
+                var data;
+                try { data = JSON.parse(text); } catch (_) { data = null; }
+                if (res.ok && data) {
+                    var currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+                    currentUser.enrolledPath = path;
+                    if (data.user) {
+                        currentUser.rank = data.user.rank;
+                        currentUser.xp = data.user.xp;
+                        currentUser.lessonsCompleted = data.user.lessonsCompleted;
+                        currentUser.streak = data.user.streak;
+                    }
+                    localStorage.setItem('user', JSON.stringify(currentUser));
+                    loadDashboardData();
+                } else {
+                    alert('Status ' + res.status + ': ' + ((data && data.error) || 'Enrollment failed' + (text ? ' (' + text.slice(0, 120) + ')' : '')));
+                }
+            } catch (e) {
+                alert('Network error: ' + e.message);
+            }
+        }
+
+        // Render learning tab based on enrolled path
+        function renderLearningContent(data) {
+            var ep = data.user ? data.user.enrolledPath : null;
+            var rank = data.user ? (data.user.rank || 'Beginner') : '-';
+            var xp = data.user ? (data.user.xp || 0) : 0;
+            var lessons = data.user ? (data.user.lessonsCompleted || 0) : 0;
+            var streak = data.user ? (data.user.streak || 0) : 0;
+
+            document.getElementById('learning-state-chooser').classList.toggle('hidden', !!ep);
+            document.getElementById('learning-state-student').classList.toggle('hidden', ep !== 'student');
+            document.getElementById('learning-state-developer').classList.toggle('hidden', ep !== 'developer');
+
+            var totalLessons = 10;
+
+            if (ep === 'student') {
+                document.getElementById('studentRank').textContent = 'Rank: ' + rank;
+                document.getElementById('studentXp').textContent = xp.toLocaleString() + ' XP';
+                document.getElementById('studentLessons').textContent = lessons;
+                document.getElementById('studentStreak').textContent = streak;
+                document.getElementById('studentTotalLessons').textContent = totalLessons;
+                document.getElementById('studentModulesEmpty').classList.toggle('hidden', lessons > 0);
+                var xpCap = 1000;
+                var pct = Math.min(100, (xp / xpCap) * 100);
+                document.getElementById('studentXpBar').style.width = pct + '%';
+            } else if (ep === 'developer') {
+                document.getElementById('devRank').textContent = 'Rank: ' + rank;
+                document.getElementById('devXp').textContent = xp.toLocaleString() + ' XP';
+                document.getElementById('devLessons').textContent = lessons;
+                document.getElementById('devStreak').textContent = streak;
+                document.getElementById('devTotalLessons').textContent = totalLessons;
+                var xpCap = 1000;
+                var pct = Math.min(100, (xp / xpCap) * 100);
+                document.getElementById('devXpBar').style.width = pct + '%';
+            }
+        }
+
         // Fetch dashboard data
         async function loadDashboardData() {
             try {
@@ -608,6 +917,18 @@
                     
                     document.getElementById('totalUsers').textContent = (data.stats?.totalUsers || 0).toLocaleString();
                     
+                    // Sync server user data to localStorage
+                    if (data.user) {
+                        var currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+                        currentUser.enrolledPath = data.user.enrolledPath || currentUser.enrolledPath;
+                        currentUser.rank = data.user.rank;
+                        currentUser.xp = data.user.xp;
+                        currentUser.lessonsCompleted = data.user.lessonsCompleted;
+                        currentUser.streak = data.user.streak;
+                        localStorage.setItem('user', JSON.stringify(currentUser));
+                        loadUserData();
+                    }
+                    
                     if (data.stats?.loginTime) {
                         const loginDate = new Date(data.stats.loginTime);
                         document.getElementById('lastLogin').textContent = loginDate.toLocaleTimeString('en-US', {
@@ -615,6 +936,8 @@
                             minute: '2-digit'
                         });
                     }
+                    
+                    renderLearningContent(data);
                 } else if (dashRes.status === 401) {
                     performLogout();
                     return;

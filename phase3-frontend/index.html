@@ -602,6 +602,12 @@
             0% { transform: translate(0, 0) scale(1); opacity: 1; }
             100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
         }
+        .aria-eye { animation: blink 4s ease-in-out infinite; }
+        .aria-pupil { animation: blink 4s ease-in-out infinite; }
+        @keyframes blink {
+            0%, 85%, 100% { transform: scaleY(1); }
+            90%, 95% { transform: scaleY(0.1); }
+        }
     </style>
 </head>
 <body class="bg-white text-dark-gray antialiased">
@@ -622,8 +628,7 @@
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="#features" class="text-metallic hover:text-cuz-blue link-underline transition-colors font-medium">Features</a>
                     <a href="#how-it-works" class="text-metallic hover:text-cuz-blue link-underline transition-colors font-medium">How It Works</a>
-                    <a href="#pricing" class="text-metallic hover:text-cuz-blue link-underline transition-colors font-medium">Pricing</a>
-                    <a href="admin-login.html" class="text-metallic hover:text-cuz-blue link-underline transition-colors font-medium">Admin</a>
+                    <a href="/academy" class="text-metallic hover:text-cuz-blue link-underline transition-colors font-medium">Academy</a>
                     <a href="#contact" class="text-metallic hover:text-cuz-blue link-underline transition-colors font-medium">Contact</a>
                 </div>
                 
@@ -649,7 +654,7 @@
                 <div class="py-4 space-y-3">
                     <a href="#features" class="block text-metallic hover:text-cuz-blue font-medium py-2">Features</a>
                     <a href="#how-it-works" class="block text-metallic hover:text-cuz-blue font-medium py-2">How It Works</a>
-                    <a href="#pricing" class="block text-metallic hover:text-cuz-blue font-medium py-2">Pricing</a>
+                    <a href="/academy" class="block text-metallic hover:text-cuz-blue font-medium py-2">Academy</a>
                     <a href="#contact" class="block text-metallic hover:text-cuz-blue font-medium py-2">Contact</a>
                     <div class="pt-3 border-t border-gray-200 space-y-2">
                         <a href="login.html" class="block text-cuz-blue font-medium py-2">Log in</a>
@@ -680,24 +685,19 @@
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
                         </svg>
-                        <span class="text-sm font-bold">DDoS Protection Coming Soon</span>
+                        <span class="text-sm font-bold">DDoS Protection Coming Soon for Developers</span>
                     </div>
                     
                     <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
                         Enterprise Security & Authentication
-                        <span class="text-white/80">Made Simple</span>
+                        <span class="text-white/80">Education & Implementation Made Simple</span>
                     </h1>
                     
-                    <p class="text-lg sm:text-xl text-white/80 mb-8 max-w-xl">
-                        Protect your applications with enterprise-grade application flood protection, secure web browsing, and JWT session management — all in 10 minutes.
-                    </p>
+
                     
                     <div class="flex flex-col sm:flex-row gap-4">
                         <a href="register.html" class="bg-white text-cuz-blue px-8 py-4 rounded-xl font-semibold text-center btn-scale shadow-lg">
-                            Start Free Trial
-                        </a>
-                        <a href="demo.html" class="bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 px-8 py-4 rounded-xl font-semibold text-center btn-scale hover:bg-white/20">
-                            View Demo
+                            Create Account
                         </a>
                         <button data-action="openIntro" class="group relative bg-transparent text-white px-8 py-4 rounded-xl font-semibold text-center overflow-hidden border-2 border-cuz-blue-light/50 hover:border-cuz-blue-light transition-all duration-300 hover:shadow-[0_0_25px_rgba(0,102,204,0.4)] hover:scale-[1.02]">
                             <span class="relative z-10 flex items-center justify-center space-x-2">
@@ -709,6 +709,9 @@
                             <div class="absolute inset-0 bg-gradient-to-r from-cuz-blue/20 to-cuz-blue-light/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             <div class="absolute inset-0 border-t-2 border-cuz-blue-light/0 group-hover:border-cuz-blue-light/60 transition-all duration-500 rounded-xl"></div>
                         </button>
+                        <a href="bootcamp.html" class="bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 px-8 py-4 rounded-xl font-semibold text-center btn-scale hover:bg-white/20">
+                            Cybersecurity Bootcamp
+                        </a>
                     </div>
                     
                     <div class="mt-8 flex items-center space-x-6 text-white/70 text-sm">
@@ -736,12 +739,15 @@
     <section id="features" class="py-24 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 fade-in-section">
-                <span class="inline-block bg-cuz-blue/10 text-cuz-blue px-4 py-2 rounded-full text-sm font-semibold mb-4">FEATURES</span>
+                <div class="inline-flex items-center space-x-2 bg-indigo-50 border border-indigo-100 text-indigo-600 px-4 py-2 rounded-full text-sm font-semibold mb-4">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                    <span>FOR DEVELOPERS</span>
+                </div>
                 <h2 class="text-3xl sm:text-4xl font-bold text-dark-gray mb-4">
                     Everything You Need to Secure Your Application
                 </h2>
                 <p class="text-lg text-metallic max-w-2xl mx-auto">
-                    Complete authentication and security suite built for modern applications
+                    Complete authentication and security suite built for modern web applications
                 </p>
             </div>
             
@@ -902,137 +908,6 @@
         </div>
     </section>
     
-    <!-- Pricing Section -->
-    <section id="pricing" class="py-24 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16 fade-in-section">
-                <span class="inline-block bg-cuz-blue/10 text-cuz-blue px-4 py-2 rounded-full text-sm font-semibold mb-4">PRICING</span>
-                <h2 class="text-3xl sm:text-4xl font-bold text-dark-gray mb-4">
-                    Simple, Transparent Pricing
-                </h2>
-                <p class="text-lg text-metallic max-w-2xl mx-auto">
-                    Start free and scale as you grow. No hidden fees.
-                </p>
-            </div>
-            
-            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                <div class="bg-white rounded-2xl p-8 border border-gray-200 card-lift fade-in-section delay-1">
-                    <div class="text-center mb-6">
-                        <h3 class="text-xl font-bold text-dark-gray mb-2">Starter</h3>
-                        <div class="text-4xl font-bold text-cuz-blue">Free</div>
-                        <p class="text-metallic text-sm mt-2">Forever free</p>
-                    </div>
-                    <ul class="space-y-3 mb-8">
-                        <li class="flex items-center text-sm">
-                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            Up to 100 users
-                        </li>
-                        <li class="flex items-center text-sm">
-                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            TOTP 2FA
-                        </li>
-                        <li class="flex items-center text-sm">
-                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            JWT Sessions
-                        </li>
-                        <li class="flex items-center text-sm">
-                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            Basic DDoS Protection
-                        </li>
-                    </ul>
-                    <a href="mailto:adrianmange00@gmail.com" class="block w-full text-center py-3 border-2 border-cuz-blue text-cuz-blue rounded-xl font-semibold hover:bg-cuz-blue hover:text-white transition-colors">
-                        Get Started
-                    </a>
-                </div>
-                
-                <div class="bg-cuz-blue rounded-2xl p-8 text-white card-lift fade-in-section delay-2 lg:scale-105 shadow-2xl relative">
-                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                        <span class="bg-yellow-400 text-dark-gray px-4 py-1 rounded-full text-sm font-bold">MOST POPULAR</span>
-                    </div>
-                    <div class="text-center mb-6 pt-2">
-                        <h3 class="text-xl font-bold mb-2">Professional</h3>
-                        <div class="text-4xl font-bold">$29</div>
-                        <p class="text-white/70 text-sm mt-2">per month</p>
-                    </div>
-                    <ul class="space-y-3 mb-8">
-                        <li class="flex items-center text-sm">
-                            <svg class="w-5 h-5 text-yellow-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            Unlimited users
-                        </li>
-                        <li class="flex items-center text-sm">
-                            <svg class="w-5 h-5 text-yellow-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            Priority support
-                        </li>
-                        <li class="flex items-center text-sm">
-                            <svg class="w-5 h-5 text-yellow-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            Audit logs (90 days)
-                        </li>
-                        <li class="flex items-center text-sm">
-                            <svg class="w-5 h-5 text-yellow-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            Custom branding
-                        </li>
-                    </ul>
-                    <a href="mailto:adrianmange00@gmail.com" class="block w-full text-center py-3 bg-white text-cuz-blue rounded-xl font-semibold hover:bg-gray-100 transition-colors">
-                        Start Free Trial
-                    </a>
-                </div>
-                
-                <div class="bg-white rounded-2xl p-8 border border-gray-200 card-lift fade-in-section delay-3">
-                    <div class="text-center mb-6">
-                        <h3 class="text-xl font-bold text-dark-gray mb-2">Enterprise</h3>
-                        <div class="text-4xl font-bold text-cuz-blue">Custom</div>
-                        <p class="text-metallic text-sm mt-2">Contact us</p>
-                    </div>
-                    <ul class="space-y-3 mb-8">
-                        <li class="flex items-center text-sm">
-                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            Everything in Pro
-                        </li>
-                        <li class="flex items-center text-sm">
-                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            SLA guarantee
-                        </li>
-                        <li class="flex items-center text-sm">
-                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            Dedicated support
-                        </li>
-                        <li class="flex items-center text-sm">
-                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            On-premise deployment
-                        </li>
-                    </ul>
-                    <a href="mailto:adrianmange00@gmail.com" class="block w-full text-center py-3 border-2 border-cuz-blue text-cuz-blue rounded-xl font-semibold hover:bg-cuz-blue hover:text-white transition-colors">
-                        Contact Sales
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-    
     <!-- Stats Section -->
     <section class="py-24" style="background: linear-gradient(135deg, #003366 0%, #0066CC 100%);">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1057,23 +932,58 @@
         </div>
     </section>
     
-    <!-- CTA Section -->
-    <section class="py-24 bg-gray-50">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="bg-white rounded-3xl p-6 sm:p-12 shadow-xl fade-in-section">
-                <h2 class="text-3xl sm:text-4xl font-bold text-dark-gray mb-4">
-                    Ready to Secure Your Application?
-                </h2>
-                <p class="text-lg text-metallic mb-8 max-w-xl mx-auto">
-                    Join organizations using SecureAuth for bulletproof authentication. Start your free trial today.
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="register.html" class="bg-cuz-blue hover:bg-cuz-blue-light text-white px-8 py-4 rounded-xl font-semibold btn-scale">
-                        Start Free Trial
-                    </a>
-                    <a href="login.html" class="bg-white border-2 border-cuz-blue text-cuz-blue hover:bg-cuz-blue hover:text-white px-8 py-4 rounded-xl font-semibold btn-scale transition-colors">
-                        Log In
-                    </a>
+    <!-- Aria CTA Section -->
+    <section class="py-24 bg-gray-50 overflow-hidden">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-gradient-to-br from-cuz-blue-dark via-cuz-blue to-cuz-blue-light rounded-3xl p-8 sm:p-12 shadow-2xl fade-in-section relative overflow-hidden">
+                <div class="absolute inset-0 pointer-events-none">
+                    <div class="absolute w-72 h-72 bg-white rounded-full blur-3xl -top-20 -right-20" style="opacity:0.1;"></div>
+                    <div class="absolute w-56 h-56 bg-white rounded-full blur-3xl -bottom-16 -left-16" style="opacity:0.1;"></div>
+                    <div class="floating-orb" style="width:160px;height:160px;background:radial-gradient(circle,rgba(255,255,255,0.3) 0%,transparent 70%);top:10%;left:25%;--dur:20s;--delay:0s;"></div>
+                    <div class="floating-orb" style="width:220px;height:220px;background:radial-gradient(circle,rgba(255,255,255,0.2) 0%,transparent 70%);bottom:5%;right:20%;--dur:24s;--delay:-6s;"></div>
+                    <div class="floating-orb" style="width:100px;height:100px;background:radial-gradient(circle,rgba(122,170,255,0.35) 0%,transparent 70%);top:60%;left:10%;--dur:16s;--delay:-12s;"></div>
+                    <div class="floating-orb" style="width:140px;height:140px;background:radial-gradient(circle,rgba(122,170,255,0.3) 0%,transparent 70%);bottom:30%;right:35%;--dur:18s;--delay:-4s;"></div>
+                </div>
+                <div class="relative z-10 flex flex-col lg:flex-row items-center gap-10">
+                    <div class="shrink-0">
+                        <div class="w-32 h-32 lg:w-40 lg:h-40 rounded-full bg-gradient-to-br from-white/10 via-white/5 to-transparent backdrop-blur-md border-2 border-white/30 flex items-center justify-center shadow-2xl relative" style="perspective: 400px;">
+                            <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" style="filter: drop-shadow(0 4px 12px rgba(255,255,255,0.3)); transform: rotateY(-10deg) rotateX(5deg);">
+                                <defs>
+                                    <linearGradient id="ariaShield" x1="0" y1="0" x2="1" y2="1">
+                                        <stop offset="0%" stop-color="rgba(255,255,255,0.25)"/>
+                                        <stop offset="100%" stop-color="rgba(255,255,255,0.05)"/>
+                                    </linearGradient>
+                                    <linearGradient id="ariaShine" x1="0" y1="0" x2="1" y2="1">
+                                        <stop offset="0%" stop-color="white"/>
+                                        <stop offset="100%" stop-color="rgba(255,255,255,0.6)"/>
+                                    </linearGradient>
+                                </defs>
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="url(#ariaShield)" stroke="url(#ariaShine)"/>
+                                <circle class="aria-eye" cx="9.2" cy="10.5" r="1.5" fill="white"/>
+                                <circle class="aria-eye" cx="14.8" cy="10.5" r="1.5" fill="white"/>
+                                <circle class="aria-pupil" data-eye="left" cx="9.2" cy="10.5" r="0.6" fill="#4a7dff"/>
+                                <circle class="aria-pupil" data-eye="right" cx="14.8" cy="10.5" r="0.6" fill="#4a7dff"/>
+                                <circle class="aria-glint" cx="8.9" cy="10.2" r="0.2" fill="white" opacity="0.9"/>
+                                <circle class="aria-glint" cx="14.5" cy="10.2" r="0.2" fill="white" opacity="0.9"/>
+                                <path d="M9.5 14.5 Q12 16.5 14.5 14.5" stroke="rgba(255,255,255,0.4)" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+                            </svg>
+                            <div class="absolute -inset-1 rounded-full" style="background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.15), transparent 60%);"></div>
+                        </div>
+                    </div>
+                    <div class="text-center lg:text-left">
+                        <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">
+                            Meet <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-white">ARIA</span>
+                        </h2>
+                        <p class="text-lg text-white/80 mb-6 max-w-xl leading-relaxed">
+                            ARIA is your AI cybersecurity mentor — guiding you through interactive lessons, hands-on labs, and real-world security scenarios. Whether you're a student learning the basics or a developer building secure systems, ARIA adapts to your path.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <a href="/academy" class="bg-white/10 text-white border-2 border-white/30 px-6 py-3 rounded-xl font-bold btn-scale hover:bg-white/20 transition-all">
+                                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                                Explore Academy
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2007,6 +1917,24 @@
                 nav.style.transform = 'translateY(0)';
             }
             lastScrollY = window.scrollY;
+        });
+    </script>
+
+    <script>
+        document.addEventListener('mousemove', function(e) {
+            var pupils = document.querySelectorAll('.aria-pupil');
+            if (!pupils.length) return;
+            var cx = window.innerWidth / 2;
+            var cy = window.innerHeight / 2;
+            var dx = (e.clientX - cx) / cx;
+            var dy = (e.clientY - cy) / cy;
+            var maxMove = 0.45;
+            pupils.forEach(function(p) {
+                var baseX = p.getAttribute('data-eye') === 'left' ? 9.2 : 14.8;
+                var baseY = 10.5;
+                p.setAttribute('cx', (baseX + dx * maxMove).toFixed(2));
+                p.setAttribute('cy', (baseY + dy * maxMove).toFixed(2));
+            });
         });
     </script>
 </body>

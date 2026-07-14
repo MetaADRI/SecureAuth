@@ -1,0 +1,88 @@
+.shell {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.shell__topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 1.25rem;
+  background: rgba(7, 14, 28, 0.72);
+  border-bottom: 1px solid var(--aria-glass-border);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.shell__brand {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.shell__logo {
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  font-size: 0.9rem;
+  color: var(--aria-cyan);
+}
+
+.shell__product {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.shell__nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.shell__nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--aria-text-secondary);
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.shell__nav-link:hover {
+  color: var(--aria-cyan);
+  background: rgba(79, 209, 255, 0.08);
+}
+
+.shell__user {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+}
+
+.shell__user-name {
+  font-weight: 600;
+}
+
+.shell__user-role {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--aria-cyan);
+  padding: 0.15rem 0.45rem;
+  background: rgba(79, 209, 255, 0.08);
+  border-radius: 4px;
+}
+
+.shell__body {
+  flex: 1;
+}

@@ -54,6 +54,23 @@ async function initDatabase() {
       // Column might already exist
     }
 
+    // Add enrolled_path and progress columns for student path enrollment
+    try {
+      await client.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS enrolled_path TEXT DEFAULT NULL');
+    } catch (e) { /* might already exist */ }
+    try {
+      await client.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS rank TEXT DEFAULT \'Cyber Cadet\'');
+    } catch (e) { /* might already exist */ }
+    try {
+      await client.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS xp INTEGER DEFAULT 0');
+    } catch (e) { /* might already exist */ }
+    try {
+      await client.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS lessons_completed INTEGER DEFAULT 0');
+    } catch (e) { /* might already exist */ }
+    try {
+      await client.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS streak INTEGER DEFAULT 0');
+    } catch (e) { /* might already exist */ }
+
     // Create audit_logs table
     await client.query(`
       CREATE TABLE IF NOT EXISTS audit_logs (

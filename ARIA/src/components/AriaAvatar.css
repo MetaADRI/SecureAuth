@@ -1,0 +1,122 @@
+.aria-avatar {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.aria-avatar--compact .aria-avatar__message {
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.aria-avatar__shield {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aria-avatar__shield svg {
+  width: 36px;
+  height: 36px;
+  filter: drop-shadow(0 0 8px rgba(79, 209, 255, 0.45));
+  transition: filter 0.3s;
+}
+
+.is-speaking .aria-avatar__shield svg {
+  filter: drop-shadow(0 0 14px rgba(79, 209, 255, 0.7));
+}
+
+.is-speaking .aria-avatar__shield .aria-eye {
+  animation: aria-blink 2.4s ease-in-out infinite;
+}
+
+.aria-avatar__waves--shield {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+}
+
+.aria-avatar__waves--shield i {
+  display: block;
+  width: 3px;
+  height: 6px;
+  border-radius: 2px;
+  background: #4fd1ff;
+  animation: aria-wave 0.9s ease-in-out infinite;
+}
+
+.aria-avatar__waves--shield i:nth-child(2) { animation-delay: 0.15s; height: 9px; }
+.aria-avatar__waves--shield i:nth-child(3) { animation-delay: 0.3s; }
+
+.aria-avatar__name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--aria-cyan);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.aria-avatar__status {
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: var(--aria-text-muted);
+  font-weight: 500;
+}
+
+.aria-avatar__message {
+  margin: 0;
+  color: var(--aria-text);
+  font-size: 0.98rem;
+  line-height: 1.55;
+  max-width: 52ch;
+}
+
+.aria-avatar__listen-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--aria-cyan, #4fd1ff);
+  background: rgba(79, 209, 255, 0.08);
+  border: 1px solid rgba(79, 209, 255, 0.18);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.aria-avatar__listen-btn:hover {
+  background: rgba(79, 209, 255, 0.14);
+  border-color: rgba(79, 209, 255, 0.35);
+}
+.is-listening .aria-avatar__listen-btn,
+.aria-avatar__listen-btn:active {
+  color: #fff;
+  background: rgba(79, 209, 255, 0.2);
+  border-color: rgba(79, 209, 255, 0.4);
+}
+
+@keyframes aria-blink {
+  0%, 95%, 100% { transform: scaleY(1); }
+  97% { transform: scaleY(0.1); }
+}
+
+@keyframes aria-wave {
+  0%, 100% { transform: scaleY(0.5); opacity: 0.5; }
+  50% { transform: scaleY(1.3); opacity: 1; }
+}

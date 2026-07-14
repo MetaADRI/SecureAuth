@@ -1,0 +1,1176 @@
+﻿<!DOCTYPE html>
+<html lang="en"><head>
+    <script type="module">import { injectIntoGlobalHook } from "/@react-refresh";
+injectIntoGlobalHook(window);
+window.$RefreshReg$ = () => {};
+window.$RefreshSig$ = () => (type) => type;</script>
+
+    <script type="module" src="/@vite/client"></script>
+
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ARIA Cybersecurity Academy ΓÇö SecureAuth dissertation demo">
+    <title>ARIA Cybersecurity Academy</title>
+  <style type="text/css" data-vite-dev-id="C:/Users/HC ELECTRONICS/Desktop/secureauth system CUZ/ARIA/src/index.css">*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: #0a0e1a;
+  color: #e8eef8;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+code {
+  font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+  font-size: 0.9em;
+  color: #4fd1ff;
+}
+</style><style type="text/css" data-vite-dev-id="C:/Users/HC ELECTRONICS/Desktop/secureauth system CUZ/ARIA/src/visuals/OrbField.css">.orb-field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: linear-gradient(160deg, #0a0e1a 0%, #0d1526 45%, #0a1020 100%);
+}
+
+.orb-field__base {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(157, 111, 255, 0.08), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 80% 70%, rgba(79, 209, 255, 0.07), transparent 50%);
+}
+
+.orb-field__stage {
+  position: absolute;
+  inset: -5%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.orb-field__orbs {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.orb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  transform-style: preserve-3d;
+  will-change: transform, opacity, filter;
+  /* volume: rim + glow sold via inline styles in JS */
+  mix-blend-mode: screen;
+}
+
+.orb--layer-0 {
+  z-index: 3;
+}
+
+.orb--layer-1 {
+  z-index: 2;
+}
+
+.orb--layer-2 {
+  z-index: 1;
+}
+
+.orb-field__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 75% 70% at 50% 45%, transparent 30%, rgba(5, 8, 16, 0.75) 100%);
+  z-index: 4;
+}
+
+/* Pull-toward-card flash during role select transition */
+.orb-field.orb-pull-focus .orb-field__stage {
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: perspective(900px) scale(1.08) !important;
+}
+
+.orb-field.orb-pull-focus .orb-field__base {
+  animation: pull-flash 0.5s ease-out;
+}
+
+@keyframes pull-flash {
+  0% { filter: brightness(1); }
+  40% { filter: brightness(1.45); }
+  100% { filter: brightness(1); }
+}
+</style><style type="text/css" data-vite-dev-id="C:/Users/HC ELECTRONICS/Desktop/secureauth system CUZ/ARIA/src/components/AriaAvatar.css">.aria-avatar {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.aria-avatar--compact .aria-avatar__message {
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.aria-avatar__orb {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.aria-avatar__core {
+  position: absolute;
+  inset: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff 0%, #4fd1ff 40%, #9d6fff 100%);
+  box-shadow: 0 0 18px rgba(79, 209, 255, 0.55);
+}
+
+.aria-avatar__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(79, 209, 255, 0.35);
+  animation: aria-spin 8s linear infinite;
+}
+
+.is-speaking .aria-avatar__ring {
+  border-color: rgba(79, 209, 255, 0.7);
+  box-shadow: 0 0 16px rgba(79, 209, 255, 0.35);
+  animation-duration: 3s;
+}
+
+.aria-avatar__waves {
+  position: absolute;
+  inset: -4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  pointer-events: none;
+}
+
+.aria-avatar__waves i {
+  display: block;
+  width: 3px;
+  height: 8px;
+  border-radius: 2px;
+  background: #4fd1ff;
+  animation: aria-wave 0.9s ease-in-out infinite;
+}
+
+.aria-avatar__waves i:nth-child(2) { animation-delay: 0.15s; height: 12px; }
+.aria-avatar__waves i:nth-child(3) { animation-delay: 0.3s; }
+
+.aria-avatar__name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--aria-cyan);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.aria-avatar__status {
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: var(--aria-text-muted);
+  font-weight: 500;
+}
+
+.aria-avatar__message {
+  margin: 0;
+  color: var(--aria-text);
+  font-size: 0.98rem;
+  line-height: 1.55;
+  max-width: 52ch;
+}
+
+@keyframes aria-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes aria-wave {
+  0%, 100% { transform: scaleY(0.5); opacity: 0.5; }
+  50% { transform: scaleY(1.3); opacity: 1; }
+}
+</style><style type="text/css" data-vite-dev-id="C:/Users/HC ELECTRONICS/Desktop/secureauth system CUZ/ARIA/src/components/RoleSelect.css">.role-select {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  padding: 2.5rem 1.5rem 3rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  animation: screen-in 0.45s ease both;
+}
+
+.role-select--pulling {
+  animation: screen-out 0.45s ease both;
+}
+
+.role-select__header {
+  text-align: center;
+}
+
+.role-select__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.role-select__logo {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 0.28em;
+  color: var(--aria-text);
+  text-shadow: 0 0 30px rgba(79, 209, 255, 0.35);
+}
+
+.role-select__product {
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.role-select__tagline {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.role-select__aria {
+  padding: 1.15rem 1.25rem;
+  max-width: 720px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.role-select__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 720px) {
+  .role-select__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.role-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  padding: 1.35rem 1.25rem;
+  color: inherit;
+  font-family: inherit;
+  min-height: 180px;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.role-card--live {
+  cursor: pointer;
+}
+
+.role-card--live:hover:not(:disabled) {
+  transform: translateY(-6px);
+  border-color: var(--aria-cyan);
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.45),
+    0 0 32px var(--aria-cyan-dim);
+}
+
+.role-card--soon {
+  cursor: default;
+  /* greyed ~15% while staying glassmorphic */
+  opacity: 0.85;
+  filter: grayscale(0.15) brightness(0.92);
+}
+
+.role-card__eyebrow {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--aria-text-muted);
+  margin-bottom: 0.55rem;
+}
+
+.role-card--live .role-card__eyebrow {
+  color: var(--aria-cyan);
+}
+
+.role-card__title {
+  margin: 0 0 0.45rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.role-card__blurb {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  flex: 1;
+}
+
+.role-card__cta {
+  margin-top: 1rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+@keyframes screen-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes screen-out {
+  to {
+    opacity: 0;
+    transform: scale(0.98) translateY(-8px);
+  }
+}
+</style><style type="text/css" data-vite-dev-id="C:/Users/HC ELECTRONICS/Desktop/secureauth system CUZ/ARIA/src/components/XPBar.css">.xp-bar {
+  width: 100%;
+}
+
+.xp-bar__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.xp-bar__rank {
+  font-weight: 700;
+  color: var(--aria-text);
+  margin-right: 0.65rem;
+}
+
+.xp-bar__xp {
+  font-size: 0.85rem;
+  color: var(--aria-cyan);
+}
+
+.xp-bar__next {
+  font-size: 0.8rem;
+}
+
+.xp-bar__track {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(79, 209, 255, 0.15);
+  overflow: hidden;
+}
+
+.xp-bar__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #4fd1ff, #9d6fff);
+  box-shadow: 0 0 12px rgba(79, 209, 255, 0.45);
+  transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.xp-bar.xp-pulse .xp-bar__fill {
+  animation: xp-pulse 1.2s ease;
+}
+
+.xp-bar.xp-pulse .xp-bar__track {
+  box-shadow: 0 0 20px rgba(240, 199, 94, 0.45);
+  border-color: rgba(240, 199, 94, 0.55);
+}
+
+@keyframes xp-pulse {
+  0%, 100% { filter: brightness(1); }
+  40% { filter: brightness(1.5) saturate(1.2); }
+  70% {
+    box-shadow: 0 0 22px rgba(240, 199, 94, 0.7);
+  }
+}
+</style><style type="text/css" data-vite-dev-id="C:/Users/HC ELECTRONICS/Desktop/secureauth system CUZ/ARIA/src/components/BadgeGrid.css">.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.75rem;
+}
+
+.badge-card {
+  padding: 0.9rem 0.7rem;
+  text-align: center;
+  min-height: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.badge-card:not(.badge-card--locked):hover {
+  border-color: var(--aria-glass-border-hot);
+  box-shadow: 0 0 18px var(--aria-cyan-dim);
+}
+
+.badge-card--locked {
+  opacity: 0.55;
+  filter: grayscale(0.4);
+}
+
+.badge-card__icon {
+  font-size: 1.5rem;
+  color: var(--aria-cyan);
+  line-height: 1;
+  margin-bottom: 0.15rem;
+}
+
+.badge-card--locked .badge-card__icon {
+  color: var(--aria-text-muted);
+  font-weight: 700;
+  font-size: 1.35rem;
+}
+
+.badge-card__name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--aria-text);
+}
+
+.badge-card__desc {
+  font-size: 0.68rem;
+  line-height: 1.3;
+}
+</style><style type="text/css" data-vite-dev-id="C:/Users/HC ELECTRONICS/Desktop/secureauth system CUZ/ARIA/src/components/LessonCard.css">.lesson-card {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 1.1rem 1.15rem;
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.lesson-card:hover:not(:disabled) {
+  transform: translateY(-3px);
+  border-color: var(--aria-glass-border-hot);
+  box-shadow:
+    0 12px 36px rgba(0, 0, 0, 0.4),
+    0 0 24px var(--aria-cyan-dim);
+}
+
+.lesson-card--locked {
+  opacity: 0.55;
+  cursor: not-allowed;
+  filter: grayscale(0.2) brightness(0.92);
+}
+
+.lesson-card--done {
+  border-color: rgba(79, 209, 255, 0.3);
+}
+
+.lesson-card__top {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.55rem;
+}
+
+.lesson-card__order {
+  font-size: 0.75rem;
+  color: var(--aria-violet);
+  font-weight: 600;
+}
+
+.lesson-card__tag {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(79, 209, 255, 0.15);
+  color: var(--aria-cyan);
+  margin-left: auto;
+}
+
+.lesson-card__tag--done {
+  background: rgba(79, 209, 255, 0.1);
+  color: var(--aria-text-muted);
+}
+
+.lesson-card__tag--locked {
+  background: rgba(139, 155, 184, 0.12);
+  color: var(--aria-text-muted);
+}
+
+.lesson-card__title {
+  margin: 0 0 0.3rem;
+  font-size: 1.05rem;
+  font-weight: 650;
+  color: var(--aria-text);
+}
+
+.lesson-card__sub {
+  margin: 0 0 0.75rem;
+  font-size: 0.88rem;
+}
+
+.lesson-card__meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+}
+</style><style type="text/css" data-vite-dev-id="C:/Users/HC ELECTRONICS/Desktop/secureauth system CUZ/ARIA/src/components/Dashboard.css">.dashboard {
+  position: relative;
+  z-index: 1;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1.75rem 1.25rem 3rem;
+  animation: screen-in 0.4s ease both;
+}
+
+.dashboard__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.dashboard__brand {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.dashboard__logo {
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  font-size: 0.95rem;
+  color: var(--aria-cyan);
+}
+
+.dashboard__title {
+  margin: 0;
+  font-size: 1.65rem;
+  font-weight: 700;
+}
+
+.dashboard__aria {
+  padding: 1rem 1.15rem;
+  margin-bottom: 1.15rem;
+}
+
+.dashboard__grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 1rem;
+}
+
+@media (max-width: 860px) {
+  .dashboard__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dashboard__panel {
+  padding: 1.15rem;
+}
+
+.dashboard__h2 {
+  margin: 0 0 0.85rem;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--aria-text-muted);
+  font-weight: 650;
+}
+
+.dashboard__rank {
+  grid-column: 1;
+}
+
+.dashboard__stats {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.stat-ring-wrap {
+  flex-shrink: 0;
+}
+
+.stat-ring {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+
+.stat-ring__inner {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--aria-navy-1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+}
+
+.stat-ring__inner strong {
+  font-size: 1.15rem;
+  color: var(--aria-text);
+}
+
+.stat-block__label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.25rem;
+}
+
+.stat-block__value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.dashboard__next {
+  grid-column: 1 / -1;
+}
+
+.dashboard__challenge h3 {
+  margin: 0.35rem 0 0.4rem;
+  font-size: 1.05rem;
+}
+
+.challenge-card__tag {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.challenge-card p {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.challenge-card__note {
+  font-size: 0.8rem !important;
+}
+
+.dashboard__lessons {
+  grid-column: 1 / -1;
+}
+
+.dashboard__lesson-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.75rem;
+}
+
+.dashboard__badges {
+  grid-column: 1 / -1;
+}
+
+@keyframes screen-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+</style><style type="text/css" data-vite-dev-id="C:/Users/HC ELECTRONICS/Desktop/secureauth system CUZ/ARIA/src/paths/developer/DeveloperPath.css">.dev-path {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+  animation: screen-in 0.4s ease both;
+}
+
+.dev-path__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.dev-path__meta h1 {
+  margin: 0.15rem 0 0.2rem;
+  font-size: 1.55rem;
+}
+
+.dev-path__meta p {
+  margin: 0;
+}
+
+.dev-path__aria {
+  padding: 1rem 1.15rem;
+  margin-bottom: 1rem;
+}
+
+.dev-path__stage {
+  padding: 1.35rem 1.25rem;
+}
+
+.phase h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+}
+
+.phase__lead {
+  margin: 0 0 1.15rem;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.phase__actions {
+  margin-top: 1.25rem;
+}
+
+.phase__feedback {
+  margin: 0.85rem 0 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.phase__feedback.is-ok {
+  color: var(--aria-cyan);
+}
+
+.phase__feedback.is-error {
+  color: #ff8f8f;
+}
+
+.phase-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.phase-pill {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(139, 155, 184, 0.25);
+  color: var(--aria-text-muted);
+}
+
+.phase-pill.is-active {
+  border-color: rgba(79, 209, 255, 0.35);
+  color: var(--aria-text);
+}
+
+.phase-pill.is-current {
+  background: rgba(79, 209, 255, 0.15);
+  color: var(--aria-cyan);
+}
+
+.takeaway-list {
+  margin: 0 0 1.25rem;
+  padding-left: 1.15rem;
+  color: var(--aria-text);
+  line-height: 1.55;
+}
+
+.concept-grid {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.concept-card {
+  padding: 1rem;
+}
+
+.concept-card h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1rem;
+  color: var(--aria-cyan);
+}
+
+.concept-card p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.check-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+}
+
+.check-input {
+  flex: 1 1 220px;
+  min-width: 0;
+  padding: 0.7rem 0.85rem;
+  border-radius: var(--aria-radius-sm);
+  border: 1px solid var(--aria-glass-border);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--aria-text);
+  font-size: 0.92rem;
+  outline: none;
+}
+
+.check-input:focus {
+  border-color: var(--aria-cyan);
+  box-shadow: 0 0 0 2px rgba(79, 209, 255, 0.2);
+}
+
+.jwt-box {
+  padding: 0.85rem;
+  border-radius: var(--aria-radius-sm);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--aria-glass-border);
+  word-break: break-all;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  margin-bottom: 0.75rem;
+}
+
+.jwt-box__label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.35rem;
+  font-family: var(--aria-font);
+}
+
+.jwt-decoded {
+  padding: 0.85rem;
+  border-radius: var(--aria-radius-sm);
+  font-size: 0.82rem;
+  margin: 0 0 0.75rem;
+  overflow: auto;
+}
+
+.lockout-sim__panel {
+  padding: 1rem;
+  margin-bottom: 0.85rem;
+}
+
+.lockout-sim__status {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.code-compare__cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+@media (max-width: 700px) {
+  .code-compare__cols {
+    grid-template-columns: 1fr;
+  }
+}
+
+.code-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.35rem;
+}
+
+.code-block {
+  margin: 0;
+  padding: 0.75rem;
+  border-radius: var(--aria-radius-sm);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  overflow: auto;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--aria-glass-border);
+}
+
+.code-block.is-bad {
+  border-color: rgba(255, 120, 120, 0.35);
+}
+
+.code-block.is-good {
+  border-color: rgba(79, 209, 255, 0.35);
+}
+
+.code-ln {
+  display: inline-block;
+  width: 1.4rem;
+  color: var(--aria-text-muted);
+  user-select: none;
+}
+
+.checklist {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.checklist__item {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  cursor: pointer;
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
+.checklist__item input {
+  margin-top: 0.2rem;
+  accent-color: var(--aria-cyan);
+}
+
+.phase--complete {
+  text-align: center;
+}
+
+.complete-burst {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 18px rgba(240, 199, 94, 0.55);
+}
+
+.phase--complete .takeaway-list {
+  text-align: left;
+  display: inline-block;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+@keyframes screen-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+</style><style type="text/css" data-vite-dev-id="C:/Users/HC ELECTRONICS/Desktop/secureauth system CUZ/ARIA/src/visuals/Glass.css">/* Glassmorphism tokens & utilities ΓÇö ARIA Academy */
+
+:root {
+  --aria-navy-0: #0a0e1a;
+  --aria-navy-1: #0d1526;
+  --aria-navy-2: #121c32;
+  --aria-cyan: #4fd1ff;
+  --aria-cyan-dim: rgba(79, 209, 255, 0.35);
+  --aria-violet: #9d6fff;
+  --aria-violet-dim: rgba(157, 111, 255, 0.35);
+  --aria-gold: #f0c75e;
+  --aria-gold-dim: rgba(240, 199, 94, 0.45);
+  --aria-text: #e8eef8;
+  --aria-text-muted: #8b9bb8;
+  --aria-glass-bg: rgba(13, 21, 38, 0.55);
+  --aria-glass-bg-strong: rgba(13, 21, 38, 0.72);
+  --aria-glass-border: rgba(79, 209, 255, 0.18);
+  --aria-glass-border-hot: rgba(79, 209, 255, 0.45);
+  --aria-radius: 16px;
+  --aria-radius-sm: 10px;
+  --aria-font: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --aria-mono: "Cascadia Code", "Fira Code", "Consolas", monospace;
+}
+
+.glass {
+  background: var(--aria-glass-bg);
+  border: 1px solid var(--aria-glass-border);
+  border-radius: var(--aria-radius);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.glass--strong {
+  background: var(--aria-glass-bg-strong);
+}
+
+.glass--hot {
+  border-color: var(--aria-glass-border-hot);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    0 0 24px var(--aria-cyan-dim),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.glass--muted {
+  opacity: 0.85;
+  filter: grayscale(0.15) brightness(0.9);
+  border-color: rgba(139, 155, 184, 0.2);
+}
+
+.glass--gold {
+  border-color: rgba(240, 199, 94, 0.5);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    0 0 28px var(--aria-gold-dim),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.btn {
+  font-family: var(--aria-font);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.7rem 1.25rem;
+  border-radius: var(--aria-radius-sm);
+  border: 1px solid var(--aria-glass-border);
+  background: rgba(79, 209, 255, 0.12);
+  color: var(--aria-text);
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+.btn:hover:not(:disabled) {
+  background: rgba(79, 209, 255, 0.22);
+  border-color: var(--aria-cyan);
+  box-shadow: 0 0 20px var(--aria-cyan-dim);
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  background: linear-gradient(135deg, rgba(79, 209, 255, 0.28), rgba(157, 111, 255, 0.22));
+  border-color: var(--aria-cyan);
+}
+
+.btn--ghost {
+  background: transparent;
+}
+
+.btn--gold {
+  background: rgba(240, 199, 94, 0.15);
+  border-color: var(--aria-gold);
+  color: var(--aria-gold);
+}
+
+.text-muted {
+  color: var(--aria-text-muted);
+}
+
+.text-cyan {
+  color: var(--aria-cyan);
+}
+
+.text-violet {
+  color: var(--aria-violet);
+}
+
+.text-gold {
+  color: var(--aria-gold);
+}
+
+.mono {
+  font-family: var(--aria-mono);
+}
+</style><style type="text/css" data-vite-dev-id="C:/Users/HC ELECTRONICS/Desktop/secureauth system CUZ/ARIA/src/App.css">.app {
+  min-height: 100vh;
+  position: relative;
+  color: var(--aria-text);
+  font-family: var(--aria-font);
+}
+
+.app__main {
+  position: relative;
+  z-index: 1;
+}
+
+.celebrate-banner {
+  position: fixed;
+  top: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  padding: 0.75rem 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--aria-gold);
+  animation: celebrate-in 0.4s ease both;
+  pointer-events: none;
+  white-space: nowrap;
+  max-width: calc(100vw - 2rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@keyframes celebrate-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+</style></head>
+  <body>
+    <div id="root"><div class="app"><div class="orb-field " aria-hidden="true"><div class="orb-field__base"></div><div class="orb-field__stage" style="transform: perspective(900px) rotateX(0deg) rotateY(0deg);"><div class="orb-field__orbs"><div class="orb orb--layer-0" style="width: 97.7738px; height: 97.7738px; will-change: transform, opacity; transform: translate3d(79.0788vw, 70.3539vh, 95px) scale(1.02596); opacity: 0.71376; filter: blur(0px); background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.55) 0%, rgba(126, 149, 255, 0.75) 28%, rgba(126, 149, 255, 0.35) 55%, rgba(126, 149, 255, 0) 72%); box-shadow: rgba(126, 149, 255, 0.35) 0px 0px 58.5px, rgba(255, 255, 255, 0.12) 0px 0px 20px inset;"></div><div class="orb orb--layer-1" style="width: 173.814px; height: 173.814px; will-change: transform, opacity; transform: translate3d(7.64613vw, 4.39809vh, 55px) scale(1.00468); opacity: 0.494647; filter: blur(8px); background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.55) 0%, rgba(79, 208, 255, 0.75) 28%, rgba(79, 208, 255, 0.35) 55%, rgba(79, 208, 255, 0) 72%); box-shadow: rgba(79, 208, 255, 0.35) 0px 0px 46.5px, rgba(255, 255, 255, 0.12) 0px 0px 20px inset;"></div><div class="orb orb--layer-2" style="width: 217.468px; height: 217.468px; will-change: transform, opacity; transform: translate3d(87.7702vw, 44.8138vh, 25px) scale(0.941139); opacity: 0.51595; filter: blur(18px); background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.55) 0%, rgba(154, 114, 255, 0.75) 28%, rgba(154, 114, 255, 0.35) 55%, rgba(154, 114, 255, 0) 72%); box-shadow: rgba(154, 114, 255, 0.35) 0px 0px 37.5px, rgba(255, 255, 255, 0.12) 0px 0px 20px inset;"></div><div class="orb orb--layer-0" style="width: 123.307px; height: 123.307px; will-change: transform, opacity; transform: translate3d(59.6102vw, 78.684vh, 95px) scale(1.1354); opacity: 0.663864; filter: blur(0px); background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.55) 0%, rgba(83, 203, 255, 0.75) 28%, rgba(83, 203, 255, 0.35) 55%, rgba(83, 203, 255, 0) 72%); box-shadow: rgba(83, 203, 255, 0.35) 0px 0px 58.5px, rgba(255, 255, 255, 0.12) 0px 0px 20px inset;"></div><div class="orb orb--layer-1" style="width: 168.445px; height: 168.445px; will-change: transform, opacity; transform: translate3d(74.9315vw, 17.5664vh, 55px) scale(0.969774); opacity: 0.508579; filter: blur(8px); background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.55) 0%, rgba(123, 155, 255, 0.75) 28%, rgba(123, 155, 255, 0.35) 55%, rgba(123, 155, 255, 0) 72%); box-shadow: rgba(123, 155, 255, 0.35) 0px 0px 46.5px, rgba(255, 255, 255, 0.12) 0px 0px 20px inset;"></div><div class="orb orb--layer-2" style="width: 243.748px; height: 243.748px; will-change: transform, opacity; transform: translate3d(53.444vw, 47.2316vh, 25px) scale(0.858692); opacity: 0.376922; filter: blur(18px); background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.55) 0%, rgba(79, 208, 255, 0.75) 28%, rgba(79, 208, 255, 0.35) 55%, rgba(79, 208, 255, 0) 72%); box-shadow: rgba(79, 208, 255, 0.35) 0px 0px 37.5px, rgba(255, 255, 255, 0.12) 0px 0px 20px inset;"></div><div class="orb orb--layer-0" style="width: 128.34px; height: 128.34px; will-change: transform, opacity; transform: translate3d(94.4506vw, 52.8461vh, 95px) scale(1.03046); opacity: 0.690665; filter: blur(0px); background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.55) 0%, rgba(138, 133, 255, 0.75) 28%, rgba(138, 133, 255, 0.35) 55%, rgba(138, 133, 255, 0) 72%); box-shadow: rgba(138, 133, 255, 0.35) 0px 0px 58.5px, rgba(255, 255, 255, 0.12) 0px 0px 20px inset;"></div><div class="orb orb--layer-1" style="width: 167.158px; height: 167.158px; will-change: transform, opacity; transform: translate3d(88.861vw, 43.4563vh, 55px) scale(0.980462); opacity: 0.503907; filter: blur(8px); background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.55) 0%, rgba(151, 118, 255, 0.75) 28%, rgba(151, 118, 255, 0.35) 55%, rgba(151, 118, 255, 0) 72%); box-shadow: rgba(151, 118, 255, 0.35) 0px 0px 46.5px, rgba(255, 255, 255, 0.12) 0px 0px 20px inset;"></div><div class="orb orb--layer-2" style="width: 213.201px; height: 213.201px; will-change: transform, opacity; transform: translate3d(89.5641vw, 10.9529vh, 25px) scale(0.944324); opacity: 0.509883; filter: blur(18px); background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.55) 0%, rgba(152, 116, 255, 0.75) 28%, rgba(152, 116, 255, 0.35) 55%, rgba(152, 116, 255, 0) 72%); box-shadow: rgba(152, 116, 255, 0.35) 0px 0px 37.5px, rgba(255, 255, 255, 0.12) 0px 0px 20px inset;"></div><div class="orb orb--layer-0" style="width: 126.13px; height: 126.13px; will-change: transform, opacity; transform: translate3d(92.2124vw, 3.6353vh, 95px) scale(1.01519); opacity: 0.720402; filter: blur(0px); background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.55) 0%, rgba(96, 187, 255, 0.75) 28%, rgba(96, 187, 255, 0.35) 55%, rgba(96, 187, 255, 0) 72%); box-shadow: rgba(96, 187, 255, 0.35) 0px 0px 58.5px, rgba(255, 255, 255, 0.12) 0px 0px 20px inset;"></div><div class="orb orb--layer-1" style="width: 143.483px; height: 143.483px; will-change: transform, opacity; transform: translate3d(71.2187vw, 23.4425vh, 55px) scale(0.875337); opacity: 0.527118; filter: blur(8px); background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.55) 0%, rgba(140, 131, 255, 0.75) 28%, rgba(140, 131, 255, 0.35) 55%, rgba(140, 131, 255, 0) 72%); box-shadow: rgba(140, 131, 255, 0.35) 0px 0px 46.5px, rgba(255, 255, 255, 0.12) 0px 0px 20px inset;"></div><div class="orb orb--layer-2" style="width: 227.874px; height: 227.874px; will-change: transform, opacity; transform: translate3d(62.1217vw, 57.0153vh, 25px) scale(0.861727); opacity: 0.374258; filter: blur(18px); background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.55) 0%, rgba(79, 208, 255, 0.75) 28%, rgba(79, 208, 255, 0.35) 55%, rgba(79, 208, 255, 0) 72%); box-shadow: rgba(79, 208, 255, 0.35) 0px 0px 37.5px, rgba(255, 255, 255, 0.12) 0px 0px 20px inset;"></div><div class="orb orb--layer-0" style="width: 91.0466px; height: 91.0466px; will-change: transform, opacity; transform: translate3d(16.7808vw, -1.76271vh, 95px) scale(1.04883); opacity: 0.684288; filter: blur(0px); background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.55) 0%, rgba(94, 189, 255, 0.75) 28%, rgba(94, 189, 255, 0.35) 55%, rgba(94, 189, 255, 0) 72%); box-shadow: rgba(94, 189, 255, 0.35) 0px 0px 58.5px, rgba(255, 255, 255, 0.12) 0px 0px 20px inset;"></div><div class="orb orb--layer-1" style="width: 159.184px; height: 159.184px; will-change: transform, opacity; transform: translate3d(94.8802vw, 40.9923vh, 55px) scale(1.02104); opacity: 0.580399; filter: blur(8px); background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.55) 0%, rgba(113, 165, 255, 0.75) 28%, rgba(113, 165, 255, 0.35) 55%, rgba(113, 165, 255, 0) 72%); box-shadow: rgba(113, 165, 255, 0.35) 0px 0px 46.5px, rgba(255, 255, 255, 0.12) 0px 0px 20px inset;"></div><div class="orb orb--layer-2" style="width: 257.756px; height: 257.756px; will-change: transform, opacity; transform: translate3d(19.5337vw, 80.0103vh, 25px) scale(0.943983); opacity: 0.511579; filter: blur(18px); background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.55) 0%, rgba(148, 121, 255, 0.75) 28%, rgba(148, 121, 255, 0.35) 55%, rgba(148, 121, 255, 0) 72%); box-shadow: rgba(148, 121, 255, 0.35) 0px 0px 37.5px, rgba(255, 255, 255, 0.12) 0px 0px 20px inset;"></div></div></div><div class="orb-field__vignette"></div></div><main class="app__main"><div class="role-select "><header class="role-select__header"><div class="role-select__brand"><span class="role-select__logo">ARIA</span><span class="role-select__product text-muted">Cybersecurity Academy</span></div><p class="role-select__tagline text-muted">SecureAuth dissertation build ΓÇö one path, production depth.</p></header><div class="role-select__aria glass glass--strong"><div class="aria-avatar  is-speaking"><div class="aria-avatar__orb" aria-hidden="true"><span class="aria-avatar__core"></span><span class="aria-avatar__ring"></span><span class="aria-avatar__waves"><i></i><i></i><i></i></span></div><div class="aria-avatar__body"><div class="aria-avatar__name">ARIA<span class="aria-avatar__status">mentoring</span></div><p class="aria-avatar__message">Welcome to the Academy. I'm ARIA ΓÇö I'll walk you through authentication the way a senior engineer would walk a junior through a production review: why first, then how.</p></div></div></div><div class="role-select__grid"><button type="button" class="role-card glass role-card--soon glass--muted" disabled="" aria-disabled="true"><div class="role-card__eyebrow">Coming to the Academy soon</div><h2 class="role-card__title">Student</h2><p class="role-card__blurb text-muted">Guided cyber fundamentals for learners building baseline security literacy.</p></button><button type="button" class="role-card glass role-card--live glass--hot" aria-disabled="false"><div class="role-card__eyebrow">Open path</div><h2 class="role-card__title">Developer</h2><p class="role-card__blurb text-muted">Auth, tokens, lockouts, injection, and secure deploy ΓÇö the path that ships.</p><span class="role-card__cta text-cyan">Enter Developer path ΓåÆ</span></button><button type="button" class="role-card glass role-card--soon glass--muted" disabled="" aria-disabled="true"><div class="role-card__eyebrow">Coming to the Academy soon</div><h2 class="role-card__title">Lecturer</h2><p class="role-card__blurb text-muted">Classroom tools and cohort progress for educators running the Academy.</p></button><button type="button" class="role-card glass role-card--soon glass--muted" disabled="" aria-disabled="true"><div class="role-card__eyebrow">Coming to the Academy soon</div><h2 class="role-card__title">Administrator</h2><p class="role-card__blurb text-muted">Institution-level configuration, cohorts, and platform oversight.</p></button></div></div></main></div></div>
+    <script type="module" src="/src/main.jsx"></script>
+  
+
+</body></html>

@@ -138,13 +138,15 @@
     <nav class="glass-panel border-b border-slate-800 fixed top-0 left-0 right-0 z-50 transition-transform duration-300">
         <div class="max-w-[1600px] mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3 sm:space-x-4">
-                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-2xl flex items-center justify-center shadow-2xl rotate-3 group hover:rotate-0 transition-transform duration-300">
-                    <i data-lucide="shield-check" class="w-6 h-6 sm:w-7 sm:h-7 text-cuz-blue"></i>
-                </div>
-                <div>
-                    <h1 class="text-lg sm:text-xl font-black text-white tracking-tighter uppercase">SecureAuth <span class="text-cuz-blue-light">Admin</span></h1>
-                    <p class="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em]">System Command Center</p>
-                </div>
+                <a href="/" class="flex items-center space-x-3 sm:space-x-4 group">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-2xl flex items-center justify-center shadow-2xl rotate-3 group-hover:rotate-0 transition-transform duration-300">
+                        <i data-lucide="shield-check" class="w-6 h-6 sm:w-7 sm:h-7 text-cuz-blue"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg sm:text-xl font-black text-white tracking-tighter uppercase">SecureAuth <span class="text-cuz-blue-light">Admin</span></h1>
+                        <p class="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em]">System Command Center</p>
+                    </div>
+                </a>
             </div>
             
             <div class="flex items-center space-x-3 sm:space-x-6">
@@ -281,6 +283,18 @@
                     <div class="p-8 border-b border-slate-800 bg-slate-800/20">
                         <h3 class="text-xl font-black text-white tracking-tight uppercase">Authorized User Registry</h3>
                     </div>
+                    <div class="px-8 py-4 flex flex-wrap items-center justify-between gap-3 border-b border-slate-800">
+                        <div class="flex space-x-2" id="roleFilterPills">
+                            <button data-action="filterUsersByRole('all')" class="role-pill active px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest bg-cuz-blue-light text-white">All</button>
+                            <button data-action="filterUsersByRole('student')" class="role-pill px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-slate-400 hover:bg-slate-800/50">Students</button>
+                            <button data-action="filterUsersByRole('lecturer')" class="role-pill px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-slate-400 hover:bg-slate-800/50">Lecturers</button>
+                            <button data-action="filterUsersByRole('admin')" class="role-pill px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest text-slate-400 hover:bg-slate-800/50">Admins</button>
+                        </div>
+                        <button data-action="openCreateModal" class="flex items-center space-x-2 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-emerald-500/20 transition-all">
+                            <i data-lucide="user-plus" class="w-4 h-4"></i>
+                            <span>New Account</span>
+                        </button>
+                    </div>
                         <div class="overflow-x-auto -mx-4 sm:mx-0">
                             <table class="w-full text-left min-w-[500px]">
                             <thead>
@@ -288,12 +302,16 @@
                                     <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">Full Name</th>
                                     <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">Email Identity</th>
                                     <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">Role</th>
+                                    <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">Level / Rank</th>
+                                    <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">XP</th>
+                                    <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">Lessons</th>
+                                    <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">Streak</th>
                                     <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="users-table-body" class="divide-y divide-slate-800/50">
                                 <!-- Users will appear here -->
-                                <tr><td colspan="4" class="px-8 py-10 text-center text-slate-500 italic">Fetching user registry...</td></tr>
+                                <tr><td colspan="8" class="px-8 py-10 text-center text-slate-500 italic">Fetching user registry...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -345,6 +363,35 @@
             </div>
         </div>
     </footer>
+
+    <!-- Create Account Modal -->
+    <div id="createAccountModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+        <div class="glass-panel rounded-[2rem] max-w-md w-full p-8 space-y-5">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xl font-black text-white uppercase tracking-tight">Create Account</h3>
+                <button data-action="closeCreateModal" class="text-slate-500 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form id="createAccountForm" class="space-y-4">
+                <div>
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Full Name</label>
+                    <input type="text" id="newUserName" required class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm outline-none focus:border-cuz-blue-light">
+                </div>
+                <div>
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Email</label>
+                    <input type="email" id="newUserEmail" required class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm outline-none focus:border-cuz-blue-light">
+                </div>
+                <div>
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Role</label>
+                    <select id="newUserRole" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm outline-none focus:border-cuz-blue-light">
+                        <option value="student">Student</option>
+                        <option value="lecturer">Lecturer</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-cuz-blue-light text-white font-black uppercase tracking-widest py-3 rounded-xl hover:bg-cuz-blue transition-all">Create Account</button>
+            </form>
+            <p id="createAccountResult" class="hidden text-sm font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4"></p>
+        </div>
+    </div>
 
     <script src="js/auth.js"></script>
     <script>
@@ -447,6 +494,7 @@
                 });
                 if (usersRes.ok) {
                     const data = await usersRes.json();
+                    allUsersCache = data.users;
                     renderUsers(data.users);
                     console.log(`Loaded ${data.users.length} users.`);
                 } else {
@@ -499,6 +547,20 @@
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
+        let allUsersCache = [];
+
+        function filterUsersByRole(role) {
+            document.querySelectorAll('.role-pill').forEach(p => {
+                p.classList.remove('active', 'bg-cuz-blue-light', 'text-white');
+            });
+            const activePill = Array.from(document.querySelectorAll('.role-pill')).find(p => p.getAttribute('data-action') === `filterUsersByRole('${role}')`);
+            if (activePill) {
+                activePill.classList.add('active', 'bg-cuz-blue-light', 'text-white');
+            }
+            const filtered = role === 'all' ? allUsersCache : allUsersCache.filter(u => u.role === role);
+            renderUsers(filtered);
+        }
+
         function renderUsers(users) {
             const tableBody = document.getElementById('users-table-body');
             if (!tableBody) return;
@@ -510,6 +572,19 @@
                 tr.className = 'hover:bg-slate-800/30 transition-colors';
                 
                 const isSelf = u.email === user.email;
+                const isStudent = u.role === 'student';
+                
+                const progressCells = isStudent ? `
+                    <td class="px-8 py-5"><span class="text-sm font-bold text-white">${u.rank || 'Cyber Cadet'}</span></td>
+                    <td class="px-8 py-5 text-sm text-slate-300 font-mono">${u.xp ?? 0}</td>
+                    <td class="px-8 py-5 text-sm text-slate-300 font-mono">${u.lessonsCompleted ?? 0}</td>
+                    <td class="px-8 py-5 text-sm text-slate-300 font-mono">${u.streak ?? 0}</td>
+                ` : `
+                    <td class="px-8 py-5 text-slate-600">—</td>
+                    <td class="px-8 py-5 text-slate-600">—</td>
+                    <td class="px-8 py-5 text-slate-600">—</td>
+                    <td class="px-8 py-5 text-slate-600">—</td>
+                `;
                 
                 tr.innerHTML = `
                     <td class="px-8 py-5">
@@ -523,6 +598,7 @@
                             ${u.role}
                         </span>
                     </td>
+                    ${progressCells}
                     <td class="px-8 py-5 text-right">
                         ${isSelf ? '' : `
                         <button data-action="confirmDelete('${u.id}', '${u.full_name}')" class="p-2 text-rose-500 hover:bg-rose-500/10 rounded-xl transition-all">
@@ -555,7 +631,12 @@
         }
 
         async function confirmDelete(userId, userName) {
-            if (confirm(`CRITICAL ACTION: Are you sure you want to PERMANENTLY DELETE user "${userName}"? This will remove all associated logs and credentials.`)) {
+            const target = allUsersCache.find(u => u.id === userId);
+            const isStudent = target && target.role === 'student';
+            const warning = isStudent
+                ? `This will permanently delete "${userName}" and all their learning progress, XP, and badges. This cannot be undone.`
+                : `This will permanently delete "${userName}" and their account access. This cannot be undone.`;
+            if (confirm(warning)) {
                 try {
                     const res = await fetch(`/api/admin/users/${userId}`, {
                         method: 'DELETE',
@@ -572,6 +653,46 @@
                 }
             }
         }
+
+        function openCreateModal() {
+            document.getElementById('createAccountModal').classList.remove('hidden');
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function closeCreateModal() {
+            document.getElementById('createAccountModal').classList.add('hidden');
+            document.getElementById('createAccountForm').reset();
+            document.getElementById('createAccountResult').classList.add('hidden');
+        }
+
+        document.getElementById('createAccountForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                full_name: document.getElementById('newUserName').value,
+                email: document.getElementById('newUserEmail').value,
+                role: document.getElementById('newUserRole').value
+            };
+            try {
+                const res = await fetch('/api/admin/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}` },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    const resultEl = document.getElementById('createAccountResult');
+                    resultEl.textContent = `Account created. Temporary password: ${data.tempPassword} (share this securely — it will not be shown again).`;
+                    resultEl.classList.remove('hidden');
+                    document.getElementById('createAccountForm').reset();
+                    loadData();
+                } else {
+                    alert(data.message || 'Failed to create account.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Network error creating account.');
+            }
+        });
 
         function performLogout() {
             console.log("Performing administrator logout...");

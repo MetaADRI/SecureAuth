@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybersecurity Bootcamp - SecureAuth</title>
+    
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23003366%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z%22/></svg>">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'cuz-blue': '#003366',
+                        'cuz-blue-light': '#0066CC',
+                        'cuz-blue-dark': '#002244',
+                        'metallic': '#6C757D',
+                        'light-gray': '#F8F9FA',
+                        'dark-gray': '#343A40',
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        * {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        .btn-scale {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .btn-scale:hover { transform: scale(1.02); }
+        .card-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-lift:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0,51,102,0.12);
+        }
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .fade-in-section.delay-1 { transition-delay: 0.1s; }
+        .fade-in-section.delay-2 { transition-delay: 0.2s; }
+        .fade-in-section.delay-3 { transition-delay: 0.3s; }
+        .fade-in-section.delay-4 { transition-delay: 0.4s; }
+        @keyframes footerGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes footerOrbFloat {
+            0%, 100% { transform: translate(0,0) scale(1); opacity: 0.15; }
+            33% { transform: translate(-40px,-30px) scale(1.3); opacity: 0.25; }
+            66% { transform: translate(30px,20px) scale(0.8); opacity: 0.1; }
+        }
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        @keyframes badgePulse {
+            0%, 100% { box-shadow: 0 0 15px rgba(74,125,255,0.3); }
+            50% { box-shadow: 0 0 35px rgba(74,125,255,0.7); }
+        }
+        @keyframes dividerGlow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+        @keyframes cardBorderPulse {
+            0%, 100% { border-color: rgba(74,125,255,0.15); }
+            50% { border-color: rgba(74,125,255,0.5); }
+        }
+        .footer-bg {
+            background: linear-gradient(135deg, #002244 0%, #003366 25%, #0a1628 50%, #002244 75%, #001a33 100%);
+            background-size: 200% 200%;
+            animation: footerGradient 10s ease infinite;
+        }
+        .footer-orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(74,125,255,0.3), transparent);
+            animation: footerOrbFloat var(--d) ease-in-out infinite;
+            animation-delay: var(--del);
+        }
+        .footer-social-icon {
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+        .footer-social-icon:nth-child(2) { animation-delay: 0.4s; }
+        .footer-social-icon:nth-child(3) { animation-delay: 0.8s; }
+        .footer-social-icon:nth-child(4) { animation-delay: 1.2s; }
+        .footer-badge {
+            animation: badgePulse 2.5s ease-in-out infinite;
+        }
+        .footer-divider {
+            animation: dividerGlow 3s ease-in-out infinite;
+        }
+        .footer-card {
+            animation: cardBorderPulse 3s ease-in-out infinite;
+        }
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .mobile-menu.open { max-height: 400px; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    
+    <!-- Nav -->
+    <nav class="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md border-b border-gray-200 z-50 transition-transform duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="index.html" class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #003366 0%, #0066CC 100%);">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold text-cuz-blue">SecureAuth</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#student-path" class="text-metallic hover:text-cuz-blue font-medium transition-colors">Student Path</a>
+                    <a href="#developer-path" class="text-metallic hover:text-cuz-blue font-medium transition-colors">Developer Path</a>
+                    <a href="#faq" class="text-metallic hover:text-cuz-blue font-medium transition-colors">FAQ</a>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <a href="login.html" class="hidden md:inline text-cuz-blue hover:text-cuz-blue-light font-medium transition-colors">Log in</a>
+                    <a href="register.html" class="bg-cuz-blue hover:bg-cuz-blue-light text-white px-5 py-2.5 rounded-lg font-semibold btn-scale transition-colors whitespace-nowrap">Get Started</a>
+                    <button id="mobile-menu-btn" class="md:hidden p-2 text-metallic hover:text-cuz-blue rounded-lg hover:bg-gray-100">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div id="mobile-menu" class="mobile-menu md:hidden">
+                <div class="py-4 space-y-3">
+                    <a href="#student-path" class="block text-metallic hover:text-cuz-blue font-medium py-2">Student Path</a>
+                    <a href="#developer-path" class="block text-metallic hover:text-cuz-blue font-medium py-2">Developer Path</a>
+                    <a href="#faq" class="block text-metallic hover:text-cuz-blue font-medium py-2">FAQ</a>
+                    <div class="pt-3 border-t border-gray-200 space-y-2">
+                        <a href="login.html" class="block text-cuz-blue font-medium py-2">Log in</a>
+                        <a href="register.html" class="block bg-cuz-blue text-white px-5 py-2.5 rounded-lg font-semibold text-center">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero -->
+    <section class="min-h-[60vh] flex items-center pt-24 relative overflow-hidden bg-gradient-to-br from-cuz-blue-dark via-cuz-blue to-cuz-blue-light">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute w-96 h-96 bg-white rounded-full blur-3xl -top-20 -left-20"></div>
+            <div class="absolute w-80 h-80 bg-white rounded-full blur-3xl -bottom-20 -right-20"></div>
+        </div>
+        <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+            <div class="inline-flex items-center px-4 py-2 bg-white/10 text-white/80 rounded-full text-sm font-semibold border border-white/10 mb-8">
+                <i data-lucide="sparkles" class="w-4 h-4 mr-2"></i>
+                SecureAuth Learning Platform
+            </div>
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight mb-6 leading-tight">
+                Cybersecurity<br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-white">Bootcamp</span>
+            </h1>
+            <p class="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto mb-10 font-medium leading-relaxed">
+                Choose your path and start building real cybersecurity skills. 
+                Structured curriculum, hands-on labs, and progress tracking — all within SecureAuth.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#student-path" class="bg-white text-cuz-blue px-8 py-4 rounded-xl font-bold btn-scale hover:shadow-2xl transition-all">
+                    <i data-lucide="graduation-cap" class="w-5 h-5 inline mr-2"></i>
+                    Explore Student Path
+                </a>
+                <a href="#developer-path" class="bg-white/10 text-white border border-white/20 px-8 py-4 rounded-xl font-bold btn-scale hover:bg-white/20 transition-all">
+                    <i data-lucide="code-2" class="w-5 h-5 inline mr-2"></i>
+                    Explore Developer Path
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Overview Section -->
+    <section class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16 fade-in-section">
+            <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-4 tracking-tight">Two Paths, One Mission</h2>
+            <p class="text-lg text-slate-500 max-w-2xl mx-auto font-medium">
+                Whether you're starting your cybersecurity journey or looking to deepen your engineering skills, 
+                there's a path built for you.
+            </p>
+        </div>
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 card-lift fade-in-section delay-1">
+                <div class="w-16 h-16 bg-cuz-blue/10 rounded-2xl flex items-center justify-center mb-6">
+                    <i data-lucide="graduation-cap" class="w-8 h-8 text-cuz-blue"></i>
+                </div>
+                <h3 class="text-2xl font-black text-slate-900 mb-3">Student Path</h3>
+                <p class="text-slate-500 font-medium mb-6">Structured cybersecurity curriculum for learners at any level. Complete modules, earn XP, track your streak.</p>
+                <ul class="space-y-4 mb-8">
+                    <li class="flex items-start"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-500 mr-3 mt-0.5 shrink-0"></i><span class="text-slate-600"><strong class="text-slate-900">10+ Learning Modules</strong> — From network fundamentals to advanced threat analysis</span></li>
+                    <li class="flex items-start"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-500 mr-3 mt-0.5 shrink-0"></i><span class="text-slate-600"><strong class="text-slate-900">Hands-on Labs</strong> — Real-world scenarios with interactive exercises</span></li>
+                    <li class="flex items-start"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-500 mr-3 mt-0.5 shrink-0"></i><span class="text-slate-600"><strong class="text-slate-900">XP & Streaks</strong> — Earn experience points and maintain daily learning streaks</span></li>
+                    <li class="flex items-start"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-500 mr-3 mt-0.5 shrink-0"></i><span class="text-slate-600"><strong class="text-slate-900">Progress Tracking</strong> — Visual dashboard showing your advancement through the curriculum</span></li>
+                    <li class="flex items-start"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-500 mr-3 mt-0.5 shrink-0"></i><span class="text-slate-600"><strong class="text-slate-900">Quizzes & Assessments</strong> — Test your knowledge after each module</span></li>
+                </ul>
+                <a href="register.html" class="inline-flex items-center bg-cuz-blue text-white px-6 py-3 rounded-xl font-bold btn-scale hover:bg-cuz-blue-light transition-colors">
+                    Start Student Path <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                </a>
+            </div>
+            <div class="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 card-lift fade-in-section delay-2">
+                <div class="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6">
+                    <i data-lucide="code-2" class="w-8 h-8 text-indigo-600"></i>
+                </div>
+                <h3 class="text-2xl font-black text-slate-900 mb-3">Developer Path</h3>
+                <p class="text-slate-500 font-medium mb-6">Advanced security engineering track for developers building secure systems and infrastructure.</p>
+                <ul class="space-y-4 mb-8">
+                    <li class="flex items-start"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-500 mr-3 mt-0.5 shrink-0"></i><span class="text-slate-600"><strong class="text-slate-900">API Security</strong> — Build and secure RESTful APIs with authentication patterns</span></li>
+                    <li class="flex items-start"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-500 mr-3 mt-0.5 shrink-0"></i><span class="text-slate-600"><strong class="text-slate-900">Integration Patterns</strong> — Connect SecureAuth with external services and tools</span></li>
+                    <li class="flex items-start"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-500 mr-3 mt-0.5 shrink-0"></i><span class="text-slate-600"><strong class="text-slate-900">Infrastructure Automation</strong> — Deploy and manage secure infrastructure at scale</span></li>
+                    <li class="flex items-start"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-500 mr-3 mt-0.5 shrink-0"></i><span class="text-slate-600"><strong class="text-slate-900">Advanced Projects</strong> — Build real security tools and automation pipelines</span></li>
+                    <li class="flex items-start"><i data-lucide="check-circle" class="w-5 h-5 text-emerald-500 mr-3 mt-0.5 shrink-0"></i><span class="text-slate-600"><strong class="text-slate-900">Code Reviews</strong> — Learn secure coding practices through peer review workflows</span></li>
+                </ul>
+                <a href="register.html" class="inline-flex items-center bg-indigo-500 text-white px-6 py-3 rounded-xl font-bold btn-scale hover:bg-indigo-600 transition-colors">
+                    Start Developer Path <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Detailed Path Sections -->
+    <section id="student-path" class="py-20 bg-white border-t border-slate-100">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-12 items-center fade-in-section">
+                <div>
+                    <div class="w-16 h-16 bg-cuz-blue/10 rounded-2xl flex items-center justify-center mb-6">
+                        <i data-lucide="graduation-cap" class="w-8 h-8 text-cuz-blue"></i>
+                    </div>
+                    <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-4 tracking-tight">Student Path<br><span class="text-cuz-blue text-2xl">In Detail</span></h2>
+                    <p class="text-slate-500 font-medium mb-8 leading-relaxed">
+                        The Student Path is a structured cybersecurity curriculum designed for learners who want to build 
+                        foundational knowledge and practical skills. Each module builds on the last, creating a clear 
+                        learning progression from beginner to advanced topics.
+                    </p>
+                    <div class="space-y-6">
+                        <div class="flex">
+                            <div class="w-12 h-12 bg-cuz-blue/10 rounded-xl flex items-center justify-center shrink-0 mr-4">
+                                <i data-lucide="book-open" class="w-6 h-6 text-cuz-blue"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900">Module-Based Curriculum</h4>
+                                <p class="text-sm text-slate-500">Progress through carefully sequenced modules covering network security, cryptography, threat analysis, and more.</p>
+                            </div>
+                        </div>
+                        <div class="flex">
+                            <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center shrink-0 mr-4">
+                                <i data-lucide="trophy" class="w-6 h-6 text-emerald-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900">Gamified Learning</h4>
+                                <p class="text-sm text-slate-500">Earn XP for completing lessons, maintain streaks for daily practice, and level up as you master new skills.</p>
+                            </div>
+                        </div>
+                        <div class="flex">
+                            <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center shrink-0 mr-4">
+                                <i data-lucide="flask" class="w-6 h-6 text-amber-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900">Hands-On Labs</h4>
+                                <p class="text-sm text-slate-500">Apply what you learn in real-world simulated environments. Practice threat detection, incident response, and more.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="register.html" class="mt-10 inline-flex items-center bg-cuz-blue text-white px-8 py-4 rounded-xl font-bold btn-scale hover:bg-cuz-blue-light transition-colors">
+                        Enroll in Student Path <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i>
+                    </a>
+                </div>
+                <div class="bg-slate-50 rounded-3xl p-8 border border-slate-100">
+                    <h4 class="font-black text-slate-700 text-sm uppercase tracking-widest mb-6">Modules Overview</h4>
+                    <div class="space-y-4">
+                        <div class="bg-white rounded-2xl p-4 border border-slate-100 flex items-center">
+                            <span class="w-8 h-8 bg-cuz-blue/10 rounded-lg flex items-center justify-center text-cuz-blue font-black text-sm shrink-0 mr-4">01</span>
+                            <div><p class="font-bold text-slate-900 text-sm">Network Fundamentals</p><p class="text-xs text-slate-400">TCP/IP, DNS, Firewalls</p></div>
+                        </div>
+                        <div class="bg-white rounded-2xl p-4 border border-slate-100 flex items-center">
+                            <span class="w-8 h-8 bg-cuz-blue/10 rounded-lg flex items-center justify-center text-cuz-blue font-black text-sm shrink-0 mr-4">02</span>
+                            <div><p class="font-bold text-slate-900 text-sm">Cryptography Basics</p><p class="text-xs text-slate-400">Encryption, Hashing, PKI</p></div>
+                        </div>
+                        <div class="bg-white rounded-2xl p-4 border border-slate-100 flex items-center">
+                            <span class="w-8 h-8 bg-cuz-blue/10 rounded-lg flex items-center justify-center text-cuz-blue font-black text-sm shrink-0 mr-4">03</span>
+                            <div><p class="font-bold text-slate-900 text-sm">Authentication & Access</p><p class="text-xs text-slate-400">2FA, OAuth, RBAC</p></div>
+                        </div>
+                        <div class="bg-white rounded-2xl p-4 border border-slate-100 flex items-center">
+                            <span class="w-8 h-8 bg-cuz-blue/10 rounded-lg flex items-center justify-center text-cuz-blue font-black text-sm shrink-0 mr-4">04</span>
+                            <div><p class="font-bold text-slate-900 text-sm">Threat Analysis</p><p class="text-xs text-slate-400">Attack Vectors, Mitigation</p></div>
+                        </div>
+                        <div class="bg-white rounded-2xl p-4 border border-slate-100 flex items-center">
+                            <span class="w-8 h-8 bg-cuz-blue/10 rounded-lg flex items-center justify-center text-cuz-blue font-black text-sm shrink-0 mr-4">05</span>
+                            <div><p class="font-bold text-slate-900 text-sm">Incident Response</p><p class="text-xs text-slate-400">Detection, Containment, Recovery</p></div>
+                        </div>
+                        <div class="bg-white rounded-2xl p-4 border border-slate-100 flex items-center">
+                            <span class="w-8 h-8 bg-cuz-blue/10 rounded-lg flex items-center justify-center text-cuz-blue font-black text-sm shrink-0 mr-4">06</span>
+                            <div><p class="font-bold text-slate-900 text-sm">Security Governance</p><p class="text-xs text-slate-400">Compliance, Policy, Standards</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="developer-path" class="py-20 bg-slate-50 border-t border-slate-100">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-12 items-center fade-in-section">
+                <div class="order-2 md:order-1 bg-white rounded-3xl p-8 border border-slate-100">
+                    <h4 class="font-black text-slate-700 text-sm uppercase tracking-widest mb-6">Modules Overview</h4>
+                    <div class="space-y-4">
+                        <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 flex items-center">
+                            <span class="w-8 h-8 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600 font-black text-sm shrink-0 mr-4">01</span>
+                            <div><p class="font-bold text-slate-900 text-sm">API Security Fundamentals</p><p class="text-xs text-slate-400">REST, JWT, Rate Limiting</p></div>
+                        </div>
+                        <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 flex items-center">
+                            <span class="w-8 h-8 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600 font-black text-sm shrink-0 mr-4">02</span>
+                            <div><p class="font-bold text-slate-900 text-sm">Integration Architecture</p><p class="text-xs text-slate-400">Webhooks, Events, SDKs</p></div>
+                        </div>
+                        <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 flex items-center">
+                            <span class="w-8 h-8 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600 font-black text-sm shrink-0 mr-4">03</span>
+                            <div><p class="font-bold text-slate-900 text-sm">Infrastructure as Code</p><p class="text-xs text-slate-400">Terraform, Docker, CI/CD</p></div>
+                        </div>
+                        <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 flex items-center">
+                            <span class="w-8 h-8 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600 font-black text-sm shrink-0 mr-4">04</span>
+                            <div><p class="font-bold text-slate-900 text-sm">Security Automation</p><p class="text-xs text-slate-400">Scanning, Testing, Monitoring</p></div>
+                        </div>
+                        <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 flex items-center">
+                            <span class="w-8 h-8 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600 font-black text-sm shrink-0 mr-4">05</span>
+                            <div><p class="font-bold text-slate-900 text-sm">Advanced Auth Protocols</p><p class="text-xs text-slate-400">OAuth2, OIDC, SAML</p></div>
+                        </div>
+                        <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 flex items-center">
+                            <span class="w-8 h-8 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600 font-black text-sm shrink-0 mr-4">06</span>
+                            <div><p class="font-bold text-slate-900 text-sm">Production Deployments</p><p class="text-xs text-slate-400">Scaling, Auditing, Compliance</p></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-1 md:order-2">
+                    <div class="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6">
+                        <i data-lucide="code-2" class="w-8 h-8 text-indigo-600"></i>
+                    </div>
+                    <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-4 tracking-tight">Developer Path<br><span class="text-indigo-500 text-2xl">In Detail</span></h2>
+                    <p class="text-slate-500 font-medium mb-8 leading-relaxed">
+                        The Developer Path is designed for engineers who want to build secure systems, integrate 
+                        authentication services, and automate security infrastructure. You'll work with real tools 
+                        and production-grade patterns.
+                    </p>
+                    <div class="space-y-6">
+                        <div class="flex">
+                            <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center shrink-0 mr-4">
+                                <i data-lucide="terminal" class="w-6 h-6 text-indigo-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900">Real-World Tooling</h4>
+                                <p class="text-sm text-slate-500">Work with Docker, Terraform, CI/CD pipelines, and actual API frameworks used in production environments.</p>
+                            </div>
+                        </div>
+                        <div class="flex">
+                            <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center shrink-0 mr-4">
+                                <i data-lucide="git-branch" class="w-6 h-6 text-emerald-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900">Project-Based Learning</h4>
+                                <p class="text-sm text-slate-500">Build real projects — secure APIs, monitoring dashboards, automation scripts, and deployment pipelines.</p>
+                            </div>
+                        </div>
+                        <div class="flex">
+                            <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center shrink-0 mr-4">
+                                <i data-lucide="users" class="w-6 h-6 text-amber-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900">Peer Collaboration</h4>
+                                <p class="text-sm text-slate-500">Review code, share solutions, and collaborate on security engineering challenges with other developers.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="register.html" class="mt-10 inline-flex items-center bg-indigo-500 text-white px-8 py-4 rounded-xl font-bold btn-scale hover:bg-indigo-600 transition-colors">
+                        Enroll in Developer Path <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- FAQ Section -->
+    <section id="faq" class="py-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16 fade-in-section">
+            <h2 class="text-3xl sm:text-4xl font-black text-slate-900 mb-4 tracking-tight">Frequently Asked Questions</h2>
+            <p class="text-slate-500 font-medium">Everything you need to know about the SecureAuth Bootcamp</p>
+        </div>
+        <div class="space-y-4 fade-in-section delay-1">
+            <details class="bg-white rounded-2xl border border-slate-100 overflow-hidden group">
+                <summary class="p-6 font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between hover:bg-slate-50 transition-colors">
+                    Can I switch paths after enrolling?
+                    <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform shrink-0 ml-4"></i>
+                </summary>
+                <div class="px-6 pb-6 text-slate-500 font-medium">
+                    Path enrollment is designed to be permanent to encourage focus and commitment. If you need to switch, 
+                    please contact <a href="mailto:adrianmange00@gmail.com" class="text-cuz-blue hover:underline">adrianmange00@gmail.com</a> 
+                    to request a path change.
+                </div>
+            </details>
+            <details class="bg-white rounded-2xl border border-slate-100 overflow-hidden group">
+                <summary class="p-6 font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between hover:bg-slate-50 transition-colors">
+                    Do I need previous cybersecurity experience?
+                    <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform shrink-0 ml-4"></i>
+                </summary>
+                <div class="px-6 pb-6 text-slate-500 font-medium">
+                    The Student Path starts from fundamentals and requires no prior experience. The Developer Path assumes 
+                    basic programming knowledge and is best suited for those with some development background.
+                </div>
+            </details>
+            <details class="bg-white rounded-2xl border border-slate-100 overflow-hidden group">
+                <summary class="p-6 font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between hover:bg-slate-50 transition-colors">
+                    How does the XP and streak system work?
+                    <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform shrink-0 ml-4"></i>
+                </summary>
+                <div class="px-6 pb-6 text-slate-500 font-medium">
+                    You earn XP by completing lessons, quizzes, and labs. Your streak tracks consecutive days of activity. 
+                    Both are displayed on your dashboard and contribute to your rank progression.
+                </div>
+            </details>
+            <details class="bg-white rounded-2xl border border-slate-100 overflow-hidden group">
+                <summary class="p-6 font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between hover:bg-slate-50 transition-colors">
+                    I'm a lecturer — how do I access the platform?
+                    <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform shrink-0 ml-4"></i>
+                </summary>
+                <div class="px-6 pb-6 text-slate-500 font-medium">
+                    Lecturer accounts are created by administrators. If you need lecturer access, please contact 
+                    <a href="mailto:adrianmange00@gmail.com" class="text-cuz-blue hover:underline">adrianmange00@gmail.com</a> 
+                    or visit the <a href="/academy" class="text-cuz-blue hover:underline">Academy</a> directly.
+                </div>
+            </details>
+            <details class="bg-white rounded-2xl border border-slate-100 overflow-hidden group">
+                <summary class="p-6 font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between hover:bg-slate-50 transition-colors">
+                    Is this free?
+                    <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform shrink-0 ml-4"></i>
+                </summary>
+                <div class="px-6 pb-6 text-slate-500 font-medium">
+                    Yes, the SecureAuth Bootcamp is completely free for all registered users. Create an account and 
+                    start learning immediately.
+                </div>
+            </details>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-24 bg-gradient-to-br from-cuz-blue-dark via-cuz-blue to-cuz-blue-light">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl sm:text-4xl font-black text-white mb-4 tracking-tight">Ready to Start Learning?</h2>
+            <p class="text-lg text-white/70 mb-10 max-w-xl mx-auto font-medium">Create your account and choose your path. No credit card required.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="register.html" class="bg-white text-cuz-blue px-8 py-4 rounded-xl font-bold btn-scale hover:shadow-2xl transition-all">
+                    <i data-lucide="user-plus" class="w-5 h-5 inline mr-2"></i>
+                    Create Free Account
+                </a>
+                <a href="login.html" class="bg-white/10 text-white border border-white/20 px-8 py-4 rounded-xl font-bold btn-scale hover:bg-white/20 transition-all">
+                    <i data-lucide="log-in" class="w-5 h-5 inline mr-2"></i>
+                    Log In
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-bg text-white py-24 w-full relative overflow-hidden">
+        <div class="footer-orbs pointer-events-none absolute inset-0 z-0">
+            <div class="footer-orb" style="width:300px;height:300px;top:5%;left:-5%;--d:25s;--del:0s;"></div>
+            <div class="footer-orb" style="width:200px;height:200px;bottom:10%;right:5%;--d:18s;--del:-6s;"></div>
+            <div class="footer-orb" style="width:150px;height:150px;top:40%;left:55%;--d:14s;--del:-12s;"></div>
+            <div class="footer-orb" style="width:120px;height:120px;bottom:30%;left:20%;--d:20s;--del:-3s;"></div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid md:grid-cols-3 gap-16">
+                <div class="space-y-10">
+                    <a href="index.html" class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-2xl">
+                            <i data-lucide="shield-check" class="w-7 h-7 text-cuz-blue"></i>
+                        </div>
+                        <span class="text-3xl font-black tracking-tighter">SecureAuth</span>
+                    </a>
+                    <p class="text-slate-400 leading-relaxed text-lg font-medium">Enterprise-grade two-factor authentication and security learning platform.</p>
+                    <div class="flex space-x-5">
+                        <a href="https://github.com/MetaADRI" target="_blank" class="footer-social-icon w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center hover:bg-white hover:text-cuz-blue-dark transition-all duration-500 hover:-translate-y-2 shadow-lg">
+                            <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.372.79 1.102.79 2.222v3.293c0 .319.21.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                        </a>
+                        <a href="https://www.linkedin.com/in/bwalya-adrian-mange-4101a8396" target="_blank" class="footer-social-icon w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center hover:bg-white hover:text-cuz-blue-dark transition-all duration-500 hover:-translate-y-2 shadow-lg">
+                            <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.6 1.437-1.237 2.673-1.237 2.856 0 3.385 1.88 3.385 4.327v6.804zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                        </a>
+                        <a href="mailto:adrianmange00@gmail.com" class="footer-social-icon w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center hover:bg-white hover:text-cuz-blue-dark transition-all duration-500 hover:-translate-y-2 shadow-lg">
+                            <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M24 5.457v13.909c0 .904-.732 1.634-1.634 1.634h-20.732c-.902 0-1.634-.73-1.634-1.634v-13.909l12 7 12-7zm-12 4.671l-10.756-6.271c-.269.172-.444.47-.444.808v.537l11.2 6.533 11.2-6.533v-.537c0-.338-.175-.636-.444-.808l-10.756 6.271z"/></svg>
+                        </a>
+                        <a href="https://adrian106293.netlify.app/" target="_blank" class="footer-social-icon w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center hover:bg-white hover:text-cuz-blue-dark transition-all duration-500 hover:-translate-y-2 shadow-lg" title="Personal Website">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="space-y-10">
+                    <h4 class="footer-divider text-xl font-black border-b border-slate-800 pb-5 uppercase tracking-widest text-slate-500">Quick Links</h4>
+                    <ul class="space-y-4">
+                        <li><a href="index.html" class="text-slate-400 hover:text-white font-medium transition-colors">Home</a></li>
+                        <li><a href="#student-path" class="text-slate-400 hover:text-white font-medium transition-colors">Student Path</a></li>
+                        <li><a href="#developer-path" class="text-slate-400 hover:text-white font-medium transition-colors">Developer Path</a></li>
+                        <li><a href="register.html" class="text-slate-400 hover:text-white font-medium transition-colors">Get Started</a></li>
+                        <li><a href="/academy" class="text-slate-400 hover:text-white font-medium transition-colors">Academy</a></li>
+                    </ul>
+                </div>
+                <div class="space-y-10">
+                    <h4 class="footer-divider text-xl font-black border-b border-slate-800 pb-5 uppercase tracking-widest text-slate-500">Research & Development</h4>
+                    <div class="footer-card bg-slate-800/40 p-8 rounded-[2rem] border border-slate-800 hover:border-cuz-blue-light transition-all duration-500 shadow-inner group">
+                        <div class="space-y-4">
+                            <p class="text-white font-black text-2xl tracking-tight">Bwalya Adrian Mange</p>
+                            <div class="space-y-2">
+                                <p class="text-slate-400 font-bold flex items-center"><i data-lucide="hash" class="w-4 h-4 mr-2"></i> 106-293</p>
+                                <p class="text-slate-400 font-bold flex items-center"><i data-lucide="graduation-cap" class="w-4 h-4 mr-2"></i> Cavendish University</p>
+                                <p class="text-slate-500 italic font-medium">BSc Computing Capstone</p>
+                            </div>
+                        </div>
+                        <div class="mt-8 pt-8 border-t border-slate-700 flex justify-between items-center">
+                            <span class="footer-badge inline-flex items-center px-4 py-2 bg-cuz-blue-light/20 text-cuz-blue-light rounded-2xl text-[10px] font-black uppercase tracking-widest">
+                                <i data-lucide="shield" class="w-3 h-3 mr-2"></i> Cybersecurity
+                            </span>
+                            <div class="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                                <div class="w-2 h-2 bg-emerald-500 rounded-full status-pulse"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-divider border-t border-slate-800 mt-24 pt-12 flex flex-col md:flex-row justify-between items-center text-slate-500 text-[11px] font-black uppercase tracking-[0.2em]">
+                <p>&copy; 2026 SECUREAUTH INFRASTRUCTURE. ALL RIGHTS RESERVED.</p>
+                <div class="flex space-x-8 mt-8 md:mt-0">
+                    <a href="#" class="hover:text-white transition-colors">Audit Protocol</a>
+                    <a href="#" class="hover:text-white transition-colors">Privacy Shield</a>
+                    <a href="#" class="hover:text-white transition-colors">Legal Terms</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('open');
+        });
+
+        // Scroll-triggered fade-in
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('.fade-in-section').forEach(function(el) {
+            observer.observe(el);
+        });
+
+        // Scroll-to-section for chevron icons on details
+        document.querySelectorAll('details summary').forEach(function(summary) {
+            summary.addEventListener('click', function() {
+                // lucide auto-handles icon rotation via CSS
+            });
+        });
+    </script>
+</body>
+</html>

@@ -122,6 +122,11 @@ router.get('/health', (req, res) => {
   });
 });
 
+/**
+ * POST /api/student/enroll — Enroll into a learning path
+ */
+router.post('/student/enroll', checkAndRefreshToken, authController.enrollStudent);
+
 // ═══════════════════════════════════════════════════════════════════
 // ADMIN ROUTES
 // ═══════════════════════════════════════════════════════════════════
@@ -141,6 +146,11 @@ router.get('/admin/logs', checkAndRefreshToken, isAdmin, adminController.getSyst
  * GET /api/admin/users - All users list
  */
 router.get('/admin/users', checkAndRefreshToken, isAdmin, adminController.getAllUsers);
+
+/**
+ * POST /api/admin/users - Create a user (admin only)
+ */
+router.post('/admin/users', checkAndRefreshToken, isAdmin, adminController.createUser);
 
 /**
  * DELETE /api/admin/users/:userId - Delete a user

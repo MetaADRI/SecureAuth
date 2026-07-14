@@ -505,8 +505,14 @@ async function getDashboard(req, res) {
         id: user.id,
         email: user.email,
         fullName: user.full_name,
+        role: user.role,
         totpEnabled: Boolean(user.totp_enabled),
-        createdAt: user.created_at
+        createdAt: user.created_at,
+        enrolledPath: user.enrolled_path || null,
+        rank: user.rank || 'Cyber Cadet',
+        xp: user.xp || 0,
+        lessonsCompleted: user.lessons_completed || 0,
+        streak: user.streak || 0
       },
       stats: {
         totalUsers: totalUsers,
@@ -582,6 +588,61 @@ async function requestDeletion(req, res) {
   }
 }
 
+/**
+ * POST /api/student/enroll — Enroll student into a learning path
+ */
+async function enrollStudent(req, res) {
+  try {
+    const userId = req.user.user_id;
+    const { path } = req.body;
+
+    if (!path || !['student', 'developer'].includes(path)) {
+      return res.status(400).json({
+        error: 'Invalid path',
+        message: 'Path must be "student" or "developer".'
+      });
+    }
+
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (user.enrolled_path) {
+      return res.status(400).json({
+        error: 'Already enrolled',
+        message: `You are already enrolled in the ${user.enrolled_path} path.`
+      });
+    }
+
+    const updated = await userModel.updateEnrolledPath(userId, path);
+
+    await insertAuditLog(userId, `enrolled_${path}`, req.ip || 'unknown', req.get('User-Agent') || 'unknown');
+
+    return res.status(200).json({
+      message: `Enrolled in ${path} path successfully!`,
+      enrolledPath: path,
+      user: {
+        id: updated.id,
+        email: updated.email,
+        fullName: updated.full_name,
+        role: updated.role,
+        enrolledPath: updated.enrolled_path,
+        rank: updated.rank || 'Cyber Cadet',
+        xp: updated.xp || 0,
+        lessonsCompleted: updated.lessons_completed || 0,
+        streak: updated.streak || 0
+      }
+    });
+  } catch (error) {
+    console.error('Enrollment error:', error);
+    return res.status(500).json({
+      error: 'Enrollment failed',
+      message: 'An error occurred. Please try again.'
+    });
+  }
+}
+
 module.exports = {
   register,
   loginStep1,
@@ -590,5 +651,6 @@ module.exports = {
   verifyTOTP,
   getDashboard,
   getLoginHistory,
-  requestDeletion
+  requestDeletion,
+  enrollStudent
 };
